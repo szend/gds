@@ -20,18 +20,12 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-          
-      - name: cd
-        run: cd ${{env.DOTNET_ROOT}}\myapp
-        
-      - name: dir
-        run: dir
 
       - name: Build with dotnet
         run: dotnet build GenericDataStore/GenericDataStore --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}\myapp\GenericDataStore
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
