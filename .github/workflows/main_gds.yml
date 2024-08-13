@@ -20,12 +20,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-      - name: Navigate
-        run: cd GenericDataStore
-
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build GenericDataStore/GenericDataStore --configuration Release
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
