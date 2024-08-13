@@ -21,7 +21,7 @@ jobs:
         with:
           dotnet-version: '8.x'
       - name: Navigate
-        run: cd GenericDataStore/GenericDataStore/
+        run: cd GenericDataStore
 
 
       - name: Build with dotnet
