@@ -1,0 +1,78 @@
+<div *ngIf="data">
+
+        <button style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="bluebutton" (click)="Refresh(true)">Refresh</button> 
+    <p-multiSelect 
+    [options]="fields" 
+    [(ngModel)]="selectedColumns" 
+    optionLabel="header"
+    selectedItemsLabel="{0} columns selected" 
+    [style]="{'width': '15rem', 'margin-right': '3rem', 'margin-bottom': '2rem'}" 
+    placeholder="Choose Columns" />
+    <i *ngIf="data.description" [pTooltip]="data.description" class="pi pi-question-circle" style="font-size: 2rem"></i>
+    <p>Double click to select an element</p>
+    <p-progressSpinner [style]="{'height' : '4rem', 'position' : 'absolute'}" [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+<div>
+    <p-table #table  [styleClass]="'p-datatable-striped'" *ngIf="data" [columns]="selectedColumns" [value]="rowData" [lazy]="true"  (onFilter)="onFilter($event)" (onSort)="onSort($event)" (onPage)="onPageChange($event)"
+    [rowHover]="true" selectionMode="single" [dataKey]="'dataObjectId'" [styleClass]="'p-datatable-gridlines p-mt-4'"
+    [reorderableColumns]="true" [resizableColumns]="true" columnResizeMode="expand"
+    [scrollable]="true"  [rowsPerPageOptions]="[5,10,15,25,50,100,200,500,1000,2000]" [showCurrentPageReport]="true" [filterDelay]="0"
+    [paginator]="true" [rows]="defaultcount" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [totalRecords]="count"
+    >
+
+        <ng-template pTemplate="colgroup" let-columns>
+            <colgroup >
+                <col *ngFor="let col of columns" [style.min-width]="'120px'">
+            </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th pReorderableColumn [pSortableColumn]="col.field"  *ngFor="let col of columns">
+                    <p-columnFilter  *ngIf="col.type != 'numeric' && col.type != 'image'&& col.type != 'option'"
+                    [type]="col.type"
+                    [field]="col.field"
+                    display="menu"
+                    class="ml-auto"> 
+                </p-columnFilter> 
+                <p-columnFilter  *ngIf="col.type == 'option'"
+                [type]="'text'"
+                [field]="col.field"
+                display="menu"
+                class="ml-auto"> 
+            </p-columnFilter> 
+                <p-columnFilter   *ngIf="col.type == 'numeric'"
+                [field]="col.field"
+                [type]="col.type"
+                display="menu"
+                class="ml-auto"> 
+                <ng-template pTemplate="filter" let-value let-filter="filterCallback" >
+                    <input #p  placeholder="Any"  [pKeyFilter]="'num'" pInputText />
+                    <button (click)="filter(p.value)"  style="margin-top: 1rem;" pButton pRipple class="p-button p-mr-2">Apply</button> 
+                </ng-template>
+            </p-columnFilter> 
+                    {{ col.header }}
+                    <p-sortIcon></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row let-columns="columns">
+            <tr (dblclick)="Select(row)">
+                <td *ngFor="let col of columns; index as i">
+                    <label *ngIf="col.type != 'image' && col.type != 'boolean'">
+                     {{ getValue(row.value, col) }}
+                    </label>
+                    <label *ngIf="col.type == 'boolean'">
+                        <i  *ngIf="getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true" class="pi pi-check" style="font-size: 1rem"></i>
+
+                        <i  *ngIf="(getValue(row.value, col) == 'false' || getValue(row.value, col) == 'False' || getValue(row.value, col) == false) " class="pi pi-times" style="font-size: 1rem"></i>
+                        {{ getValue(row.value, col)}}
+                       </label>
+                    <p-image [width]="'300rem'" [height]="'300rem'" *ngIf="col.type == 'image' && getImageObj(row, col.header)"  [src]="getImageObj(row, col.header)"  alt="not picture" [preview]="true"></p-image>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+</div>
+<div *ngIf="!data">
+no data
+</div>

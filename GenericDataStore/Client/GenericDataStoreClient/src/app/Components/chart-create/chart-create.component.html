@@ -1,0 +1,74 @@
+<p-messages></p-messages>
+<button style="margin-bottom: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ShowDesc()">Show description</button> 
+<br>
+<label>Read about how to do it in the features</label>
+
+<br><br>
+<label>Type:</label>
+<p-dropdown [style]="{'width':'15rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptions" [dataKey]="'value'"[(ngModel)]="selectedoption"  placeholder="Type" />
+    <br><br>
+<div class="grid">
+    <label>X:</label>
+     <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="xcalculation"></textarea>
+     <label style="margin-left: 1rem;">Y:</label>
+     <textarea  rows="5" cols="30" pInputTextarea [(ngModel)]="ycalculation"></textarea>
+     <label   style="margin-left: 1rem;">Group option:</label>
+     <p-dropdown  [style]="{'width':'15rem','margin-right' : '1rem'}"   optionLabel="label" [options]="groupoption" [dataKey]="'value'"[(ngModel)]="selectedgroupoption"  placeholder="Type" />
+    </div>
+<br><br>
+
+<button style="margin-bottom: 1rem; margin-right: 3rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+<button  *ngIf="cahrtdata" style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Add()">Add</button> 
+<p-progressSpinner [hidden]="!loadnig" ariaLabel="loading"></p-progressSpinner>
+
+<div *ngIf="type =='numeric'" >
+    <div *ngIf="cahrtdata && selectedoption.value == 'line'">
+        <p-card   [header]="'custom chart'" [subheader]="" [style]="{ margin: '2rem'}">
+            <p-chart  type="line" [data]="cahrtdata" [options]="optionsnum"></p-chart>
+        </p-card>
+    </div>
+    <div *ngIf="cahrtdata && selectedoption.value == 'bar'">
+        <p-card   [header]="'custom chart'" [subheader]="" [style]="{ margin: '2rem'}">
+            <p-chart  type="bar" [data]="cahrtdata" [options]="optionsnum"></p-chart>
+        </p-card>
+    </div>
+    <div *ngIf="cahrtdata && selectedoption.value == 'scatter'">
+        <p-card   [header]="'custom chart'" [subheader]="" [style]="{ margin: '2rem'}">
+            <p-chart  type="scatter" [data]="cahrtdata" [options]="optionsnum"></p-chart>
+        </p-card>
+    </div>
+    <div *ngIf="cahrtdata && selectedoption.value == 'radar'">
+        <p-card   [header]="'custom chart'" [subheader]="" [style]="{ margin: '2rem'}">
+            <p-chart  type="radar" [data]="cahrtdata" [options]="optionsnum"></p-chart>
+        </p-card>
+    </div>    
+</div>
+<div *ngIf="type =='text' || type == 'logical'" >
+    <div *ngIf="cahrtdata && selectedoption.value == 'pie'">
+        <p-card   [header]="'custom chart'" [subheader]="" [style]="{ margin: '2rem'}">
+            <p-chart  type="pie" [data]="cahrtdata" [options]="optionsnum"></p-chart>
+        </p-card>
+    </div>
+    <div *ngIf="cahrtdata && selectedoption.value == 'doughnut'">
+        <p-card   [header]="'custom chart'" [subheader]="" [style]="{ margin: '2rem'}">
+            <p-chart  type="doughnut" [data]="cahrtdata" [options]="optionsnum"></p-chart>
+        </p-card>
+    </div>
+    <div *ngIf="cahrtdata && selectedoption.value == 'bar'">
+        <p-card   [header]="'custom chart'" [subheader]="" [style]="{ margin: '2rem'}">
+            <p-chart  type="bar" [data]="cahrtdata" [options]="optionsnum"></p-chart>
+        </p-card>
+    </div>
+    <div *ngIf="cahrtdata && selectedoption.value == 'polarArea'">
+        <p-card   [header]="'custom chart'" [subheader]="" [style]="{ margin: '2rem'}">
+            <p-chart  type="polarArea" [data]="cahrtdata" [options]="optionsnum"></p-chart>
+        </p-card>
+    </div>
+    <div *ngIf="cahrtdata && selectedoption.value == 'radar'">
+        <p-card   [header]="'custom chart'" [subheader]="" [style]="{ margin: '2rem'}">
+            <p-chart  type="radar" [data]="cahrtdata" [options]="optionsnum"></p-chart>
+        </p-card>
+    </div>
+</div>
+
+

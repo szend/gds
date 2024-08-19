@@ -1,0 +1,30 @@
+<div class="card flex justify-content-center">
+    <p-card  [style]="{ width: '760px' }">
+        <div style="display: grid;">
+            <p>If you have a special request, you found a bug, or need some help, don't hesitate to get in touch.</p>
+            <p>Just send us a message with your needs, and we will get back to you as soon as possible.</p>
+        </div>
+
+    
+        <ng-template pTemplate="footer">
+        </ng-template>
+    </p-card>
+</div>
+<p-messages></p-messages>
+<div class="grid">
+    <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-5">
+        <label>Name</label>
+        <input    [(ngModel)]="name"  pInputText/>               
+    </div>
+    <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-5">
+        <label>Email</label>
+        <input    [(ngModel)]="email"  pInputText/>               
+    </div>
+    <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-11">
+        <label>Comment</label>
+        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="comment"></textarea>
+    </div>
+</div>
+<div  style="display: grid; margin: 1rem; padding: 1rem;">
+    <button pButton style="margin-right: 1rem;margin-bottom: 2rem; width: 5rem;" pRipple class="p-button-success p-mr-2" (click)="Send()">Send</button> 
+</div>

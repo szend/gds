@@ -1,0 +1,17 @@
+<p-messages></p-messages>
+<label>Complex calculated color can slow down loading, especially if it's from a child!</label>
+<br><br>
+<button style="margin-bottom: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ShowDesc()">Show description</button> 
+<br><br>
+<label>Choose a field</label>
+<p-dropdown [style]="{ 'margin-bottom': '2rem'}" [options]="fieldsoption" [(ngModel)]="choosenfield" dataKey="code" optionLabel="name" [showClear]="true">
+    <br><br>
+</p-dropdown>
+<div *ngIf="choosenfield">
+    <label>Calculation: the result of the calculation should be a color or a color code (hex, rgb, hsl), read about this in the features</label>
+    <br><br>
+    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="calculationColor"></textarea>
+
+</div>
+<br><br>
+<button style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 

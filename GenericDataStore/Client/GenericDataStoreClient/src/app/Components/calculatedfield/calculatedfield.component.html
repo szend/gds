@@ -1,0 +1,71 @@
+<p-messages></p-messages>
+
+<label>Complex calculated fields can slow down loading, especially if it's from a child!</label>
+<br>
+<button style="margin-bottom: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ShowDesc()">Show description</button> 
+<br><br>
+<label>Name</label>
+<input  style="margin-bottom: 1rem; margin-right: 1rem; width: 20rem;"  [(ngModel)]="name"  pInputText/>
+<label>Choose Type</label>
+<p-dropdown [style]="{ 'margin-bottom': '2rem'}"[options]="options" [(ngModel)]="chtype" dataKey="code" optionLabel="name" [showClear]="true">
+</p-dropdown>
+
+
+<br>
+<h3 >numeric:</h3>
+<div class="grid" >
+    <div *ngFor="let prop of fields; index as i">
+    
+        <div  *ngIf="'numeric' == prop.type" class="col-4" style="display: grid; margin: 1rem; padding: 1rem;">
+            <label >{{prop.name}}</label>
+            <button icon="pi pi-plus" style="margin-bottom: 1rem; top: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddToCalc(prop)"></button> 
+        </div>
+</div>
+</div>
+<h3 >text/option:</h3>
+<div class="grid" >
+    <div *ngFor="let prop of fields; index as i">
+    
+        <div  *ngIf="'text' == prop.type || 'option' == prop.type " class="col-4" style="display: grid; margin: 1rem; padding: 1rem;">
+            <label >{{prop.name}}</label>
+            <button icon="pi pi-plus" style="margin-bottom: 1rem; top: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddToCalc(prop)"></button> 
+        </div>
+</div>
+</div>
+<h3 >boolean:</h3>
+<div class="grid" >
+    <div *ngFor="let prop of fields; index as i">
+    
+        <div  *ngIf="'boolean' == prop.type" class="col-4" style="display: grid; margin: 1rem; padding: 1rem;">
+            <label >{{prop.name}}</label>
+            <button icon="pi pi-plus" style="margin-bottom: 1rem; top: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddToCalc(prop)"></button> 
+        </div>
+</div>
+</div>
+<h3 >operators/functions:</h3>
+<div class="grid" *ngIf="chtype">
+    <div *ngIf="chtype.code == 'numeric'">
+        <p-dropdown [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}"[options]="numoperators" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+        <p-dropdown [placeholder]="'Select function'" [style]="{ 'margin-bottom': '2rem'}"[options]="numfunctions" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+    
+    </div>
+    <div *ngIf="chtype.code == 'text'">
+        <p-dropdown [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}"[options]="textoperators" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+        <p-dropdown [placeholder]="'Select function'" [style]="{ 'margin-bottom': '2rem'}"[options]="textfunctions" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+    
+    </div>
+    <div *ngIf="chtype.code == 'boolean'">
+        <p-dropdown [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}"[options]="booloperators" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+        <p-dropdown [placeholder]="'Select function'" [style]="{ 'margin-bottom': '2rem'}"[options]="boolfunctions" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+    
+    </div>
+
+</div>
+<div class="grid" *ngIf="chtype">
+
+    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="calculationString"></textarea>
+
+</div>
+<br><br>
+<button style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+

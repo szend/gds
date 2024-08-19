@@ -1,0 +1,54 @@
+<p-messages></p-messages>
+<label>Field what you want to classify</label>
+<p-dropdown  [options]="fields" dataKey="code" optionLabel="name"  [(ngModel)]="choosenfield" [showClear]="true"
+[placeholder]="'Select'"></p-dropdown>
+<br>
+<br>
+<p-progressSpinner [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+
+<button *ngIf="choosenfield"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Classify()">Create AI model</button> 
+<br>
+<br>
+<p>An image classification model is a supervised learning algorithm that falls
+     under the category of computer vision. The ultimate goal is for a computer to identify objects 
+     in an image based on labeled training images, and then provide recommendations or take action based on the information.
+    </p>
+    <p>
+        It requires a large amount of data to train the model, and the more data you have, the better the model will perform.
+    </p>
+    <p>
+        The model will be trained on the field you choose, and then you can upload an image to classify it.
+    </p>
+    <p>
+        The model will return the probability of the image belonging to each class in the field.
+    </p>
+    <p>
+        For example, if you choose the field "fruit" and upload an image of an apple, the model might return:
+    </p>
+    <p>
+        Apple: 0.95
+    </p>
+    <p>
+        Orange: 0.03
+    </p>
+    <p>
+        Banana: 0.02
+    </p>
+    <p>
+        This means the model is 95% confident that the image is an apple, 3% confident it is an orange, and 2% confident it is a banana.
+    </p>
+    <p>
+        You can use this information to make decisions or take action based on the image classification.
+    </p>
+    <p>
+        For example, you could use the model to classify images of fruit in a grocery store, and then automatically update inventory based on the results.
+    </p>
+    <p>
+        Or you could use the model to classify images of animals in the wild, and then provide recommendations for conservation efforts based on the results.
+    </p>
+    <p>
+        The possibilities are endless, and the only limit is your imagination!
+    </p>
+    <p>
+        So go ahead and create your own image classification model, and start using the power of AI to make a difference in the world!
+    </p>

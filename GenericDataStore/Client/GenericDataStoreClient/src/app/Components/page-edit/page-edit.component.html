@@ -1,0 +1,54 @@
+<button style="margin-right: 1rem; margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreatePage()">New Page</button>
+<p-dataView #dv [value]="pages">
+    <ng-template pTemplate="list" let-products>
+        <div class="grid grid-nogutter">
+            <div  class="col-12" *ngFor="let item of products;" class="col-12">
+                <div  class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3" [ngClass]="{ 'border-top-1 surface-border': true }">
+                    <div class="md:w-10rem relative">
+                        <div class="text-lg font-medium text-900 mt-2">
+                            <span class="font-medium text-secondary text-sm">Name</span>
+                            <input  style="width: 10rem;"  [(ngModel)]="item.name" pInputText/>
+                            <!-- <span class="font-medium text-secondary text-sm">URL parameters</span>
+                            <input *ngFor="let param of item.parameters; index as i" style="width: 10rem;"  [value]="param" pInputText/>
+                            
+                            <button pButton pRipple class="p-button p-mr-2" (click)="AddParam(item)">Add parameter</button> 
+                            <button pButton pRipple class="p-button-danger p-mr-2" (click)="RemoveParam(item)">Remove parameter</button>  -->
+                        </div>
+                        <!-- <img class="block xl:block mx-auto border-round w-full" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image" [alt]="item.name" /> -->
+                    </div>
+                    <div class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-4">
+                        <div class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
+                            <div>
+                                <span class="font-medium text-secondary text-sm">HTML</span>
+                                <textarea  style="width: 20rem;"  [(ngModel)]="item.html" pInputText></textarea>
+                            </div>
+                            <div>
+                                <span class="font-medium text-secondary text-sm">CSS</span>
+                                <textarea  style="width: 20rem;"  [(ngModel)]="item.css" pInputText></textarea>
+                            </div>
+                        </div>
+                        <div class="flex flex-column md:align-items-end gap-5">
+                            <div class="flex flex-row-reverse md:flex-row gap-2">
+                                <button pButton pRipple class="p-button p-mr-2" (click)="Save(item)">Save</button> 
+                                <button pButton pRipple class="p-button-danger p-mr-2" (click)="Delete(item)">Delete</button> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-dataView>
+<p-toast position="top-right"  (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="p-flex p-flex-column" style="flex: 1">
+            <div class="p-text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="p-grid p-fluid">
+            </div>
+        </div>
+    </ng-template>
+</p-toast>

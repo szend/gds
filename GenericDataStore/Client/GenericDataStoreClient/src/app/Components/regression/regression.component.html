@@ -1,0 +1,46 @@
+<p-messages></p-messages>
+<label>Field what you want to predict</label>
+<p-dropdown  [options]="fields" dataKey="code" optionLabel="name"  [(ngModel)]="choosenfield" [showClear]="true"
+[placeholder]="'Select'"></p-dropdown>
+<br>
+<br>
+<p-progressSpinner [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+
+<button *ngIf="choosenfield"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Regression()">Create AI model</button> 
+<br>
+<br>
+<p>Regression is a supervised learning algorithm that falls under the category of predictive analytics. The ultimate goal is for a computer to predict a continuous value based on labeled training data, and then provide recommendations or take action based on the information.
+</p>
+<p>
+    It requires a large amount of data to train the model, and the more data you have, the better the model will perform.
+</p>
+<p>
+    The model will be trained on the field you choose, and then you can input a value to predict it.
+</p>
+<p>
+    The model will return the predicted value based on the input you provide.
+</p>
+<p>
+    For example, if you choose the field "price" and input a value of 100, the model might return:
+</p>
+<p>
+    Predicted price: 95
+</p>
+<p>
+    This means the model predicts the price will be 95 based on the input value of 100.
+</p>
+<p>
+    You can use this information to make decisions or take action based on the regression model.
+</p>
+<p>
+    For example, you could use the model to predict prices of products in a store, and then adjust pricing strategies based on the results.
+</p>
+<p>
+    Or you could use the model to predict sales of a product, and then optimize inventory levels based on the results.
+</p>
+<p>
+    The possibilities are endless, and the only limit is your imagination!
+</p>
+<p>
+    So go ahead and create your regression model, and start using the power of AI to make a difference in the world!
+</p>

@@ -1,0 +1,32 @@
+<p-messages></p-messages>
+<label>Field what you want to classify</label>
+<p-dropdown  [options]="fields" dataKey="code" optionLabel="name"  [(ngModel)]="choosenfield" [showClear]="true"
+[placeholder]="'Select'"></p-dropdown>
+<br>
+<br>
+<p-progressSpinner [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+
+<button *ngIf="choosenfield"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Classify()">Create AI model</button> 
+<br>
+<br>
+<p>
+    AI data classification is the process of using artificial intelligence to organize and categorize data based on predetermined criteria, enabling efficient data retrieval and analysis.
+</p>
+<p>
+    The ultimate goal of AI data classification is to automate the process of organizing data, making it easier to access and analyze.
+</p>
+<p>
+    AI data classification can be used in a wide range of applications, from organizing documents and images to categorizing products and customer data.
+</p>
+<p>
+    For example, AI data classification can be used to automatically tag and categorize images based on their content, making it easier to search and retrieve specific images.
+</p>
+<p>
+    AI data classification can also be used to categorize products based on their features and attributes, enabling more efficient inventory management and product recommendations.
+</p>
+<p>
+    The possibilities are endless, and the only limit is your imagination!
+</p>
+<p>
+    So go ahead and create your own AI data classification model, and start using the power of AI to make a difference in the world!
+</p>

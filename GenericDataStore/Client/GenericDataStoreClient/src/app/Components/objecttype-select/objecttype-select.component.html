@@ -1,0 +1,52 @@
+<div>
+    <p-progressSpinner [style]="{'height' : '4rem', 'position' : 'absolute'}" [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+    <br><br><br>
+    <p-messages ></p-messages>
+    <p-dataView #dv [value]="types">
+        <ng-template pTemplate="list" let-products>
+            <div class="grid grid-nogutter">
+                <div [ngClass]="item.promoted == true  ? 'promoted' :''" class="col-12" *ngFor="let item of products; let first = first" class="col-12">
+                    <div class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3" [ngClass]="{ 'border-top-1 surface-border': !first }">
+                        <div class="md:w-10rem relative">
+                            <p-tag severity="success" *ngIf="item.promoted" [style.left.px]="4" [style.top.px]="4" [value]="'promoted'" />
+                            <div class="text-lg font-medium text-900 mt-2">{{ item.name }}</div>
+                            <!-- <img class="block xl:block mx-auto border-round w-full" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image" [alt]="item.name" /> -->
+                        </div>
+                        <div class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-4">
+                            <div class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
+                                <div>
+                                    <span class="font-medium text-secondary text-sm">{{ item.description}}</span>
+                                </div>
+                                <div *ngIf="item.category" class="surface-100 p-1" style="border-radius: 30px">
+    
+                                </div>
+                            </div>
+                            <div class="flex flex-column md:align-items-end gap-5">
+                                <div class="flex flex-row-reverse md:flex-row gap-2">
+                                    <button *ngIf="!remove" pButton pRipple class="p-button p-mr-2" (click)="AddChild(item.objectTypeId)">Add relation</button> 
+                                    <button *ngIf="remove" pButton pRipple class="p-button p-mr-2" (click)="RemoveChild(item.objectTypeId)">Remove relation</button> 
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+    </p-dataView>
+    <br><br><br>
+    <p-toast position="top-right" key="key1" (onClose)="onReject()" [baseZIndex]="500000">
+        <ng-template let-message pTemplate="message">
+            <div class="p-flex p-flex-column" style="flex: 1">
+                <div class="p-text-center">
+                    <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                    <h4>{{message.summary}}</h4>
+                    <p>{{message.detail}}</p>
+                </div>
+                <div class="p-grid p-fluid">
+                </div>
+            </div>
+        </ng-template>
+    </p-toast>    
+</div>

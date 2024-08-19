@@ -33,6 +33,18 @@ namespace GenericDataStore.Models
 
         public int AllowedExternalDataCount { get; set; }
 
+        public int MaxDataCountInMonth { get; set; }
+
+        public int MaxExternalDataCountInMonth { get; set; }
+
+        public bool HasSub { get; set; }
+
+        public DateTime? SubStart { get; set; }
+
+        public DateTime? NextPay { get; set; }
+
+        public string? SubType { get; set; }
+
         //public long AllowedFileSize { get; set; }
         //public string? SubscriptionType { get; set; }
         //public DateTime? SubscriptionEnd { get; set; }

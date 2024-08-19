@@ -1,3 +1,4 @@
+using FluentScheduler;
 using GenericDataStore;
 using GenericDataStore.DatabaseConnector;
 using GenericDataStore.Models;
@@ -5,6 +6,8 @@ using GenericDataStore.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -23,8 +26,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer("Name=ConnectionStrings:Db");
 });
-
-//builder.Services.AddSingleton<Repository>();
 
 builder.Services.AddMemoryCache();
 
@@ -78,9 +79,17 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
+
 var app = builder.Build();
+JobManager.Initialize();
+JobManager.AddJob(() => {
+    new ScheduledTask().Start();
+}, s => s.ToRunEvery(5).Days());
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -95,8 +104,11 @@ app.UseAuthorization();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();

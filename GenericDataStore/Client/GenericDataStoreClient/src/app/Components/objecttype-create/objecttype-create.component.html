@@ -1,0 +1,154 @@
+
+<p-tabView>
+<p-tabPanel header="Properties">
+    <button pButton *ngIf="dataRec.parentObjectTypeId"  pRipple class="p-button" (click)="SelectChild()">Select existing table</button> 
+<i *ngIf="dataRec.parentObjectTypeId" pTooltip="Select an existing table to make it this child" class="pi pi-question-circle" style="font-size: 2rem"></i>
+<div class="grid">
+    <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-5">
+        <label>Name</label>
+        <input    [(ngModel)]="name"  pInputText/>               
+    </div>
+    <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-5">
+        <div style="display: flex;">
+            <label>Database</label>
+            <i  pTooltip="Select a database. If you select a database (Internal) than it will be stored in our database." class="pi pi-question-circle" style="font-size: 1rem"></i>
+        </div>
+        <p-dropdown [disabled]="!editable" [editable]="editable" [options]="databases" [dataKey]="'databaseConnectionPropertyId'" (onChange)="SetDatabase($event)" optionLabel="databaseName" [showClear]="true"
+        [placeholder]="GetDatabaseName()"></p-dropdown>
+                  
+
+    </div>
+    <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-5">
+        <div style="display: flex;">
+            <label>Category</label>
+            <i  pTooltip="Select an existing category or create a new one. It helps others find your list." class="pi pi-question-circle" style="font-size: 1rem"></i>
+        </div>
+
+        <p-dropdown [editable]="true"  [style]="{}"[options]="categories" dataKey="id" optionLabel="cat" (onChange)="SetCategory($event)" [showClear]="true"
+        [placeholder]="cat != '' ? cat : 'Select'"></p-dropdown>
+    </div>
+    <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-12">
+        <div style="display: flex;">
+            <label>Description</label>
+            <i  pTooltip="Describe your data. It is important if you want others to understand your list." class="pi pi-question-circle" style="font-size: 1rem"></i>
+        </div>
+        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="desc"></textarea>
+    </div>
+</div>
+<p-fileUpload  *ngIf="editable" #fileUploader   mode="basic"  [style]="{'display' : 'inline-block'}"  (uploadHandler)="importFile($event)" chooseLabel="Create from file" [customUpload]="true"></p-fileUpload>
+<i  pTooltip="Create the table and fields, then Import elements from excel. The first line must contain field names. Same file structure as in the export file.
+ Check if every field type is correct, especially if you have an option (category) or date type. If you select an option for a field the program will generate every option based on your data" class="pi pi-question-circle" style="font-size: 2rem"></i>
+
+   
+
+
+<div  class="grid">
+        <div *ngFor="let prop of props; index as i" >
+            <p-card [subheader]="" [style]="{ margin: '2rem', 'background-color': '#9fc4c6'}" class="col-4">
+                <ng-template pTemplate="header">
+                    <div class="grid">
+                        <div class="col" style="display: flex;">
+                            <h1>{{prop.name}}</h1>
+                        </div>
+                        <div class="col-fixed" style="display: flex;">
+                            <button style="max-height: 2rem;" icon="pi pi-times"  pButton pRipple class="p-button-danger p-mr-2" (click)="RemoveProperty(i)"></button> 
+                        </div>
+                    </div>
+
+                </ng-template>
+                <p-inputGroup class="col" class="col-4">
+                    <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-4">
+                        <label>Name of the property</label>
+                        <input  style="margin-bottom: 1rem; width: 20rem;"  [(ngModel)]="prop.name"  pInputText/>
+                        <div style="display: flex;">
+                            <label *ngIf="editable">Type of the property</label>
+                            <i  pTooltip="Define which type of data you want to store in this field. Select text if it is simple characters, number if it is numeric, date if date, boolean if true/false, option if category (you can define the categories if you select), and image if you want to store images." class="pi pi-question-circle" style="font-size: 1rem"></i>
+                        </div>
+                        <p-dropdown  [style]="{ 'margin-bottom': '2rem'}"[options]="options" [(ngModel)]="prop.type" dataKey="code" optionLabel="name" (onChange)="SetType($event,i)" [showClear]="true"
+                         [placeholder]="prop.type ?? 'Select type'"></p-dropdown>
+                         <div *ngIf="prop.type == 'option'" >
+                            <div style="display: flex; margin-bottom: 0.5rem;" *ngFor="let opt of prop.option, index as j">
+                                <input style="width: 20rem;"  [(ngModel)]="opt.optionName"  pInputText/>
+                                <button icon="pi pi-times" style="width: 2rem; margin-left: 0.5rem;" pButton pRipple class="p-button-danger" (click)="RemoveOption(prop,j)"></button> 
+                            </div>
+                            <button pButton style="margin-right: 1rem; margin-bottom: 2rem;" pRipple class="p-button-success p-mr-2" (click)="AddOption(prop)">AddOption</button>       
+                        </div>
+                        <div *ngIf="prop.type == 'calculatednumeric' || prop.type == 'calculatedtext' || prop.type == 'calculatedboolean'" >
+                            <label>Calculation method:</label>
+                            <textarea pInputTextarea [(ngModel)]="prop.calculationMethod"></textarea>
+                        </div>
+                        <div *ngIf="prop.colorMethod && prop.colorMethod != ''" >
+                            <label>Color:</label>
+                            <textarea  pInputTextarea [(ngModel)]="prop.colorMethod"></textarea>
+                        </div>
+                    </div>
+                </p-inputGroup>
+            </p-card>
+
+        </div>
+        <div>
+            <p-card  [style]="{ margin: '2rem', 'background-color': '#9fc4c6'}" class="col-4">
+                <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-4">
+                    <button style="margin-bottom: 1rem; width: 10rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddProperty()">New Field</button> 
+                </div>
+            </p-card>
+        </div>
+    
+    </div>
+    
+    
+</p-tabPanel>
+<p-tabPanel header="Configuration">
+    <div  class="grid">
+        <div class="col-4">
+            <label>Private</label>
+            <i  pTooltip="If you select this, you will be the only one who can find this list." class="pi pi-question-circle" style="font-size: 1rem"></i>
+            <p-checkbox  [(ngModel)]="dataRec.private" [binary]="true" ></p-checkbox>
+        </div>
+        <div class="col-4">
+            <label>Deny add button</label>
+            <i  pTooltip="If you select this, you will be the only one who can add new records." class="pi pi-question-circle" style="font-size: 1rem"></i>
+            <p-checkbox (onChange)="AccessDeny($event)"  [(ngModel)]="dataRec.denyAdd" [binary]="true" ></p-checkbox>
+        </div>
+        <div class="col-4">
+            
+        <label>All users full access</label>
+        <i  pTooltip="If you select this, every user will have admin right on your list. They can even edit the object definition." class="pi pi-question-circle" style="font-size: 1rem"></i>
+        <p-checkbox  (onChange)="AccessAllUser($event)" [(ngModel)]="dataRec.allUserFullAccess"  [binary]="true" ></p-checkbox>
+        </div>
+        <div class="col-4">
+            <label>No filter menu</label>
+            <i  pTooltip="If you select this, the options menu will be invisible." class="pi pi-question-circle" style="font-size: 1rem"></i>
+            <p-checkbox   [(ngModel)]="dataRec.noFilterMenu" [binary]="true" ></p-checkbox>
+        </div>
+        <div class="col-4">
+            <label>Deny export button</label>
+            <i  pTooltip="If you select this, you will be the only one who can use the export button." class="pi pi-question-circle" style="font-size: 1rem"></i>
+            <p-checkbox (onChange)="AccessDeny($event)"  [(ngModel)]="dataRec.denyExport" [binary]="true" ></p-checkbox>
+        </div>
+        <div class="col-4">
+            <label>Deny chart button</label>
+            <i  pTooltip="If you select this, you will be the only one who can use the chart button and see visualizations." class="pi pi-question-circle" style="font-size: 1rem"></i>
+            <p-checkbox  (onChange)="AccessDeny($event)" [(ngModel)]="dataRec.denyChart" [binary]="true" ></p-checkbox>
+        </div>
+    </div>
+
+
+</p-tabPanel>
+
+</p-tabView>
+<button pButton style="margin-right: 1rem;margin-bottom: 2rem;" pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+
+<p-toast position="top-right"  (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="p-flex p-flex-column" style="flex: 1">
+            <div class="p-text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="p-grid p-fluid">
+            </div>
+        </div>
+    </ng-template>
+</p-toast>

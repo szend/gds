@@ -324,5 +324,92 @@ namespace GenericDataStore.Controllers
             }
             return new JsonResult(new { maxlist = user.AllowedListCount, maxdata = user.AllowedDataCount, currentlist = alllist.Count(), currentdata = alldatacount, maxexterndata = user.AllowedExternalDataCount, currentexdata = allexternaldatacount }, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
+
+
+
+        [HttpGet("CheckSub/{sec}")]
+        public async Task<ActionResult> CheckSub(string sec)
+        {
+            var users = this._userManager.Users.ToList();
+            int payed = 0;
+            foreach (var item in users)
+            {
+                if(item.HasSub == true)
+                {
+                    var alldatacount = 0;
+                    var allexternaldatacount = 0;
+                    var dbids = DbContext.DatabaseConnectionProperty.Where(x => x.AppUserId == item.Id).ToList();
+                    foreach (var item2 in dbids)
+                    {
+                        var repo = new Repository(item2.ConnectionString, item2.DatabaseType);
+                        var lists = DbContext.ObjectType.Where(x => x.DatabaseConnectionPropertyId == item2.DatabaseConnectionPropertyId).ToList();
+                        foreach (var item3 in lists)
+                        {
+                            allexternaldatacount += repo.GetCount(item3);
+
+                        }
+
+                    }
+
+                    var internaldatabases = DbContext.DatabaseConnectionProperty.Where(x => x.Default == true).ToList();
+                    foreach (var item2 in internaldatabases)
+                    {
+                        var repo = new Repository(item2.ConnectionString, item2.DatabaseType);
+                        var lists = DbContext.ObjectType.Where(x => x.DatabaseConnectionPropertyId == item2.DatabaseConnectionPropertyId && x.AppUserId == item.Id).ToList();
+                        foreach (var item3 in lists)
+                        {
+                            alldatacount += repo.GetCount(item3);
+
+                        }
+                    }
+
+                    
+                    if (item.NextPay < DateTime.Now)
+                    {
+                        item.MaxDataCountInMonth = alldatacount;
+                        item.MaxExternalDataCountInMonth = allexternaldatacount;
+                        item.NextPay = DateTime.Now.AddMonths(1);
+                        payed++;
+                    }
+                    else
+                    {
+                        if (item.MaxDataCountInMonth < alldatacount)
+                        { 
+                            item.MaxDataCountInMonth = alldatacount;
+                        }
+                        if (item.MaxExternalDataCountInMonth < allexternaldatacount)
+                        {
+                            item.MaxExternalDataCountInMonth = allexternaldatacount;
+                        }
+                    }
+                    await _userManager.UpdateAsync(item);
+
+                }
+            }
+
+            return new JsonResult(new {payeduser = payed }, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+        }
+
+        [Authorize(Policy = "Full")]
+        [HttpGet("SetLimit/{datacount}/{extdatacount}")]
+        public async Task<ActionResult> SetLimit(int datacount, int extdatacount)
+        {
+            var user = await this._userManager.FindByNameAsync(User.Identity.Name);
+            if(user?.HasSub == true)
+            {
+                user.AllowedDataCount = datacount;
+                user.AllowedExternalDataCount = extdatacount;
+                await _userManager.UpdateAsync(user);
+            }
+            else
+            {
+                return BadRequest("You have no subscription");
+            }
+
+            return Ok();
+
+        }
+
     }
 }

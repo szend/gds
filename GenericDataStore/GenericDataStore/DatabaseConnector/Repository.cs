@@ -61,9 +61,7 @@ namespace GenericDataStore.DatabaseConnector
 
         public List<string> GetAllTableName()
         {
-
             var all = sQLConnector.GetAllTableName();
-            all = all.Where(x => x != "ObjectType" && x != "Field" && x != "Option" && x != "Offer" && x != "UserMessage" && x != "Value" && x != "DataObject" && x != "AspNetRoles" && x != "AspNetUsers" && x != "AspNetUserRoles" && x != "AspNetUserClaims" && x != "AspNetUserLogins" && x != "AspNetUserTokens" && x != "AspNetRoleClaims" && x != "AspNetUserTokens" && x != "__EFMigrationsHistory").ToList();
             return all;
         }
 

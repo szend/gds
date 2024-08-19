@@ -1,0 +1,56 @@
+<div>
+    
+    <button  style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateNew()">Add new</button>   
+    <button style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="bluebutton" (click)="Refresh()">Refresh</button> 
+
+
+
+    <p-progressSpinner [style]="{'height' : '4rem', 'position' : 'absolute'}" [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+<div>
+    <p-table #table  [styleClass]="'p-datatable-striped'"  [columns]="selectedColumns" [value]="databases" [lazy]="true"
+    [rowHover]="true" selectionMode="single" [dataKey]="'dataObjectId'" [styleClass]="'p-datatable-gridlines p-mt-4'"
+    [reorderableColumns]="true" [resizableColumns]="true" columnResizeMode="expand"
+    [scrollable]="true"  [rowsPerPageOptions]="[5,10,15,25,50,100,200,500]" [showCurrentPageReport]="true" [filterDelay]="0"
+    [paginator]="true" [rows]="500" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [totalRecords]="count"
+    >
+
+        <ng-template pTemplate="colgroup" let-columns>
+            <colgroup >
+                <col *ngFor="let col of columns" [style.min-width]="'120px'">
+            </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th pReorderableColumn   *ngFor="let col of columns">
+                    {{ col.header }}                
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row let-columns="columns">
+            <tr (dblclick)="Edit(row)" [pContextMenuRow]="row">
+                <td *ngFor="let col of columns; index as i">
+                    <label >
+                     {{ row[col.field]}}
+                    </label>
+                    <!-- <label *ngIf="col.type == 'boolean'">
+                        <i  *ngIf="getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true" class="pi pi-check" style="font-size: 1rem"></i>
+
+                        <i  *ngIf="(getValue(row.value, col) == 'false' || getValue(row.value, col) == 'False' || getValue(row.value, col) == false) " class="pi pi-times" style="font-size: 1rem"></i>
+                        {{ getValue(row.value, col)}}
+                       </label> -->
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+    
+        <p-confirmDialog>
+            <ng-template pTemplate="message" let-message>
+                <div class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
+                    <p-image [width]="'300rem'" [height]="'300rem'"  [src]="'././assets/img/warning.png'"  alt="not picture" ></p-image>
+                    <p>Are you sure?</p>
+                </div>
+            </ng-template>
+        </p-confirmDialog>
+</div>

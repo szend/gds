@@ -1,0 +1,22 @@
+<div class="card flex justify-content-center">
+    <p-card  [style]="{ width: '360px' }">
+        <ng-template pTemplate="header">
+            <h1>Login</h1>
+        </ng-template>
+        <div style="display: grid;">
+            <label>Email</label>
+            <input (keyup.enter)="Login()"  required type="text" pInputText [(ngModel)]="email" />
+        </div>
+        <div style="display: grid;">
+            <label>Password</label>
+            <p-password (keyup.enter)="Login()"  required [(ngModel)]="password" [feedback]="false"></p-password>
+        </div>
+    
+        <ng-template pTemplate="footer">
+            <p-button label="Login" (onClick)="Login()"></p-button>
+            <p-progressSpinner *ngIf="loading" ></p-progressSpinner>
+        </ng-template>
+    </p-card>
+</div>
+<p-messages></p-messages>
+

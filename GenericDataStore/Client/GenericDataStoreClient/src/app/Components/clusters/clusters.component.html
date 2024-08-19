@@ -1,0 +1,11 @@
+<p-tabView>
+    <p-tabPanel *ngIf="chartdata.length > 0 " header="Clusters">
+        <div *ngFor="let data of chartdata; index as i"  class="grid">
+            <div  class="card flex justify-content-center" class="col-12">
+                <p-card [header]="headers[i]"  [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-chart  type="scatter" [data]="data"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>

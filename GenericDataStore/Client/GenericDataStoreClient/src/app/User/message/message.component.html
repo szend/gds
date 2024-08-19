@@ -1,0 +1,70 @@
+<p-tabView>
+    <p-tabPanel header="Received">
+        <p-dataView #dv [value]="rec">
+            <ng-template pTemplate="list" let-mes>
+                <div class="grid grid-nogutter">
+                    <div class="col-12" *ngFor="let item of mes; let first = first">
+                        <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4" [ngClass]="{ 'border-top-1 surface-border': !first }">
+                            <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                <div class="flex flex-column align-items-center sm:align-items-start gap-3 mx-w-70">
+                                    <div class="text-2xl font-bold text-900">{{ item.name }}</div>
+                                    
+                                    <div class="flex align-items-center gap-3">
+                                        <p-fieldset [legend]=" 'from: '+item.senderName">
+                                            <span class="flex align-items-center gap-2">
+                                                <span class="font-semibold">{{ item.comment }}</span>
+                                            </span>
+                                        </p-fieldset>
+                                        <span class="flex align-items-center gap-2">
+                                            <span class="font-semibold">{{ item.date | date }}</span>
+                                        </span>
+        
+                                    </div>
+                                </div>
+                                <div class="sm:flex-column align-items-center  gap-3 sm:gap-2">
+                                    <button (click)="CreateMessage(item)" pButton icon="pi pi-comment" class="md:align-self-end mb-2 p-button-rounded" style="margin-right: 1rem;"></button>
+                                    <button (click)="DeleteMessage(item.userMessageId)" pButton icon="pi pi-trash" class="md:align-self-end mb-2 p-button-rounded p-button-danger"></button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </p-dataView>
+    </p-tabPanel>
+    <p-tabPanel header="Sent">
+        <p-dataView #dv [value]="sen">
+            <ng-template pTemplate="list" let-mes>
+                <div class="grid grid-nogutter">
+                    <div class="col-12" *ngFor="let item of mes; let first = first">
+                        <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4" [ngClass]="{ 'border-top-1 surface-border': !first }">
+                            <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                <div class="flex flex-column align-items-center sm:align-items-start gap-3 mx-w-70">
+                                    <div class="text-2xl font-bold text-900"></div>
+                                    
+                                    <div class="flex align-items-center gap-3 card flex justify-content-center">
+                                        <p-fieldset [legend]=" 'to: '+item.receiverName">
+                                            <p class="m-0">
+                                                {{ item.comment }}
+                                            </p>
+
+                                        </p-fieldset>
+                                        <span class="flex align-items-center gap-2">
+                                            <span class="font-semibold">{{ item.date | date }}</span>
+                                        </span>
+        
+                                    </div>
+                                </div>
+                                <div class="sm:flex-column align-items-center  gap-3 sm:gap-2">
+                                    <button (click)="DeleteMessage(item.userMessageId)" pButton icon="pi pi-trash" class="md:align-self-end mb-2 p-button-rounded p-button-danger"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </p-dataView>
+    </p-tabPanel>
+</p-tabView>
+

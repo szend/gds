@@ -1,0 +1,29 @@
+<div class="card flex justify-content-center">
+    <p-card  [style]="{ width: '360px' }">
+        <ng-template pTemplate="header">
+            <h1>Register</h1>
+        </ng-template>
+        <div style="display: grid;">
+            <label>Name</label>
+            <input (keyup.enter)="Register()"  required type="text" pInputText [(ngModel)]="username" />
+        </div>
+        <div style="display: grid;">
+            <label>Email</label>
+            <input (keyup.enter)="Register()"  required type="text" pInputText [(ngModel)]="email" />
+        </div>
+        <div style="display: grid;">
+            <label>Password</label>
+            <p-password (keyup.enter)="Register()"  required [(ngModel)]="password" [feedback]="false"></p-password>
+        </div>
+        <div style="display: grid;">
+            <label>Password again</label>
+            <p-password (keyup.enter)="Register()"  required [(ngModel)]="password2" [feedback]="false"></p-password>
+        </div>
+    
+        <ng-template pTemplate="footer">
+            <p-button label="Login" (onClick)="Register()"></p-button>
+        </ng-template>
+    </p-card>
+</div>
+<p-messages></p-messages>
+

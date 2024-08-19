@@ -1,0 +1,602 @@
+<br>
+<div *ngIf="dataRec.booleans || dataRec.options || dataRec.numbers" style="width: 20%;">
+    <p-slider [min]="1" [max]="3" [(ngModel)]="size" />
+</div>
+<p *ngIf="dataRec.booleans || dataRec.options || dataRec.numbers">Charts show only the filtered values. If you have more than 2000 row they show the ones in the current page. Click an element to filter</p>
+<br>
+<br>
+<p-tabView *ngIf="size == 1">
+    <p-tabPanel header="Options">
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartChategory()">Merge checked chart into new</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('text')">Create custom chart</button> 
+
+        <div class="grid">
+            <div *ngFor="let item of dataRec.options; index as i" class="card flex justify-content-center" class="col-4">
+                <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+
+                <p-card  *ngIf="!item.type || item.type == 'pie'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="pie" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart  *ngIf="item.name == 'New Chart'" type="pie" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card  *ngIf="item.type == 'doughnut'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="doughnut" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="doughnut" [data]="item" [options]="optionsoptcombined"></p-chart>
+
+                </p-card>
+
+                <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox  [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="bar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'polarArea'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart *ngIf="item.name != 'New Chart'" type="polarArea" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name == 'New Chart'" type="polarArea" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="radar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+                <p-card *ngIf="item.type == 'treemap'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="treemap" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Numbers">
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChart()">Merge checked charts into new</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('numeric')">Create custom chart</button> 
+        <div class="grid">
+            <div *ngFor="let item of dataRec.numbers; index as i" class="card flex justify-content-center" class="col-4">
+                <div>
+                    <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptions" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+                    <p-dropdown *ngIf="(!item.type || item.type == 'line' || item.type == 'radar') && item.name != 'New Chart'" [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="filloptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                  
+                    <p-dropdown *ngIf="item.name == 'New Chart' && (!item.type || item.type == 'line'|| item.type == 'radar' || !item.type )"  [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="fillmoreoptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                   
+                    <p-dropdown *ngIf="!item.type || item.type == 'line' || item.type == 'radar'" [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="steppedoptions" [dataKey]="'value'" (onChange)="SteppedChart($event,item,i)"  placeholder="Stepped" />
+                    <p-dropdown  [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="decioptions" [dataKey]="'value'" (onChange)="Decimation($event,item,i)"  placeholder="Decimation" />
+                    <p-dropdown  [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="regoptions" [dataKey]="'value'" (onChange)="Regression($event,item,i)"  placeholder="Regression" />
+                    <button style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Scale(item, i)">Scale</button> 
+                    <button  *ngIf="item.name == 'New Chart'"   style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Stacked(item, i)">Stacked</button> 
+
+                    
+                    <p-card *ngIf="!item.type || item.type == 'line'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                            [(ngModel)]="color[i]" />
+                            <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'line')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'line'" type="line" [data]="dataRec.numbers[i]" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}"  [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'bar')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'bar'" type="bar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'scatter'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'scatter')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'scatter'" type="scatter" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'radar')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'radar'" type="radar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                </div>
+            
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Booleans">
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartBool()">Merge checked chart into new</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('logical')">Create custom chart</button> 
+        <div class="grid">
+            <div *ngFor="let item of dataRec.booleans; index as i" class="card flex justify-content-center" class="col-4">
+                <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+
+                <p-card  *ngIf="!item.type || item.type == 'pie'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="pie" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart  *ngIf="item.name == 'New Chart'" type="pie" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card  *ngIf="item.type == 'doughnut'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="doughnut" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="doughnut" [data]="item" [options]="optionsoptcombined"></p-chart>
+
+                </p-card>
+
+                <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="bar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'polarArea'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="polarArea" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="polarArea" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="radar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+                <p-card *ngIf="item.type == 'treemap'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="treemap" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel   header="Data structure">
+        <div (chartClick)="onChartEvent($event)" style="width: 40rem; height: 30rem; background-color: white" *ngIf="orgchart" echarts [options]="orgchart"></div>    
+</p-tabPanel>
+</p-tabView>
+
+<p-tabView *ngIf="size == 2">
+    <p-tabPanel *ngIf="dataRec.options" header="Options">
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartChategory()">Merge checked chart into new</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('text')">Create custom chart</button> 
+
+        <div class="grid">
+            <div *ngFor="let item of dataRec.options; index as i" class="card flex justify-content-center" class="col-6">
+                <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+
+                <p-card  *ngIf="!item.type || item.type == 'pie'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="pie" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart   *ngIf="item.name == 'New Chart'" type="pie" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card  *ngIf="item.type == 'doughnut'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="doughnut" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="doughnut" [data]="item" [options]="optionsoptcombined"></p-chart>
+
+                </p-card>
+
+                <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="bar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'polarArea'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="polarArea" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="polarArea" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="radar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+                <p-card *ngIf="item.type == 'treemap'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="treemap" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="dataRec.numbers" header="Numbers">
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChart()">Merge checked charts into new</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('numeric')">Create custom chart</button> 
+        <div class="grid">
+            <div *ngFor="let item of dataRec.numbers; index as i" class="card flex justify-content-center" class="col-6">
+                <div>
+                    <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptions" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+                    <p-dropdown *ngIf="(!item.type || item.type == 'line' || item.type == 'radar') && item.name != 'New Chart'" [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="filloptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                  
+                    <p-dropdown *ngIf="item.name == 'New Chart' && (!item.type || item.type == 'line'|| item.type == 'radar' || !item.type )"  [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="fillmoreoptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                   
+                    <p-dropdown *ngIf="!item.type || item.type == 'line' || item.type == 'radar'" [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="steppedoptions" [dataKey]="'value'" (onChange)="SteppedChart($event,item,i)"  placeholder="Stepped" />
+                    <p-dropdown  [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="decioptions" [dataKey]="'value'" (onChange)="Decimation($event,item,i)"  placeholder="Decimation" />
+                    <p-dropdown  [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="regoptions" [dataKey]="'value'" (onChange)="Regression($event,item,i)"  placeholder="Regression" />
+                    <button style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Scale(item, i)">Scale</button> 
+                    <button  *ngIf="item.name == 'New Chart'"   style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Stacked(item, i)">Stacked</button> 
+
+                    
+                    <p-card  *ngIf="!item.type || item.type == 'line'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                            [(ngModel)]="color[i]" />
+                           <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'line')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'line'" type="line" [data]="dataRec.numbers[i]" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}"  [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'bar')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'bar'" type="bar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'scatter'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'scatter')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'scatter'" type="scatter" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'radar')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'radar'" type="radar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                </div>
+            
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="dataRec.booleans" header="Booleans">
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartBool()">Merge checked chart into new</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('logical')">Create custom chart</button> 
+
+        <div class="grid">
+            <div *ngFor="let item of dataRec.booleans; index as i" class="card flex justify-content-center" class="col-6">
+                <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+
+                <p-card  *ngIf="!item.type || item.type == 'pie'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="pie" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart  *ngIf="item.name == 'New Chart'" type="pie" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card  *ngIf="item.type == 'doughnut'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="doughnut" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="doughnut" [data]="item" [options]="optionsoptcombined"></p-chart>
+
+                </p-card>
+
+                <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="bar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'polarArea'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="polarArea" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="polarArea" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="radar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+                <p-card *ngIf="item.type == 'treemap'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="treemap" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel   header="Data structure">
+                <div (chartClick)="onChartEvent($event)" style="width: 80rem; height: 80rem; background-color: white" *ngIf="orgchart" echarts [options]="orgchart"></div>    
+    </p-tabPanel>
+</p-tabView>
+
+<p-tabView *ngIf="size == 3">
+    <p-tabPanel header="Options">
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartChategory()">Merge checked chart into new</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('text')">Create custom chart</button> 
+
+        <div class="grid">
+            <div *ngFor="let item of dataRec.options; index as i" class="card flex justify-content-center" class="col-12">
+                <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+
+                <p-card  *ngIf="!item.type || item.type == 'pie'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="pie" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart  *ngIf="item.name == 'New Chart'" type="pie" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card  *ngIf="item.type == 'doughnut'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="doughnut" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="doughnut" [data]="item" [options]="optionsoptcombined"></p-chart>
+
+                </p-card>
+
+                <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="bar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'polarArea'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="polarArea" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="polarArea" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="radar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+                <p-card *ngIf="item.type == 'treemap'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="treemap" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Numbers">
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChart()">Merge checked charts into new</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('numeric')">Create custom chart</button> 
+       <div class="grid">
+            <div *ngFor="let item of dataRec.numbers; index as i" class="card flex justify-content-center" class="col-12">
+                <div>
+                    <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptions" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+                    <p-dropdown *ngIf="(!item.type || item.type == 'line' || item.type == 'radar') && item.name != 'New Chart'" [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="filloptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                  
+                    <p-dropdown *ngIf="item.name == 'New Chart' && (!item.type || item.type == 'line'|| item.type == 'radar' || !item.type )"  [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="fillmoreoptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                   
+                    <p-dropdown *ngIf="!item.type || item.type == 'line' || item.type == 'radar'" [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="steppedoptions" [dataKey]="'value'" (onChange)="SteppedChart($event,item,i)"  placeholder="Stepped" />
+                    <p-dropdown  [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="decioptions" [dataKey]="'value'" (onChange)="Decimation($event,item,i)"  placeholder="Decimation" />
+                    <p-dropdown  [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="regoptions" [dataKey]="'value'" (onChange)="Regression($event,item,i)"  placeholder="Regression" />
+                    <button style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Scale(item, i)">Scale</button> 
+                    <button  *ngIf="item.name == 'New Chart'"   style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Stacked(item, i)">Stacked</button> 
+
+                    
+                    <p-card *ngIf="!item.type || item.type == 'line'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                            [(ngModel)]="color[i]" />
+                            <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'line')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'line'" type="line" [data]="dataRec.numbers[i]" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}"  [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'bar')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'bar'" type="bar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'scatter'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'scatter')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'scatter'" type="scatter" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <label  *ngIf="item.regresult" style="margin-left: 3rem">Regression: {{item.regresult}}</label> 
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'radar')"></button>  -->
+                        <p-chart (onDataSelect)="ChartClick($event,item,i)" [id]="item.name+'radar'" type="radar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                </div>
+            
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Booleans">
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartBool()">Merge checked chart into new</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('logical')">Create custom chart</button> 
+        <div class="grid">
+            <div *ngFor="let item of dataRec.booleans; index as i" class="card flex justify-content-center" class="col-12">
+                <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+
+                <p-card  *ngIf="!item.type || item.type == 'pie'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="pie" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart  *ngIf="item.name == 'New Chart'" type="pie" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card  *ngIf="item.type == 'doughnut'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="doughnut" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart *ngIf="item.name == 'New Chart'" type="doughnut" [data]="item" [options]="optionsoptcombined"></p-chart>
+
+                </p-card>
+
+                <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="bar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'polarArea'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" *ngIf="item.name != 'New Chart'" type="polarArea" [data]="item" [options]="optionsopt"></p-chart>
+                    <p-chart  *ngIf="item.name == 'New Chart'" type="polarArea" [data]="item" [options]="optionsoptcombined"></p-chart>
+                </p-card>
+
+                <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="radar" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+                <p-card *ngIf="item.type == 'treemap'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
+                    <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                    <p-chart (onDataSelect)="ChartClickOption($event,item,i)" type="treemap" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel   header="Data structure">
+        <div (chartClick)="onChartEvent($event)" style="width: 40rem; height: 30rem; background-color: white" *ngIf="orgchart" echarts [options]="orgchart"></div>    
+</p-tabPanel>
+</p-tabView>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p-tabView *ngIf="size == 4">
+    <p-tabPanel header="Options">
+        <div class="grid">
+            <div *ngFor="let item of dataRec.options" class="card flex justify-content-center" class="col-12">
+                <p-card [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '200rem'}">
+                    <p-chart type="pie" [width]="'200rem'" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Numbers">
+        <div class="grid">
+            <div *ngFor="let item of dataRec.numbers; index as i" class="card flex justify-content-center" class="col-12">
+                <div>
+                    <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptions" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+                    <p-dropdown *ngIf="(!item.type || item.type == 'line' || item.type == 'radar') && item.name != 'New Chart'" [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="filloptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                  
+                    <p-dropdown *ngIf="item.name == 'New Chart' && (!item.type || item.type == 'line'|| item.type == 'radar' || !item.type )"  [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="fillmoreoptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                   
+                    <p-dropdown *ngIf="!item.type || item.type == 'line' || item.type == 'radar'" [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="steppedoptions" [dataKey]="'value'" (onChange)="SteppedChart($event,item,i)"  placeholder="Stepped" />
+                    <button style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Scale(item, i)">Scale</button> 
+                    <button  *ngIf="item.name == 'New Chart'"   style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Stacked(item, i)">Stacked</button> 
+
+                    
+                    <p-card *ngIf="!item.type || item.type == 'line'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '200rem', height: '200rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                            [(ngModel)]="color[i]" />
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'line')"></button>  -->
+                        <p-chart [id]="item.name+'line'" type="line" [data]="dataRec.numbers[i]" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '200rem', height: '200rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}"  [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'bar')"></button>  -->
+                        <p-chart [id]="item.name+'bar'" type="bar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'scatter'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '200rem', height: '200rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'scatter')"></button>  -->
+                        <p-chart [id]="item.name+'scatter'" type="scatter" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '200rem', height: '200rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'radar')"></button>  -->
+                        <p-chart [id]="item.name+'radar'" type="radar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                </div>
+            
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Booleans">
+        <div class="grid">
+            <div *ngFor="let item of dataRec.booleans" class="card flex justify-content-center" class="col-12">
+                <p-card [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '200rem'}">
+                    <p-chart type="doughnut" [width]="'200rem'" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Data structure">
+
+            <div class="card flex justify-content-center">
+                <p-organizationChart [value]="dataRec.organisation" />
+            </div>
+       
+    </p-tabPanel>
+</p-tabView>
+
+<p-tabView *ngIf="size == 5">
+    <p-tabPanel header="Options">
+        <div class="grid">
+            <div *ngFor="let item of dataRec.options" class="card flex justify-content-center" class="col-12">
+                <p-card [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '600rem'}">
+                    <p-chart type="pie" [width]="'600rem'" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Numbers">
+        <div class="grid">
+            <div *ngFor="let item of dataRec.numbers; index as i" class="card flex justify-content-center" class="col-12">
+                <div>
+                    <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptions" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+                    <p-dropdown *ngIf="(!item.type || item.type == 'line' || item.type == 'radar') && item.name != 'New Chart'" [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="filloptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                  
+                    <p-dropdown *ngIf="item.name == 'New Chart' && (!item.type || item.type == 'line'|| item.type == 'radar' || !item.type )"  [style]="{'width':'6rem','margin-right' : '1rem'}"  optionLabel="label" [options]="fillmoreoptions" [dataKey]="'value'" (onChange)="FillChart($event,item,i)"  placeholder="Fill" />                   
+                    <p-dropdown *ngIf="!item.type || item.type == 'line' || item.type == 'radar'" [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="steppedoptions" [dataKey]="'value'" (onChange)="SteppedChart($event,item,i)"  placeholder="Stepped" />
+                    <button style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Scale(item, i)">Scale</button> 
+                    <button  *ngIf="item.name == 'New Chart'"   style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Stacked(item, i)">Stacked</button> 
+
+                    
+                    <p-card *ngIf="!item.type || item.type == 'line'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '600rem', height: '600rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                            [(ngModel)]="color[i]" />
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'line')"></button>  -->
+                        <p-chart [id]="item.name+'line'" type="line" [data]="dataRec.numbers[i]" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'bar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '600rem', height: '600rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}"  [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'bar')"></button>  -->
+                        <p-chart [id]="item.name+'bar'" type="bar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'scatter'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '600rem', height: '600rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'scatter')"></button>  -->
+                        <p-chart [id]="item.name+'scatter'" type="scatter" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                    <p-card *ngIf="item.type == 'radar'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '600rem', height: '600rem'}">
+                        <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
+                        <p-colorPicker *ngIf="item.name != 'New Chart'" (onChange)="ChangeColor($event,item,i)"
+                        [(ngModel)]="color[i]" />
+                        <!-- <button [icon]="'pi pi-save'" style="margin-left: 1rem;font-size: 0.8rem;" pButton pRipple class="bluebutton" (click)="DownloadChart(item.name+'radar')"></button>  -->
+                        <p-chart [id]="item.name+'radar'" type="radar" [data]="item" [options]="optionsnum"></p-chart>
+                    </p-card>
+                </div>
+            
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Booleans">
+        <div class="grid">
+            <div *ngFor="let item of dataRec.booleans" class="card flex justify-content-center" class="col-12">
+                <p-card [header]="item.name" [subheader]="" [style]="{ margin: '2rem', width: '600rem'}">
+                    <p-chart type="doughnut" [width]="'600rem'" [data]="item" [options]="optionsopt"></p-chart>
+                </p-card>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Data structure">
+
+            <div class="card flex justify-content-center">
+                <p-organizationChart [value]="dataRec.organisation" >
+                </p-organizationChart>
+            </div>
+       
+    </p-tabPanel>
+</p-tabView>
+

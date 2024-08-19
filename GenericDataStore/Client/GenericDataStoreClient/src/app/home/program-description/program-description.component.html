@@ -1,0 +1,194 @@
+<p>There are 3 main rules to follow when you use this language
+    <br> <br>
+    1:
+    <br>
+    <b> If you want to get the value of a column that belongs to a table, you have to use the following syntax:
+    <br>
+    {{'{columnname}'}}
+    <br></b>
+    For example, if you have a table called "users" and you want to get the value of the column "name", you have to use the following syntax:
+    <br>
+    {{'{name}'}}
+    <br>
+    If you use this in the calculated field dialog, you will get the value of the column "name" for the current row.
+    <br>
+    Or if you use this as an x-axis in a chart, you will have a chart where the x-axis is the column "name".
+    <br> <br><br>
+    
+    2:
+    <br>
+    <b> If you want to get values from a parent table, you have to use the following syntax:
+    <br>
+    [parent.parenttablename.parenttablecolumn]
+    <br></b>
+    For example, if you have a table called "users" and this table has a parent table called "companies" 
+    and you want to get the value of the column "name" from the parent table, you have to use the following syntax:
+    <br>
+    [parent.companies.name]
+    <br><br>
+    <b> If you want to get values from a child table, you have to use the following syntax:
+    <br>
+    [child.childtablename.childtablecolumn.selectionfunction]
+    <br></b>
+    For example, if you have a table called "users" and this table has a child table called "orders"
+    and you want to get the sum of the column "price" from the child table, you have to use the following syntax:
+    <br>
+    [child.orders.price.sum]
+    <br><br>
+    The selection function is required, because the child table can have multiple rows, and you have to define how you want to get the value from these rows.
+    <br><br>
+    
+    All selection functions:
+    <br>
+    sum: sum of the values (only for numeric values)
+    <br>
+    avg: average of the values (only for numeric values)
+    <br>
+    min: minimum value (only for numeric values)
+    <br>
+    max: maximum value (only for numeric values)
+    <br>
+    count: number of values
+    <br>
+    first: first value
+    <br>
+    last: last value
+    <br>
+    countdistinct: number of distinct values
+    <br>
+    countnull: number of null values
+    <br>
+    countnotnull: number of not null values
+    <br>
+    concat: concatenation of the values
+    <br>
+    minlenght: value with the minimum length
+    <br>
+    maxlenght: value with the maximum length
+    <br>
+    sumlenght: sum of the lengths
+    <br>
+    avglenght: average of the lengths
+    <br>
+    all: if all value equals true then true else false (only for boolean values)
+    <br>
+    any: if any value equals true then true else false (only for boolean values) 
+    <br>
+    anynot: if any value equals false then true else false (only for boolean values)
+    <br>
+    moretrue: if more than half of the values are true then true else false (only for boolean values)
+    <br>
+    morefalse: if more than half of the values are false then true else false (only for boolean values)
+    <br>
+    <br>
+    <b>If you only want to get filtered values from a child table, you have to use the following syntax:
+    <br>
+    [child.childtablename.childtablecolumn.selectionfunction.where(filter)]
+    <br></b>
+    For example, if you have a table called "users" and this table has a child table called "orders"
+    and you want to get the sum of the column "price" from the child table, where the column "status" equals "paid", you have to use the following syntax:
+    <br>
+    [child.orders.price.sum.where(status = paid)]
+    <br>
+    In the filter you can use the following operators:
+    <br>
+    =, !=, <, <=, >, >=, 
+    <br>
+    -> (x -> y: x contains y), <- (x <- y: y contains x), =in() (abc =in(aaa,bbb,ccc): abc is in the list, in this case no), 
+    
+    <br> <br>
+    <b> If you want to sort the values, you can use the following syntax:
+    <br>
+    [child.childtablename.childtablecolumn.selectionfunction.orderby(sortcolumn)]
+    <br></b>
+    For example, if you have a table called "users" and this table has a child table called "orders"
+    and you want to get the sum of the column "price" from the child table, where the column "status" equals "paid", and you want to sort the values by the column "date", you have to use the following syntax:
+    <br>
+    [child.orders.price.sum.where(status = paid).orderby(date)]
+    <br>
+    <b> You can use the orderbydesc instead of orderby, if you want to sort the values in descending order.</b>
+    <br>
+    The sorting is only useful for the following selection functions:
+    <br>
+    first, Last
+    <br><br><br>
+    3:
+    <br>
+    <b> You can use "if" statements if you want to use different values based on a condition.
+    <br>
+    The syntax is the following:
+    <br>
+    $ if'condition1' ?? value1 $
+    <br>
+    $ if'condition2' ?? value2 $
+    <br>
+    ...
+    <br>
+    If a value matches the condition, the value will be used, if not, the next value will be checked.
+    <br>
+    If a value matches more than one condition, the last one will be used.
+    <br>
+    </b>
+    For example, if you have a table called "users" and you want to get the value of the column "name"
+    if the column "age" is greater than 18, you want to get the value of the column "name", if not then its age, you have to use the following syntax:
+    <br>
+    $ if'{{'{age}'}} > 18' ?? {{'{name}'}} $
+    <br>
+    $ if'{{'{age}'}} <= 18' ?? {{'{age}'}} $
+    <br>
+    <br>
+    <b>Always use () if you have multiple conditions in one if statement
+    <br>
+    For example:
+    <br>
+    $ if'({{'{age}'}} > 18) & ({{'{age}'}} < 20)' ?? {{'{name}'}} $
+    $ if'({{'{age}'}} > 18) | ({{'{age}'}} < 20)' ?? {{'{nickname}'}} $
+    </b>
+    
+    
+    <br> <br> <br>
+    You can use multiple operators to combine the values.
+    <br>
+    The following operators are available:
+    <br>
+    "-", "+", "/", "*",
+    <br>
+    "^" ( power),
+    <br>
+    "!" (not), 
+    <br>
+    "|" (or),
+    <br>
+    "&" (and),
+    <br>
+    "=",
+    <br>
+    "!=",
+    <br>
+    "<",
+    <br>
+    ">",
+    <br>
+    "<=",
+    <br>
+    ">=",
+    <br>
+     "->" (contains),
+     <br>
+    "<-" (is in),
+    <br>
+    ":-" (text minus: abc :- a = bc),
+    <br>
+    ":+" (text plus: abc :+ a = abca),
+    <br> <br> <br> <br>
+    With the combination of these rules, you can create complex formulas to get the values you want and create complex charts, coloring, and calculated fields.
+    <br>
+    If you have any questions, or you need help or don't find the right syntax, please contact us.
+    
+    
+    
+    
+    
+    
+    
+    </p>

@@ -1,0 +1,35 @@
+<button   style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AllSelected()">Select all</button> 
+<p-progressSpinner [style]="{'height' : '4rem', 'position' : 'absolute'}" [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+
+<div *ngIf="!loading" class="grid">
+    <div *ngFor="let table of tables; index as i" class="col-4">
+        <p-inputGroup>
+            <div  style="display: grid; margin: 1rem; padding: 1rem;">
+                <label>{{table}}</label>
+                
+                <div>
+                    <p-checkbox  [(ngModel)]="boolvalues[i]"  (onChange)="Select(table)" [binary]="true" />
+                    <br>
+                </div>
+
+                
+            </div>
+        </p-inputGroup>
+    </div>
+</div>
+<button *ngIf="!loading"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">{{this.action}}</button> 
+
+<p-toast position="top-right"  (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="p-flex p-flex-column" style="flex: 1">
+            <div class="p-text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="p-grid p-fluid">
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+

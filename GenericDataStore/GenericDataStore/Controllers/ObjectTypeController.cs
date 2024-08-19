@@ -1146,6 +1146,7 @@ namespace GenericDataStore.Controllers
         [Authorize(Policy = "Full")]
         public virtual async Task<IActionResult> ImageClassification(string name)
         {
+            return BadRequest("Image Classification CURRENTLY NOT AVAILABLE IN ONLYNE ENVIROMENT");
             string filters = await new StreamReader(Request.Body).ReadToEndAsync();
             RootFilter? filterResult = null;
             var query = this.DbContext.Set<ObjectType>().ToArray().AsQueryable();

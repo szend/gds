@@ -1,0 +1,48 @@
+
+
+<div  class="grid">
+    <div *ngFor="let prop of fields; index as i" class="col-4">
+        <p-inputGroup>
+            <div  style="display: grid; margin: 1rem; padding: 1rem;">
+                <label>{{prop.field}}</label>
+                <input *ngIf="prop.type == 'text'" style="width: 20rem;"  [(ngModel)]="dataRec[prop.field]" pInputText/>
+                <input class="numberinput" *ngIf="prop.type == 'numeric'"  [(ngModel)]="dataRec[prop.field]"  [pKeyFilter]="'num'"  pInputText/>
+                <input [disabled]="true" *ngIf="prop.type == 'id'" style="width: 20rem;"  [(ngModel)]="dataRec[prop.field]" pInputText/>
+
+                <input  *ngIf="prop.type == 'foreignkey'" style="width: 20rem;"  [(ngModel)]="dataRec[prop.field]" pInputText/>
+                <button *ngIf="prop.type == 'foreignkey'"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="SelectParent(prop.header)">Select</button> 
+
+                <p-checkbox *ngIf="prop.type == 'boolean'" (onChange)="boolChange($event,prop)" [binary]="true" ></p-checkbox>
+
+                <p-calendar #c dateFormat="dd.mm.yy" class="numberinput" [showTime]="false" *ngIf="prop.type == 'date'" (onClose)="setDate(c, prop)"></p-calendar>
+
+                <p-dropdown *ngIf="prop.type == 'option'" [options]="prop.option" [dataKey]="'optionValue'" (onChange)="OptionSelect($event,prop)"  optionLabel="optionName" [showClear]="true" placeholder="Select a type"></p-dropdown>
+
+                <div *ngIf="prop.type == 'image'">
+                    <label>Upload after its created</label>
+
+                    <!-- <p-fileUpload #fileUploader [maxFileSize]="5485760"  mode="basic" accept="image/*" 
+                    (uploadHandler)="UploadFile($event,dataRec[i].valueId)" chooseLabel="Select file" [customUpload]="true"
+                    invalidFileSizeMessageDetail="Allowed file size is 5MiB"></p-fileUpload>                -->
+                </div>
+    
+            </div>
+        </p-inputGroup>
+    </div>
+</div>
+
+    <button pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+
+    <p-toast position="top-right"  (onClose)="onReject()" [baseZIndex]="5000">
+        <ng-template let-message pTemplate="message">
+            <div class="p-flex p-flex-column" style="flex: 1">
+                <div class="p-text-center">
+                    <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                    <h4>{{message.summary}}</h4>
+                    <p>{{message.detail}}</p>
+                </div>
+                <div class="p-grid p-fluid">
+                </div>
+            </div>
+        </ng-template>
+    </p-toast>

@@ -1,0 +1,181 @@
+
+
+<div *ngIf="data">
+    <p-menubar *ngIf="GetAccess('f') && filterMetu.length > 0" [model]="filterMetu"></p-menubar>
+
+    
+    <button *ngIf="GetAccess('c')" style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateNew()">Add new</button>
+    <button *ngIf="GetAccess()" style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="EditAll()">Edit all filtered</button>      
+    <button style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="bluebutton" (click)="Refresh(true)">Refresh</button> 
+    <button *ngIf="GetAccess()" style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-warning p-mr-2" (click)="settingVisible = !settingVisible">Settings</button>
+    <button *ngIf="GetAccess()" style="margin-bottom: 2rem;" pButton pRipple class="p-button-warning p-mr-2" (click)="aiVisible = !aiVisible">AI</button>
+    <button *ngIf="GetAccess('ch')" style="margin-left: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="OpenChart()">Chart</button> 
+    <button *ngIf="GetAccess('e')" style="margin-left: 1rem;margin-bottom: 2rem;margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Export()">Export</button> 
+
+    <button *ngIf="!GetAccess()" style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-warning p-mr-2" (click)="SendMessage()">Send Message</button>
+
+    <p-multiSelect 
+    [options]="fields" 
+    [(ngModel)]="selectedColumns" 
+    optionLabel="header"
+    selectedItemsLabel="{0} columns selected" 
+    [style]="{'width': '15rem', 'margin-right': '3rem', 'margin-bottom': '2rem'}" 
+    placeholder="Choose Columns" />
+    <i *ngIf="data.description" [pTooltip]="data.description" class="pi pi-question-circle" style="font-size: 2rem"></i>
+
+    <p-progressSpinner [style]="{'height' : '4rem', 'position' : 'absolute'}" [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+<div>
+    <p-table #table  [styleClass]="'p-datatable-striped'" *ngIf="data" [columns]="selectedColumns" [value]="rowData" [lazy]="true"  (onFilter)="onFilter($event)" (onSort)="onSort($event)" (onPage)="onPageChange($event)"
+    [rowHover]="true" selectionMode="single" [dataKey]="'dataObjectId'" [styleClass]="'p-datatable-gridlines p-mt-4'"
+    [reorderableColumns]="true" [resizableColumns]="true" columnResizeMode="expand"
+    [scrollable]="true"  [rowsPerPageOptions]="[5,10,15,25,50,100,200,500,1000,2000]" [showCurrentPageReport]="true" [filterDelay]="0"
+    [paginator]="true" [rows]="defaultcount" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [totalRecords]="count"
+    [(contextMenuSelection)]="selectedProduct" 
+    [contextMenu]="cm" 
+    >
+
+        <ng-template pTemplate="colgroup" let-columns>
+            <colgroup >
+                <col *ngFor="let col of columns" [style.min-width]="'120px'">
+            </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th pReorderableColumn [pSortableColumn]="col.field"  *ngFor="let col of columns">
+                    <p-columnFilter  *ngIf="col.type != 'numeric' && col.type != 'image'&& col.type != 'option'"
+                    [type]="col.type"
+                    [field]="col.field"
+                    display="menu"
+                    class="ml-auto"> 
+                </p-columnFilter> 
+                <p-columnFilter  *ngIf="col.type == 'option'"
+                [type]="'text'"
+                [field]="col.field"
+                display="menu"
+                class="ml-auto"> 
+            </p-columnFilter> 
+                <p-columnFilter   *ngIf="col.type == 'numeric'"
+                [field]="col.field"
+                [type]="col.type"
+                display="menu"
+                class="ml-auto"> 
+                <ng-template pTemplate="filter" let-value let-filter="filterCallback" >
+                    <input #p  placeholder="Any"  [pKeyFilter]="'num'" pInputText />
+                    <button (click)="filter(p.value)"  style="margin-top: 1rem;" pButton pRipple class="p-button p-mr-2">Apply</button> 
+                </ng-template>
+            </p-columnFilter> 
+                    {{ col.header }}
+                    <p-sortIcon></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row let-columns="columns">
+            <tr (dblclick)="Edit(row)" [pContextMenuRow]="row" [ngClass]="{'editablerow': row.editable == true && bgch,'simplerow': row.editable != true || !bgch}">
+               
+                    <td *ngFor="let col of columns; index as i" [ngStyle]="GetStyle(row.value,col)">
+                        <label *ngIf="col.type != 'image' && col.type != 'boolean'">
+                         {{ getValue(row.value, col) }}
+                        </label>
+                        <label *ngIf="col.type == 'boolean'">
+                            <i  *ngIf="getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true" class="pi pi-check" style="font-size: 1rem"></i>
+    
+                            <i  *ngIf="(getValue(row.value, col) == 'false' || getValue(row.value, col) == 'False' || getValue(row.value, col) == false) " class="pi pi-times" style="font-size: 1rem"></i>
+                            {{ getValue(row.value, col)}}
+                           </label>
+                        <p-image [width]="'300rem'" [height]="'300rem'" *ngIf="col.type == 'image' && getImageObj(row, col.header)"  [src]="getImageObj(row, col.header)"  alt="not picture" [preview]="true"></p-image>
+                    </td>
+               
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+    
+        <p-confirmDialog>
+            <ng-template pTemplate="message" let-message>
+                <div class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
+                    <p-image [width]="'300rem'" [height]="'300rem'"  [src]="'././assets/img/warning.png'"  alt="not picture" ></p-image>
+                    <p>Are you sure?</p>
+                </div>
+            </ng-template>
+        </p-confirmDialog>
+</div>
+<div *ngIf="!data">
+no data
+</div>
+
+
+<p-sidebar [(visible)]="settingVisible" position="left">
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button style="margin-right: 1rem;" *ngIf="GetAccess()" pButton pRipple class="p-button p-mr-2" (click)="EditType()">Edit Object Definition</button>
+        <i  pTooltip="You can edit your list. Add or remove field, option, category, description,
+         or define others right. But you have to be very careful if you change the type of a field, check if every value is correct before the change." class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="AddChild()">Add Child</button>
+        <i  pTooltip="Child list is same as any other list, but every element in the list are also belong to a parent element.
+         The whole list with every element will be available from your list menu, and if you double-click on any element in your parent list you can see every child element next to the properties tab." class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="RemoveChild()">Remove Child</button>
+        <i  pTooltip="Remove child relation" class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="AddCalculatedField()">Add Calculated Field</button>
+        <i  pTooltip="Create a new field what is calculated from one or more other field. " class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="AddColor()">Add Coloring</button>
+        <i  pTooltip="Create coloring" class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Pages()">Pages</button>
+        <i  pTooltip="Manage pages" class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <p-fileUpload  *ngIf="GetAccess()" #fileUploader   mode="basic"  [style]="{'display' : 'inline-block'}"  (uploadHandler)="importFile($event)" chooseLabel="Import from file" [customUpload]="true"></p-fileUpload>
+        <i  pTooltip="Import elements from excel. The first line must contains field names. Same file structure like in the export file." class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button-danger p-mr-2" (click)="DeleteDialog($event)">DeleteList</button>
+        <i  pTooltip="Delete your list. You can not delete until your list has child list." class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+
+     
+</p-sidebar>
+<p-sidebar [(visible)]="aiVisible" position="left">
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Clusters()">AI Clusters</button>
+        <i  pTooltip="Based on your data, AI try to put every element into a cluster and create a field with the cluster id." class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Classification()">Classification</button>
+        <i  pTooltip="If you have a field with type 'text' or 'option', then you can create and train an AI to predict your next elements value." class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ImageClassification()">ImageClassification</button>
+        <i  pTooltip="If you have a field with type 'image', and at least one other none 'image' type field, then you can create and train an AI. Then if you create a new element and upload an image, you can click the Classify button. The trained AI will try to fill every other field based on the information on the picture." class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+    <div style="margin-right: 1rem;margin-bottom: 2rem;">
+        <button *ngIf="GetAccess()"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Regression()">Regression</button>
+        <i  pTooltip="If you have a field with type 'numeric', then you can create and train an AI to predict your next elements value." class="pi pi-question-circle" style="font-size: 2rem"></i>
+    </div>
+</p-sidebar>
+<p-contextMenu #cm [model]="contextitems" />
+
+<p-toast position="top-right" key="key1" (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="p-flex p-flex-column" style="flex: 1">
+            <div class="p-text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="p-grid p-fluid">
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+

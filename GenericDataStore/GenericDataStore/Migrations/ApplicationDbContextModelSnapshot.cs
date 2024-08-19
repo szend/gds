@@ -79,11 +79,23 @@ namespace GenericDataStore.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("HasSub")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("MaxDataCountInMonth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxExternalDataCountInMonth")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("NextPay")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -103,6 +115,12 @@ namespace GenericDataStore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SubStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SubType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")

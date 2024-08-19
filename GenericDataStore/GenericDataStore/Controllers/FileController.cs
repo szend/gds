@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -36,10 +37,11 @@ namespace GenericDataStore.Controllers
 
         public async Task<IActionResult> SaveFile(string id, string field, Guid table)
         {
+
             try
             {
                 var user = await userManager.FindByNameAsync(User.Identity.Name);
-                if(user.AllowedDataCount <= 50)
+                if(user.AllowedDataCount <= 5000000)
                 {
                     return BadRequest("Premium feature");
                 }
@@ -265,7 +267,8 @@ namespace GenericDataStore.Controllers
                 Repository.CreateValue(type, dataObject);
 
             }
-            return this.Ok();
+       
+                return this.Ok();
 
         }
 

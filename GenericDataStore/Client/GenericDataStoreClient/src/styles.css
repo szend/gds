@@ -1,0 +1,159 @@
+/* You can add global styles to this file, and also import other style files */
+.p-dropdown{
+    width: 20rem;
+}
+.p-dialog {
+    width: 90%;
+    height: 90%;
+}
+.numberinput{
+    width: 20rem;
+}
+.p-submenu-list{
+    z-index: 100;
+}
+.buttonmargin{
+    margin: 1rem;
+}
+.mx-w-70{
+    max-width: 70%;
+}
+
+.bluebutton{
+    background-color: #3b82f6!important;
+    color: white;
+
+}
+.p-card {
+    background-color: white ;
+    color:  black;
+}
+body {
+    background-color: #eeeeee;
+    background-image: url("/assets/img/logo_transparent.png");
+    background-repeat: no-repeat;
+    background-size: 120rem;
+}
+.p-menubar{
+    background-color: #76abae;
+    margin-bottom: 0.5rem;
+    border-color: #76abae;
+    color: white;
+}
+.p-menuitem-text{
+    color: white;
+}
+.p-menuitem-icon{
+    color: white;
+}
+.p-submenu-icon{
+    color: white;
+}
+.p-menuitem-link{
+    background-color: #76abae;
+}
+.pi-filter-icon{
+    color: white;
+}
+.p-sortable-column-icon{
+    color: white;
+}
+th{
+    background-color: #76abae;
+    border-color: #76abae;
+    color: white;
+
+
+}
+/* .simplerow{
+    background-color: #507844;
+    border-color: #99a98f;
+} */
+.editablerow{
+    background-color: #039b9b!important;
+    color: white;
+}
+.p-button-success{
+    background-color: #50af87!important;
+    color: white!important;
+    border: #50af87!important;
+}
+.p-button-warning{
+    background-color: #204636!important;
+    color: white!important;
+    border: #204636!important;
+}
+.p-button-danger{
+    background-color: #cb3a63!important;
+    color: white!important;
+    border: #cb3a63!important;
+}
+.p-button{
+    background-color: #568d8f;
+    color: white;
+    border: #568d8f;
+}
+.p-fileupload{
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 2rem;
+
+}
+.p-avatar{
+    background-color: #196D78;
+}
+.p-dialog-content{
+    background-color: #eeeeee;
+    color: black;
+}
+.p-dialog-header{
+    background-color: #eeeeee;
+    color: black;
+}
+.p-tabview-nav{
+    background-color: #eeeeee;
+    color: black;
+    border-color: #76abae;
+}
+.p-tabview-panel{
+    background-color: #eeeeee;
+    color: black;
+}
+.p-tabview-panels{
+    background-color: #eeeeee;
+    color: black;
+}
+.promoted{
+    background-color: #76abae;
+}
+
+.p-datatable-wrapper{
+    max-height: 40rem;
+}
+.p-fieldset{
+    margin: 3rem;
+}
+.p-sidebar-mask{
+    z-index: 100 !important;
+}
+.about{
+    background-image: url("/assets/img/logo.png");
+    color: black;
+}
+
+
+
+:host ::ng-deep .p-dropdown { 
+    width: 250px; 
+} 
+  
+:host ::ng-deep .p-dropdown-items { 
+    border: 5px solid green; 
+} 
+  
+:host ::ng-deep .p-dropdown-clearable { 
+    background-color: lightgreen; 
+    font-weight: bold; 
+}
+
+

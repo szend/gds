@@ -1,0 +1,34 @@
+<div  class="grid">
+    <div class="col-4">
+        <p-inputGroup>
+            <div  style="display: grid; margin: 1rem; padding: 1rem;">
+                <label>Name</label>
+                <input  style="width: 20rem;"  [(ngModel)]="name" pInputText/>
+                <!-- <label>URL parameters</label> -->
+                <!-- <input *ngFor="let param of params; index as i" style="width: 10rem;"  [(ngModel)]="params[i]" pInputText/>
+                <button pButton pRipple class="p-button p-mr-2" (click)="AddParam()">Add parameter</button> 
+                <button pButton pRipple class="p-button-danger p-mr-2" (click)="RemoveParam()">Remove parameter</button>  -->
+                <label>HTML</label>
+                <textarea  style="width: 20rem;"  [(ngModel)]="html" pInputText></textarea>
+
+                <label>CSS</label>
+                <textarea  style="width: 20rem;"  [(ngModel)]="css" pInputText></textarea>
+
+            </div>
+        </p-inputGroup>
+    </div>
+</div>
+<button  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+<p-toast position="top-right"  (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="p-flex p-flex-column" style="flex: 1">
+            <div class="p-text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="p-grid p-fluid">
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
