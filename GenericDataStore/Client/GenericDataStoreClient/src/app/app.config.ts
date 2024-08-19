@@ -6,6 +6,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { authInterceptor } from './Services/auth.interceptor';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,6 +14,7 @@ export const appConfig: ApplicationConfig = {
      importProvidersFrom(HttpClientModule, BrowserAnimationsModule),
      provideHttpClient(
       withInterceptors([authInterceptor])
-    )
+    ),
+    {provide: LocationStrategy, useClass: HashLocationStrategy}
      ]
 };
