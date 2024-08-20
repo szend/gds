@@ -8,9 +8,9 @@ import { RootFilter } from '../Models/Parameters';
 })
 export class ApiService {
 
-  baseUrl: string = "https://localhost:7053/api";
+  //baseUrl: string = "https://localhost:7053/api";
 
-  //baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
+  baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
 
  // baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
 
