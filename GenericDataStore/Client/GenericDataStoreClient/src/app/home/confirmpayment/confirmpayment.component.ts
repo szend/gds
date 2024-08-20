@@ -24,7 +24,6 @@ export class ConfirmpaymentComponent implements OnInit {
   message : string = "";
 
   ngOnInit(): void {
-    console.log('l');
     if(localStorage.getItem('link')){
       localStorage.removeItem('link');
 
@@ -35,6 +34,7 @@ export class ConfirmpaymentComponent implements OnInit {
         this.loading = false;
         this.message = 'Successful subscription.';
       }, e => {
+        this.loading = false;
         this.message = 'Something wrong. Contact us if your payment was successful.'
       });
 

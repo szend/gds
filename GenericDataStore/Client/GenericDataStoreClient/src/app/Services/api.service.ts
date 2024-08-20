@@ -8,9 +8,9 @@ import { RootFilter } from '../Models/Parameters';
 })
 export class ApiService {
 
-  //baseUrl: string = "https://localhost:7053/api";
+  baseUrl: string = "https://localhost:7053/api";
 
-  baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
+  //baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
 
  // baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
 
@@ -139,7 +139,7 @@ export class ApiService {
   }
 
   SetLimit(datacount : number, extdatacount : number, listcount : number, str : string):Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/Users/SetLimit/`+ datacount + "/" + extdatacount+"/" + listcount, str );
+    return this.http.get<any>(`${this.baseUrl}/Users/SetLimit/`+ datacount + "/" + extdatacount+"/" + listcount+"/" + str );
   }
 
 

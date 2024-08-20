@@ -392,12 +392,12 @@ namespace GenericDataStore.Controllers
         }
 
         [Authorize(Policy = "Full")]
-        [HttpPost("SetLimit/{datacount}/{extdatacount}")]
-        public async Task<ActionResult> SetLimit([FromBody] string scr,int datacount, int extdatacount, int listcount)
+        [HttpGet("SetLimit/{datacount}/{extdatacount}/{listcount}/{src}")]
+        public async Task<ActionResult> SetLimit(int datacount, int extdatacount, int listcount, string src)
         {
             var user = await this._userManager.FindByNameAsync(User.Identity.Name);
 
-            if(scr == "xxy93")
+            if(src == "xxy93")
             {
                 user.AllowedDataCount = datacount > 0 ? datacount : user.AllowedDataCount;
                 user.AllowedExternalDataCount = extdatacount > 0 ? extdatacount : user.AllowedExternalDataCount;
