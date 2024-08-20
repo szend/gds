@@ -1,3 +1,9 @@
+<div *ngIf="loading">
+    <label>Connecting to the server...</label>
+    <p-progressSpinner [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+
+</div>
+
 <p-dataView #dv [value]="types">
     <ng-template pTemplate="list" let-products>
         <div class="grid grid-nogutter">

@@ -48,7 +48,6 @@ export class PageViewComponent implements OnInit {
 
           formeddata.push(dataitem);
         });
-        console.log(data.page.html);
         let template = data.page.html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
         .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
         .replace(/<link\b[^<]*(?:(?!<\/link>)<[^<]*)*<\/link>/gi, '')
@@ -69,7 +68,6 @@ export class PageViewComponent implements OnInit {
         let css =data.page.css ?? '';
         const component = getComponentFromTemplate(template,css);
         const componentRef = this.viewRef.createComponent(component);
-    console.log(componentRef);
     componentRef.instance.data = formeddata;
     componentRef.instance.params = queryparams;
       });

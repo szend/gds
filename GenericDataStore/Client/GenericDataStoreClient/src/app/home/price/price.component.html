@@ -9,40 +9,133 @@
     <br><br>
      Your space is limited to 50 data rows and 2 tables.
 </p>
-<br><br>
+
 <ng-template pTemplate="footer">
     <div class="flex gap-3 mt-1">
     </div>
 </ng-template>
 </p-card>
 </div>
+
+<div class="col-4">
+     <p-card header="Basic Internal 1k" subheader="0.59€/1000 data row/month">
+          <p>
+               You can use all the features of the program.
+               <br>
+               You can create 3 list and you can have 1000 data row.
+          </p>
+     <ng-template pTemplate="footer">
+         <div class="flex gap-3 mt-1">
+             <p-button (onClick)="Select('https://buy.stripe.com/test_5kAaI2dRacFP1IAcMN')" label="Select" class="w-full" styleClass="w-full" />
+         </div>
+     </ng-template>
+     </p-card>
+</div>
     
 <div class="col-4">
-<p-card header="Basic" subheader="0.96€/5000 data row/month">
+<p-card header="Basic Internal 2k" subheader="0.96€/2000 data row/month">
 <p>
      You can use all the features of the program.
+     <br>
+     You can create 4 list and you can have 2500 data row.
 </p>
 <ng-template pTemplate="footer">
     <div class="flex gap-3 mt-1">
-        <p-button label="Select" class="w-full" styleClass="w-full" />
+        <p-button (onClick)="Select('https://buy.stripe.com/test_14kdUebJ25dndri5km')"  label="Select" class="w-full" styleClass="w-full" />
     </div>
 </ng-template>
 </p-card>
 </div>
     
 <div class="col-4">
-<p-card header="Unique" subheader="unique">
+<p-card header="Basic Internal 10k" subheader="2.96€/10000 data row/month">
 <p>
-     If you have a large number of data, or you have a special demand, you can contact us for a unique offer.
-    <br><br><br>
+     You can use all the features of the program.
+     <br>
+     You can create 10 list and you can have 10000 data row.
 </p>
 <ng-template pTemplate="footer">
     <div class="flex gap-3 mt-1">
-        <p-button label="Select" class="w-full" styleClass="w-full" />
+        <p-button (onClick)="Select('https://buy.stripe.com/test_bIY7vQfZicFP4UM003')"  label="Select" class="w-full" styleClass="w-full" />
     </div>
 </ng-template>
 </p-card>
 </div>
+
+<div class="col-4">
+     <p-card header="Premium Internal 50k" subheader="6.96€/50000 data row/month">
+     <p>
+          You can use all the features of the program.
+          <br>
+          You can create 20 list and you can have 50000 data row.
+     </p>
+     <ng-template pTemplate="footer">
+         <div class="flex gap-3 mt-1">
+             <p-button  (onClick)="Select('https://buy.stripe.com/test_9AQ4jE14o0X71IAdQU')" label="Select" class="w-full" styleClass="w-full" />
+         </div>
+     </ng-template>
+     </p-card>
+     </div>
+
+<div class="col-4">
+          <p-card header="Premium Internal 200k" subheader="12.96€/200000 data row/month">
+               <p>
+                    You can use all the features of the program.
+                    <br>
+                    You can create 50 list and you can have 200000 data row.
+               </p>
+          <ng-template pTemplate="footer">
+              <div class="flex gap-3 mt-1">
+                  <p-button (onClick)="Select('https://buy.stripe.com/test_7sI4jE3cw35fbjaaEJ')" label="Select" class="w-full" styleClass="w-full" />
+              </div>
+          </ng-template>
+          </p-card>
+</div>
+
+<div class="col-4">
+     <p-card header="Premium Internal 1M" subheader="29.96€/1000000 data row/month">
+          <p>
+               You can use all the features of the program.
+               <br>
+               You can create 100 list and you can have 1000000 data row.
+          </p>
+     <ng-template pTemplate="footer">
+         <div class="flex gap-3 mt-1">
+             <p-button (onClick)="Select('https://buy.stripe.com/test_28o4jE5kEgW572U7sy')" label="Select" class="w-full" styleClass="w-full" />
+         </div>
+     </ng-template>
+     </p-card>
+</div>
+
+<div class="col-4">
+     <p-card header="Enterprise Internal 10M" subheader="149.96€/10000000 data row/month">
+          <p>
+               You can use all the features of the program.
+               <br>
+               You can create 200 list and you can have 10000000 data row.
+          </p>
+     <ng-template pTemplate="footer">
+         <div class="flex gap-3 mt-1">
+             <p-button (onClick)="Select('https://buy.stripe.com/test_14k8zU3cwfS172U6ov')" label="Select" class="w-full" styleClass="w-full" />
+         </div>
+     </ng-template>
+     </p-card>
+</div>
+
+<div class="col-4">
+               <p-card header="Unique" subheader="unique">
+               <p>
+                    If you have a large number of data, or you have a special demand, you can contact us for a unique offer.
+                   <br>
+               </p>
+               <ng-template pTemplate="footer">
+                   <div class="flex gap-3 mt-1">
+                       <p-button (onClick)="Contact()" label="Select" class="w-full" styleClass="w-full" />
+                   </div>
+               </ng-template>
+               </p-card>
+</div>
+
     </div>     
 </p-tabPanel>
 <p-tabPanel header="Store data on your server and use the program online">

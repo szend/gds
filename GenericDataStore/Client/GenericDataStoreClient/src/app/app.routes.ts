@@ -15,6 +15,7 @@ import { OfferlistComponent } from './home/offerlist/offerlist.component';
 import { ContactComponent } from './home/contact/contact.component';
 import { PriceComponent } from './home/price/price.component';
 import { FeaturesComponent } from './home/features/features.component';
+import { ConfirmpaymentComponent } from './home/confirmpayment/confirmpayment.component';
 
 
 export const routes: Routes = [
@@ -26,6 +27,7 @@ export const routes: Routes = [
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
+      { path: 'confirm/:intcount/:extcount/:listcount', component: ConfirmpaymentComponent},
       { path: 'contact', component: ContactComponent },
       { path: 'home', component: HomeComponent },
       { path: 'messages', component: MessageComponent },
@@ -39,6 +41,7 @@ export const routes: Routes = [
       { path: 'page/:id/:name/:page', component: PageViewComponent },
       { path: ':id/:name', component: DataobjectListComponent },
       { path: ':private/:id/:name', component: DataobjectListComponent},
+
 
     ]
 }

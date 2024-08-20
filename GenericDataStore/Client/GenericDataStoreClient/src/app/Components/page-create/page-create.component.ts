@@ -70,8 +70,6 @@ export class PageCreateComponent implements OnInit {
 
   AddParam(){
     this.params.push('');
-    console.log(this.params);
-
   }
   RemoveParam(){
     this.params.pop();

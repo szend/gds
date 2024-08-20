@@ -144,7 +144,6 @@ calculationString : string = "";
     }
   }
   AddOperator(op : any){
-    console.log(op);
     this.calculationString += op.value.code;
   }
 

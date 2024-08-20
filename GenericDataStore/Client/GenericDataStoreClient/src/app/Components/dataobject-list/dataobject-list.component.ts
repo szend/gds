@@ -165,7 +165,6 @@ export class DataobjectListComponent  implements OnInit {
 
     this.rootFilter.filters.push({ field: 'Name', operator: 'equals', value: this.name });
     this.rootFilter.filters.push({ field: 'ObjectTypeId', operator: 'equals', value: this.id });
-    console.log(this.rootFilter);
      localStorage.removeItem('name');
      localStorage.removeItem('id');
 
@@ -187,7 +186,6 @@ export class DataobjectListComponent  implements OnInit {
 
      this.apiService.ListOwner(this.data.objectTypeId).subscribe(y => {
        this.admin = y;
-       console.log(this.admin);
        if(this.admin){
         this.contextitems =[
           { label: 'View', icon: 'pi pi-fw pi-search', command: () => this.Edit(this.selectedProduct) },

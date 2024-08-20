@@ -165,10 +165,8 @@ export class DataobjectCreateComponent  implements OnInit {
 
   SelectParent(field : string){
     this.apiService.SelectParent(this.parentid ?? "",field).subscribe(x => {
-      console.log(x);
       this.ref = this.dialogService.open(DataobjectParentselectComponent,  {data: {id: x.objectTypeId, name: x.name, private: x.private }, header: 'Select Parent', resizable: true});
       this.ref.onClose.subscribe((x : any) => {
-        console.log(x);
         if(x != undefined){
           this.dataRec[field] = x;
         }

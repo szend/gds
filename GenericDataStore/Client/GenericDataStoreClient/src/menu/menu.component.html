@@ -1,8 +1,6 @@
 <p-menubar *ngIf="items.length > 2" class="menu" [model]="items">
     <ng-template pTemplate="end">
-        <input #search (keyup.enter)="Search($event,search)" style="margin-right: 2rem;" type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" />
-        <p-button *ngIf="loggedIn != true"  class="buttonmargin" label="Login" (onClick)="Login()"></p-button>
-        <p-button *ngIf="loggedIn != true"  label="Register" (onClick)="Register()"></p-button>
+        <input #search (keyup.enter)="Search($event,search)" style="margin-right: 1rem;" type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" />
         <p-button (onClick)="Settings()" *ngIf="loggedIn == true" [label]="username != undefined ? username[0] : ''">
         </p-button> 
 
@@ -11,7 +9,6 @@
 
     <p-sidebar [(visible)]="sidebarVisible" position="right">
         <p-button *ngIf="loggedIn == true"  class="buttonmargin" label="Logout" (onClick)="Logout()"></p-button>
-        <p-button *ngIf="loggedIn == true" class="p-button-secondary p-mr-2"  label="Messages" (onClick)="Messages()"></p-button>
         <br><br>
         <div class="card">
             <p-meterGroup [value]="listspace"></p-meterGroup>

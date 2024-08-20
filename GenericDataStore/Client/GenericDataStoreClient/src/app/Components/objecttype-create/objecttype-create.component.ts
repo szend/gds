@@ -92,7 +92,6 @@ export class ObjecttypeCreateComponent implements OnInit {
       }
 
     }
-    console.log(this.props);
   }
 
   public props : any[] = [];

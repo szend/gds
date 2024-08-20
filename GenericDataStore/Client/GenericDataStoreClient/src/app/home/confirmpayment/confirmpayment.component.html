@@ -1,0 +1,8 @@
+<div *ngIf="loading">
+    <label>Don't navigate away from this page until it is loading.</label>
+    <p-progressSpinner [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+
+</div>
+<div *ngIf="!loading ">
+<h1>{{message}}</h1>
+</div>

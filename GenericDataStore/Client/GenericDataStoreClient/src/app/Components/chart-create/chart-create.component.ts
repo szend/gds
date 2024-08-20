@@ -88,7 +88,6 @@ export class ChartCreateComponent  implements OnInit{
       filter: this.filter,
       groupOption: this.selectedgroupoption.value
     }
-    console.log(chartcalculation);
     this.apiService.CreateCalculatedChart(chartcalculation).subscribe((data: any) => {
       this.cahrtdata = data;
       this.loadnig = false;

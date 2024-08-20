@@ -392,20 +392,21 @@ namespace GenericDataStore.Controllers
         }
 
         [Authorize(Policy = "Full")]
-        [HttpGet("SetLimit/{datacount}/{extdatacount}")]
-        public async Task<ActionResult> SetLimit(int datacount, int extdatacount)
+        [HttpPost("SetLimit/{datacount}/{extdatacount}")]
+        public async Task<ActionResult> SetLimit([FromBody] string scr,int datacount, int extdatacount, int listcount)
         {
             var user = await this._userManager.FindByNameAsync(User.Identity.Name);
-            if(user?.HasSub == true)
+
+            if(scr == "xxy93")
             {
-                user.AllowedDataCount = datacount;
-                user.AllowedExternalDataCount = extdatacount;
+                user.AllowedDataCount = datacount > 0 ? datacount : user.AllowedDataCount;
+                user.AllowedExternalDataCount = extdatacount > 0 ? extdatacount : user.AllowedExternalDataCount;
+                user.AllowedListCount = listcount > 0 ? listcount : user.AllowedListCount;
+                user.HasSub = true;
                 await _userManager.UpdateAsync(user);
             }
-            else
-            {
-                return BadRequest("You have no subscription");
-            }
+
+
 
             return Ok();
 

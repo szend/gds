@@ -138,8 +138,8 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/Users/ListOwner/`+ id );
   }
 
-  SetLimit(datacount : number, extdatacount : number):Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/Users/SetLimit/`+ datacount + "/" + extdatacount );
+  SetLimit(datacount : number, extdatacount : number, listcount : number, str : string):Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/Users/SetLimit/`+ datacount + "/" + extdatacount+"/" + listcount, str );
   }
 
 

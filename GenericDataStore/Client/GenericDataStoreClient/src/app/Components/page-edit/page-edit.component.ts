@@ -55,8 +55,6 @@ export class PageEditComponent implements OnInit{
       page.parameters = [];
     }
     page.parameters.push('');
-    console.log(page);
-
   }
   RemoveParam(page : { parameters: any[]; }){
     page.parameters.pop();

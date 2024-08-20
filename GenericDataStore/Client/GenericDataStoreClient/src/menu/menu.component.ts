@@ -77,6 +77,7 @@ export class MenuComponent {
         { label: 'Contact', icon: 'pi pi-megaphone', routerLink: '/contact'},
         { label: 'Features', icon: 'pi pi-info-circle', routerLink: '/features'},
         { label: 'MyDatabases',icon: 'pi pi-database', routerLink: '/connection/databases'},
+        { label: 'Messages',icon: 'pi pi-comments', routerLink: '/messages'},
       ];
       this.items.push(privatmenu);
       this.getCategories();
@@ -87,9 +88,10 @@ export class MenuComponent {
         { label: 'Price', icon: 'pi pi-euro', routerLink: '/price'},
         { label: 'Contact', icon: 'pi pi-megaphone', routerLink: '/contact'},
         { label: 'Features', icon: 'pi pi-info-circle', routerLink: '/features'},
-
       ];
       this.getCategories();
+      this.items.push(        { label: 'Login', icon: 'pi pi-sign-in', routerLink: '/login'},
+        { label: 'Register', icon: 'pi pi-user-plus', routerLink: '/register'});
 
     })
 
@@ -131,14 +133,6 @@ export class MenuComponent {
 
   Messages(){
     this.router.navigateByUrl('messages');
-  }
-
-  SetLimit(){
-    if(this.intdata && this.extdata){
-      this.apiService.SetLimit(this.intdata,this.extdata).subscribe(x => {
-        this.limitsaved = true;
-      });
-    }
   }
 
   Settings(){

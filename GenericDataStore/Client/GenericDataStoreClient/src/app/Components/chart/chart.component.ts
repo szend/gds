@@ -297,7 +297,6 @@ public optionsnum = {
 
   orgchart : EChartsOption | undefined;
   onChartEvent(event: any) {
-    console.log('chart event:', event);
     if(event.data.name){
         localStorage.setItem('name', event.data.name);
     }
@@ -769,9 +768,6 @@ Regression(event: any,chart: {datasets : any[], regresult: string | undefined}, 
 }
 
 ChartClick(event: {element:{ datasetIndex: number, index : number}},chart: {name: string, datasets : any[], regresult: string | undefined}, i: number){
-    console.log( chart);
-    console.log( event);
-
     if(chart.datasets[event.element.datasetIndex].label.includes('Regression')){
         return;
     }
@@ -802,7 +798,6 @@ ChartClick(event: {element:{ datasetIndex: number, index : number}},chart: {name
 ChartClickOption(event: {element:{ datasetIndex: number, index : number}},chart: {name: string, datasets : any[], labels: any[]}, i: number){
 
     var filter = { field: chart.name, operator: 'equals', value: chart.labels[event.element.index].toString() };
-console.log( chart);
     localStorage.setItem('filter', JSON.stringify(filter));
     if(this.name){
         localStorage.setItem('name', this.name);

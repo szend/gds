@@ -87,7 +87,6 @@ export class DataobjectEditComponent implements OnInit {
     }
     if(this.config.data.editable){
       this.editable = this.config.data.editable;
-      console.log(this.editable);
     }
     if(this.config.data.parentid){
       this.parentid = this.config.data.parentid;
@@ -162,9 +161,7 @@ export class DataobjectEditComponent implements OnInit {
   }
 
   getImageObj(row: any, field: string){
-    console.log(this.images);
     let res = this.images.find(x => x.field == field);
-    console.log(res);
     if(res?.data){
       return res?.data;
 
@@ -197,7 +194,7 @@ export class DataobjectEditComponent implements OnInit {
       this.messageService.add({ 
         severity: "error", 
         summary: "Error", 
-        detail: error.message, 
+        detail: error.error, 
         life: 300000
       });
     });
@@ -242,7 +239,6 @@ export class DataobjectEditComponent implements OnInit {
         });
       },
       error: (e) => {
-        console.log(e);
         this.messageService.add({ 
           severity: "error", 
           summary: "Error", 
@@ -427,10 +423,8 @@ GetIdDict(){
 
   SelectParent(field : string){
     this.apiService.SelectParent(this.parentid ?? "",field).subscribe(x => {
-      console.log(x);
       this.ref = this.dialogService.open(DataobjectParentselectComponent,  {data: {id: x.objectTypeId, name: x.name, private: x.private }, header: 'Select Parent', resizable: true});
       this.ref.onClose.subscribe((x : any) => {
-        console.log(x);
         if(x != undefined){
           this.dataRec.find((y : any) => y.name == field).valueString = x;
         }
