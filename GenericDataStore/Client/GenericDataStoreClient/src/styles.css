@@ -19,6 +19,11 @@
     max-width: 70%;
 }
 
+.p-tag-success{
+    background-color: #76abae;
+    margin-bottom: 0.5rem;
+}
+
 .bluebutton{
     background-color: #3b82f6!important;
     color: white;

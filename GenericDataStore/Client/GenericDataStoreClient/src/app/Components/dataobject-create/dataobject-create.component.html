@@ -1,20 +1,20 @@
 
 
-<div  class="grid">
-    <div *ngFor="let prop of fields; index as i" class="col-4">
+<div>
+    <div *ngFor="let prop of fields; index as i">
         <p-inputGroup>
             <div  style="display: grid; margin: 1rem; padding: 1rem;">
                 <label>{{prop.field}}</label>
-                <input *ngIf="prop.type == 'text'" style="width: 20rem;"  [(ngModel)]="dataRec[prop.field]" pInputText/>
-                <input class="numberinput" *ngIf="prop.type == 'numeric'"  [(ngModel)]="dataRec[prop.field]"  [pKeyFilter]="'num'"  pInputText/>
-                <input [disabled]="true" *ngIf="prop.type == 'id'" style="width: 20rem;"  [(ngModel)]="dataRec[prop.field]" pInputText/>
+                <input *ngIf="prop.type == 'text'"   [(ngModel)]="dataRec[prop.field]" pInputText/>
+                <input  *ngIf="prop.type == 'numeric'"  [(ngModel)]="dataRec[prop.field]"  [pKeyFilter]="'num'"  pInputText/>
+                <input [disabled]="true" *ngIf="prop.type == 'id'"  [(ngModel)]="dataRec[prop.field]" pInputText/>
 
-                <input  *ngIf="prop.type == 'foreignkey'" style="width: 20rem;"  [(ngModel)]="dataRec[prop.field]" pInputText/>
+                <input  *ngIf="prop.type == 'foreignkey'"  [(ngModel)]="dataRec[prop.field]" pInputText/>
                 <button *ngIf="prop.type == 'foreignkey'"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="SelectParent(prop.header)">Select</button> 
 
                 <p-checkbox *ngIf="prop.type == 'boolean'" (onChange)="boolChange($event,prop)" [binary]="true" ></p-checkbox>
 
-                <p-calendar #c dateFormat="dd.mm.yy" class="numberinput" [showTime]="false" *ngIf="prop.type == 'date'" (onClose)="setDate(c, prop)"></p-calendar>
+                <p-calendar #c dateFormat="dd.mm.yy" [showTime]="false" *ngIf="prop.type == 'date'" (onClose)="setDate(c, prop)"></p-calendar>
 
                 <p-dropdown *ngIf="prop.type == 'option'" [options]="prop.option" [dataKey]="'optionValue'" (onChange)="OptionSelect($event,prop)"  optionLabel="optionName" [showClear]="true" placeholder="Select a type"></p-dropdown>
 

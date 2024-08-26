@@ -3,20 +3,21 @@
 
 <p-tabView>
     <p-tabPanel header="Properties">
-        <div  class="grid">
-            <div *ngFor="let prop of fields; index as i" class="col-4">
-                <p-inputGroup>
+        <div>
+            <div *ngFor="let prop of fields; index as i">
+
                     <div  style="display: grid; margin: 1rem; padding: 1rem;">
-                        <label>{{prop.field}}</label>
-                        <input [disabled]="!editable" *ngIf="prop.type == 'text' && dataRec[i]" style="width: 20rem;"  [(ngModel)]="dataRec[i].valueString" pInputText/>
-                        <input [disabled]="true" *ngIf="prop.type == 'id'" style="width: 20rem;"  [(ngModel)]="dataRec[i].valueString" pInputText/>
-                        <input [disabled]="!editable" class="numberinput" *ngIf="prop.type == 'numeric' && dataRec[i]"  [(ngModel)]="dataRec[i].valueString"  [pKeyFilter]="'num'"  pInputText/>
+
+                        <p-tag severity="success" [style]="{ background: dataRec[i].color }" [value]="prop.field" />
+                        <input [disabled]="!editable" *ngIf="prop.type == 'text' && dataRec[i]"   [(ngModel)]="dataRec[i].valueString" pInputText/>
+                        <input [disabled]="true" *ngIf="prop.type == 'id'"   [(ngModel)]="dataRec[i].valueString" pInputText/>
+                        <input [disabled]="!editable" *ngIf="prop.type == 'numeric' && dataRec[i]"  [(ngModel)]="dataRec[i].valueString"  [pKeyFilter]="'num'"  pInputText/>
                         
-                        <input [disabled]="!editable" *ngIf="prop.type == 'foreignkey' && dataRec[i]" style="width: 20rem;"  [(ngModel)]="dataRec[i].valueString" pInputText/>
+                        <input [disabled]="!editable" *ngIf="prop.type == 'foreignkey' && dataRec[i]" [(ngModel)]="dataRec[i].valueString" pInputText/>
                         <button *ngIf="prop.type == 'foreignkey' && dataRec[i]"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="SelectParent(prop.header)">Select</button> 
 
-                        <input [disabled]="true" class="numberinput" *ngIf="prop.type == 'calculatednumeric' && dataRec[i]"  [(ngModel)]="dataRec[i].valueString"  [pKeyFilter]="'num'"  pInputText/>
-                        <input [disabled]="true" class="numberinput" *ngIf="prop.type == 'calculatedtext' && dataRec[i]"  [(ngModel)]="dataRec[i].valueString"  pInputText/>
+                        <input [disabled]="true"  *ngIf="prop.type == 'calculatednumeric' && dataRec[i]"  [(ngModel)]="dataRec[i].valueString"  [pKeyFilter]="'num'"  pInputText/>
+                        <input [disabled]="true" *ngIf="prop.type == 'calculatedtext' && dataRec[i]"  [(ngModel)]="dataRec[i].valueString"  pInputText/>
                         <p-triStateCheckbox [disabled]="true" [(ngModel)]="boolvalues[i]"  *ngIf="prop.type == 'calculatedboolean' && dataRec[i]" inputId="tricheckbox" />
 
                         <div  *ngIf="prop.type == 'boolean' && dataRec[i]">
@@ -24,7 +25,7 @@
                             <br>
                         </div>
         
-                        <p-calendar [(ngModel)]="datevalues[i]" [disabled]="!editable" #c dateFormat="dd.mm.yy" class="numberinput" [showTime]="false" *ngIf="prop.type == 'date' && dataRec[i]" (onClose)="setDate(c, i)"></p-calendar>
+                        <p-calendar [(ngModel)]="datevalues[i]" [disabled]="!editable" #c dateFormat="dd.mm.yy"  [showTime]="false" *ngIf="prop.type == 'date' && dataRec[i]" (onClose)="setDate(c, i)"></p-calendar>
         
                         <p-dropdown [disabled]="!editable" *ngIf="prop.type == 'option' && dataRec[i]" [options]="prop.option" [dataKey]="'optionValue'" (onChange)="OptionSelect($event,i)"  optionLabel="optionName" [showClear]="true"
                          [placeholder]="dataRec[i].valueString != null && dataRec[i].valueString != undefined && dataRec[i].valueString != '' ? dataRec[i].valueString : 'Select'"></p-dropdown>
@@ -42,7 +43,7 @@
         
             
                     </div>
-                </p-inputGroup>
+ 
             </div>
         </div>
     </p-tabPanel>

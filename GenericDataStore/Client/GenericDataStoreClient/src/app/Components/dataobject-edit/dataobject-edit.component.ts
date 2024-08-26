@@ -25,7 +25,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ChipModule } from 'primeng/chip';
 import {ToastModule} from 'primeng/toast';
 import { DataobjectParentselectComponent } from '../dataobject-parentselect/dataobject-parentselect.component';
-
+import { TagModule } from 'primeng/tag';
 
 
 
@@ -38,7 +38,7 @@ import { DataobjectParentselectComponent } from '../dataobject-parentselect/data
   standalone: true,
   imports: [InputGroupModule, FormsModule,CommonModule,TriStateCheckboxModule,CalendarModule,ConfirmDialogModule,DropdownModule,TabViewModule,ImageModule,ChipModule,
     InputTextModule,InputNumberModule,ButtonModule,MessagesModule,CheckboxModule,forwardRef(() => DataobjectListComponent),FileUploadModule,KeyFilterModule,
-    ProgressSpinnerModule,ToastModule
+    ProgressSpinnerModule,ToastModule,TagModule
   ],
     providers: [MessageService,ConfirmationService], 
   templateUrl: './dataobject-edit.component.html',

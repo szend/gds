@@ -10,7 +10,7 @@
             <div [ngClass]="item.promoted == true  ? 'promoted' :''" class="col-12" *ngFor="let item of products; let first = first" class="col-12">
                 <div (dblclick)="GoToType(item.name,item.objectTypeId)" class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3" [ngClass]="{ 'border-top-1 surface-border': !first }">
                     <div class="md:w-10rem relative">
-                        <p-tag severity="success" *ngIf="item.promoted" [style.left.px]="4" [style.top.px]="4" [value]="'promoted'" />
+                        <p-tag severity="contrast" *ngIf="item.promoted" [style.left.px]="4" [style.top.px]="4" [value]="'promoted'" />
                         <div class="text-lg font-medium text-900 mt-2">{{ item.name }}</div>
                         <!-- <img class="block xl:block mx-auto border-round w-full" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image" [alt]="item.name" /> -->
                     </div>
