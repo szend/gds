@@ -399,9 +399,9 @@ namespace GenericDataStore.Controllers
 
             if(src == "xxy93")
             {
-                user.AllowedDataCount = datacount > 0 ? datacount : user.AllowedDataCount;
-                user.AllowedExternalDataCount = extdatacount > 0 ? extdatacount : user.AllowedExternalDataCount;
-                user.AllowedListCount = listcount > 0 ? listcount : user.AllowedListCount;
+                user.AllowedDataCount = datacount > user.AllowedDataCount ? datacount : user.AllowedDataCount;
+                user.AllowedExternalDataCount = extdatacount > user.AllowedExternalDataCount ? extdatacount : user.AllowedExternalDataCount;
+                user.AllowedListCount = listcount > user.AllowedListCount  ? listcount : user.AllowedListCount;
                 user.HasSub = true;
                 await _userManager.UpdateAsync(user);
             }

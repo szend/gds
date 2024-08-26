@@ -135,6 +135,10 @@ export class MenuComponent {
     this.router.navigateByUrl('messages');
   }
 
+  Subscriptions(){
+    window.open('https://billing.stripe.com/p/login/test_14kaFq7iGf5T8Ug9AA', '_blank');
+  }
+
   Settings(){
     this.apiService.GetSettingData().subscribe(x =>{
       let newlistspace : MeterItem[] = [];

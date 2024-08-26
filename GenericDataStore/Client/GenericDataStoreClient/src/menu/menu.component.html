@@ -8,7 +8,9 @@
     </ng-template></p-menubar>
 
     <p-sidebar [(visible)]="sidebarVisible" position="right">
-        <p-button *ngIf="loggedIn == true"  class="buttonmargin" label="Logout" (onClick)="Logout()"></p-button>
+        <p-button  *ngIf="loggedIn == true"  class="buttonmargin" label="Logout" (onClick)="Logout()"></p-button>
+        <br><br>
+        <p-button *ngIf="loggedIn == true"  class="buttonmargin" label="Subscriptions" (onClick)="Subscriptions()"></p-button>
         <br><br>
         <div class="card">
             <p-meterGroup [value]="listspace"></p-meterGroup>

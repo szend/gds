@@ -119,6 +119,7 @@ export class DataobjectCreateComponent  implements OnInit {
     });
 
     if(this.alledit == true && this.rootFilter != undefined){
+      this.rootFilter.filters = this.rootFilter.filters.filter(x => x.value != undefined);
       this.apiService.EditAllFiltered(obj,this.rootFilter).subscribe({
         next: (v) => {
           this.messageService.add({ 

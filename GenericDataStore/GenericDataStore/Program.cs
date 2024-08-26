@@ -81,10 +81,10 @@ builder.Services.AddAuthorization(options =>
 
 
 var app = builder.Build();
-JobManager.Initialize();
-JobManager.AddJob(() => {
-    new ScheduledTask().Start();
-}, s => s.ToRunEvery(5).Days());
+//JobManager.Initialize();
+//JobManager.AddJob(() => {
+//    new ScheduledTask().Start();
+//}, s => s.ToRunEvery(5).Days());
 
 app.UseAuthentication();
 app.UseAuthorization();

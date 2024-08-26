@@ -37,7 +37,7 @@
 <p>
      You can use all the features of the program.
      <br>
-     You can create 4 list and you can have 2500 data row.
+     You can create 4 list and you can have 2000 data row.
 </p>
 <ng-template pTemplate="footer">
     <div class="flex gap-3 mt-1">
@@ -78,7 +78,7 @@
      </div>
 
 <div class="col-4">
-          <p-card header="Premium Internal 200k" subheader="12.96€/200000 data row/month">
+          <p-card header="Premium Internal 200k" subheader="13.96€/200000 data row/month">
                <p>
                     You can use all the features of the program.
                     <br>
@@ -108,7 +108,7 @@
 </div>
 
 <div class="col-4">
-     <p-card header="Enterprise Internal 10M" subheader="149.96€/10000000 data row/month">
+     <p-card header="Enterprise Internal 10M" subheader="199.96€/10000000 data row/month">
           <p>
                You can use all the features of the program.
                <br>
@@ -146,39 +146,123 @@
     <p-card header="Free" subheader="0€">
         <p>
      Free version of the program. You can use it for free.
-            <br><br>
+  <br><br>
      You can add 1 databases and connect 2 table but if you have more than 2000 rows you, can not add more.
         </p>
-        <br><br>
-        <ng-template pTemplate="footer">
-            <div class="flex gap-3 mt-1">
-            </div>
-        </ng-template>
     </p-card>
 </div>
 
 <div class="col-4">
-    <p-card header="Basic" subheader="0.96€/10000 data row/month">
-        <p>
-     You can use all the features of the program. Only the image upload is limited or has an additional cost.
-            <br><br>
-You can add as many databases as you want and connect as many tables as you need. You can even set up a virtual
-     relation between tables with different database.           
-            <br>
-        </p>
-        <ng-template pTemplate="footer">
-            <div class="flex gap-3 mt-1">
-                <p-button label="Select" class="w-full" styleClass="w-full" />
-            </div>
-        </ng-template>
-    </p-card>
+     <p-card header="Basic External 1k" subheader="0.96€/2000 data row/month">
+     <p>
+          You can use all the features of the program.
+          <br>
+          You can import 4 list and you can have 2000 data row in external databases.
+     </p>
+     <ng-template pTemplate="footer">
+         <div class="flex gap-3 mt-1">
+             <p-button (onClick)="Select('https://buy.stripe.com/test_14kdUebJ25dndri5km')"  label="Select" class="w-full" styleClass="w-full" />
+         </div>
+     </ng-template>
+     </p-card>
+     </div>
+
+<div class="col-4">
+     <p-card header="Basic External 10k" subheader="1.96€/10000 data row/month">
+     <p>
+          You can use all the features of the program.
+          <br>
+          You can import 10 list and you can have 10000 data row in external databases.
+     </p>
+     <ng-template pTemplate="footer">
+         <div class="flex gap-3 mt-1">
+             <p-button (onClick)="Select('https://buy.stripe.com/test_14kdUebJ25dndri5km')"  label="Select" class="w-full" styleClass="w-full" />
+         </div>
+     </ng-template>
+     </p-card>
+     </div>
+
+<div class="col-4">
+          <p-card header="Basic External 50k" subheader="4.96€/50000 data row/month">
+          <p>
+               You can use all the features of the program.
+               <br>
+               You can import 20 list and you can have 50000 data row in external databases.
+          </p>
+          <ng-template pTemplate="footer">
+              <div class="flex gap-3 mt-1">
+                  <p-button (onClick)="Select('https://buy.stripe.com/test_14kdUebJ25dndri5km')"  label="Select" class="w-full" styleClass="w-full" />
+              </div>
+          </ng-template>
+          </p-card>
+</div>
+
+<div class="col-4">
+               <p-card header="Premium External 200k" subheader="9.96€/200000 data row/month">
+               <p>
+                    You can use all the features of the program.
+                    <br>
+                    You can import 50 list and you can have 200000 data row in external databases.
+               </p>
+               <ng-template pTemplate="footer">
+                   <div class="flex gap-3 mt-1">
+                       <p-button (onClick)="Select('https://buy.stripe.com/test_14kdUebJ25dndri5km')"  label="Select" class="w-full" styleClass="w-full" />
+                   </div>
+               </ng-template>
+               </p-card>
+</div>
+
+
+<div class="col-4">
+                    <p-card header="Premium External 1M" subheader="15.96€/1000000 data row/month">
+                    <p>
+                         You can use all the features of the program.
+                         <br>
+                         You can import 100 list and you can have 1000000 data row in external databases.
+                    </p>
+                    <ng-template pTemplate="footer">
+                        <div class="flex gap-3 mt-1">
+                            <p-button (onClick)="Select('https://buy.stripe.com/test_14kdUebJ25dndri5km')"  label="Select" class="w-full" styleClass="w-full" />
+                        </div>
+                    </ng-template>
+                    </p-card>
+</div>
+
+<div class="col-4">
+                         <p-card header="Premium External 10M" subheader="69.96€/10000000 data row/month">
+                         <p>
+                              You can use all the features of the program.
+                              <br>
+                              You can import 200 list and you can have 10000000 data row in external databases.
+                         </p>
+                         <ng-template pTemplate="footer">
+                             <div class="flex gap-3 mt-1">
+                                 <p-button (onClick)="Select('https://buy.stripe.com/test_14kdUebJ25dndri5km')"  label="Select" class="w-full" styleClass="w-full" />
+                             </div>
+                         </ng-template>
+                         </p-card>
+</div>
+     
+<div class="col-4">
+                              <p-card header="Enterprise External 50M" subheader="149.96€/50000000 data row/month">
+                              <p>
+                                   You can use all the features of the program.
+                                   <br>
+                                   You can import 400 list and you can have 50000000 data row in external databases.
+                              </p>
+                              <ng-template pTemplate="footer">
+                                  <div class="flex gap-3 mt-1">
+                                      <p-button (onClick)="Select('https://buy.stripe.com/test_14kdUebJ25dndri5km')"  label="Select" class="w-full" styleClass="w-full" />
+                                  </div>
+                              </ng-template>
+                              </p-card>
 </div>
 
 <div class="col-4">
     <p-card header="Unique" subheader="unique">
         <p>
      If you have a large number of data, or you have a special demand, you can contact us for a unique offer.
-            <br><br><br>
+            <br>
         </p>
         <ng-template pTemplate="footer">
             <div class="flex gap-3 mt-1">

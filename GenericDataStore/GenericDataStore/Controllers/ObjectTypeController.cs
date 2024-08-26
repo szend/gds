@@ -1497,8 +1497,6 @@ namespace GenericDataStore.Controllers
                                 filterResult.ValueFilters.RemoveAll(x => x.Field == "ParentDataObjectId");
                             }
 
-                            item.Field = item.Field.Where(x => x.Name != "AppUserId" && x.Name != "DataObjectId").ToList();
-
                             if (filterResult.ValueFilters.Any(x => x.Field == "AppUserId"))
                             {
                                 filterResult.ValueFilters.FirstOrDefault(Field => Field.Field == "AppUserId").Value = item.AppUserId.ToString();
