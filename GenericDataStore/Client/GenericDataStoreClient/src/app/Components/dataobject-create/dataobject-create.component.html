@@ -4,7 +4,7 @@
     <div *ngFor="let prop of fields; index as i">
         <p-inputGroup>
             <div  style="display: grid; margin: 1rem; padding: 1rem;">
-                <label>{{prop.field}}</label>
+                <p-tag severity="success" [value]="prop.field" />
                 <input *ngIf="prop.type == 'text'"   [(ngModel)]="dataRec[prop.field]" pInputText/>
                 <input  *ngIf="prop.type == 'numeric'"  [(ngModel)]="dataRec[prop.field]"  [pKeyFilter]="'num'"  pInputText/>
                 <input [disabled]="true" *ngIf="prop.type == 'id'"  [(ngModel)]="dataRec[prop.field]" pInputText/>

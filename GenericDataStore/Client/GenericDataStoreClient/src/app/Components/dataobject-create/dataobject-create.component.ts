@@ -19,13 +19,15 @@ import { KeyFilterModule } from 'primeng/keyfilter';
 import {ToastModule} from 'primeng/toast';
 import { RootFilter } from '../../Models/Parameters';
 import { DataobjectParentselectComponent } from '../dataobject-parentselect/dataobject-parentselect.component';
+import { TagModule } from 'primeng/tag';
+
 
 
 @Component({
   selector: 'app-dataobject-create',
   standalone: true,
   imports: [InputGroupModule, FormsModule,CommonModule,CheckboxModule,TriStateCheckboxModule,CalendarModule,DropdownModule,FileUploadModule,KeyFilterModule,
-    InputTextModule,InputNumberModule,ButtonModule,MessagesModule,ToastModule],
+    InputTextModule,InputNumberModule,ButtonModule,MessagesModule,ToastModule,TagModule],
     providers: [MessageService], 
   templateUrl: './dataobject-create.component.html',
   styleUrl: './dataobject-create.component.css'
