@@ -2,7 +2,6 @@
 
 <div>
     <div *ngFor="let prop of fields; index as i">
-        <p-inputGroup>
             <div  style="display: grid; margin: 1rem; padding: 1rem;">
                 <p-tag severity="success" [value]="prop.field" />
                 <input *ngIf="prop.type == 'text'"   [(ngModel)]="dataRec[prop.field]" pInputText/>
@@ -27,7 +26,6 @@
                 </div>
     
             </div>
-        </p-inputGroup>
     </div>
 </div>
 

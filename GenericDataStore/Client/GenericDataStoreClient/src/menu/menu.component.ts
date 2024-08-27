@@ -81,6 +81,7 @@ export class MenuComponent {
       ];
       this.items.push(privatmenu);
       this.getCategories();
+      this.loggedIn = true;
       
     }, () =>{
       this.items = [
@@ -136,7 +137,7 @@ export class MenuComponent {
   }
 
   Subscriptions(){
-    window.open('https://billing.stripe.com/p/login/test_14kaFq7iGf5T8Ug9AA', '_blank');
+    window.open('https://billing.stripe.com/p/login/bIYbKS8HgdiNazKfYY', '_blank');
   }
 
   Settings(){
