@@ -154,11 +154,20 @@ export class ObjecttypeCreateComponent implements OnInit {
       });
       return;
     }
-    if(this.desc?.length > 200){
+    if(this.name?.includes(' ') || this.name?.includes('/')|| this.name?.includes('#')|| this.name?.includes("'")|| this.name?.includes('"')|| this.name?.includes('%')){
       this.messageService.add({ 
         severity: "error", 
         summary: "Error", 
-        detail: "Description is too long. Max 200 characters.", 
+        detail: "Name can not contains special characters", 
+        life: 3000
+      });
+      return;
+    }
+    if(this.desc?.length > 1000){
+      this.messageService.add({ 
+        severity: "error", 
+        summary: "Error", 
+        detail: "Description is too long. Max 1000 characters.", 
         life: 3000
       });
       return;

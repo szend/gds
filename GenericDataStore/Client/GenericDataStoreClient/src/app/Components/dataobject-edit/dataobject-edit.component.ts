@@ -369,7 +369,7 @@ GetIdDict(){
       this.messageService.add({
         severity: "error", 
         summary: "Error", 
-        detail: error.message,
+        detail: "Prediction failed",
         life: 9000
       });
       this.loading = false;
@@ -403,7 +403,7 @@ GetIdDict(){
       this.messageService.add({
         severity: "error", 
         summary: "Error", 
-        detail: error.message,
+        detail: "Classification failed",
         life: 9000
       });
       this.loading = false;
