@@ -25,8 +25,8 @@
                             <br>
                         </div>
         
-                        <p-calendar [(ngModel)]="datevalues[i]" [disabled]="!editable" #c dateFormat="dd.mm.yy"  [showTime]="false" *ngIf="prop.type == 'date' && dataRec[i]" (onClose)="setDate(c, i)"></p-calendar>
-        
+                        <p-calendar [(ngModel)]="datevalues[i] " [disabled]="!editable" #c  [showTime]="false" *ngIf="prop.type == 'date' && dataRec[i]" (onClose)="setDate(c, i)"></p-calendar>
+
                         <p-dropdown [disabled]="!editable" *ngIf="prop.type == 'option' && dataRec[i]" [options]="prop.option" [dataKey]="'optionValue'" (onChange)="OptionSelect($event,i)"  optionLabel="optionName" [showClear]="true"
                          [placeholder]="dataRec[i].valueString != null && dataRec[i].valueString != undefined && dataRec[i].valueString != '' ? dataRec[i].valueString : 'Select'"></p-dropdown>
                         <div *ngIf="prop.type == 'image' && dataRec[i]">

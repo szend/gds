@@ -188,7 +188,7 @@ namespace GenericDataStore.Controllers
                 }
                 foreach (var item in alltable)
                 {
-                    var connections = Repository.databaseTableRelations().Where(x => x.ParentTable == item || x.ChildTable == item).ToList();
+                    var connections = Repository.databaseTableRelations()?.Where(x => x.ParentTable == item || x.ChildTable == item).ToList();
                     if (connections != null)
                     {
                         foreach (var item2 in connections)

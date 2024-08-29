@@ -55,8 +55,8 @@ export class SearchviewComponent implements OnInit{
     });
   }
 
-  GoToType(name : string){
-    this.router.navigateByUrl('/'+ name);
+  GoToType(name : string, id: string){
+    this.router.navigateByUrl('/'+ id +'/'+ name);
   }
 
   OpenObject(id : string){

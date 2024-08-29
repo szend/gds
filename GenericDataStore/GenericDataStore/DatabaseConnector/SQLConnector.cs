@@ -556,7 +556,7 @@ ORDER BY
             using (SqlConnection myConnection = new SqlConnection(ConnectionString))
             {
                 var pkey = objtype.Field.Where(x => x.Type == "id").Count() > 0 ? objtype.Field.Where(x => x.Type == "id").Select(x => x.Name) : new List<string> { objtype.TableName + "Id" };
-                string oString = @"CREATE TABLE " + objtype.Name + " ("+string.Join(",", pkey.Select(x => "[" + x + "]" + idtype)) + " , " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => "[" + x.Name + "] " + GetType(x.Type))) + ", PRIMARY KEY ("+ string.Join(",", pkey.Select(x => "["+x+"]")) + "))";
+                string oString = @"CREATE TABLE [" + objtype.Name + "] (" + string.Join(",", pkey.Select(x => "[" + x + "]" + idtype)) + " , " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => "[" + x.Name + "] " + GetType(x.Type))) + ", PRIMARY KEY ("+ string.Join(",", pkey.Select(x => "["+x+"]")) + "))";
                 SqlCommand oCmd = new SqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();

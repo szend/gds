@@ -77,10 +77,10 @@
                          {{ getValue(row.value, col) }}
                         </label>
                         <label *ngIf="col.type == 'boolean'">
-                            <i  *ngIf="getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true" class="pi pi-check" style="font-size: 1rem"></i>
+                            <i  *ngIf="getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true || getValue(row.value, col) == 1 || getValue(row.value, col) == '1' " class="pi pi-check" style="font-size: 1rem"></i>
     
                             <i  *ngIf="(getValue(row.value, col) == 'false' || getValue(row.value, col) == 'False' || getValue(row.value, col) == false) " class="pi pi-times" style="font-size: 1rem"></i>
-                            {{ getValue(row.value, col)}}
+                            {{ getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true || getValue(row.value, col) == 1 || getValue(row.value, col) == '1' }}
                            </label>
                         <p-image [width]="'300rem'" [height]="'300rem'" *ngIf="col.type == 'image' && getImageObj(row, col.header)"  [src]="getImageObj(row, col.header)"  alt="not picture" [preview]="true"></p-image>
                     </td>

@@ -1,7 +1,12 @@
 ﻿using GenericDataStore.Filtering;
 using GenericDataStore.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
+using Microsoft.ML.Transforms;
 using MySqlConnector;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System;
 
 namespace GenericDataStore.DatabaseConnector
 {
@@ -17,20 +22,8 @@ namespace GenericDataStore.DatabaseConnector
         {
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"DELETE FROM " + tablename + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => x + " = " + y + ""));
-                MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-                myConnection.Open();
-                oCmd.ExecuteNonQuery();
-                myConnection.Close();
-            }
-            return true;
-        }
 
-        public bool InsertValue(string tablename, List<string> columns, List<string> values)
-        {
-            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-            {
-                string oString = @"INSERT INTO " + tablename + "] (" + string.Join(",", columns) + ") VALUES ('" + string.Join("','", values) + "')";
+                string oString = @"DELETE FROM `" + tablename + "` WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "`" + x + "`" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -42,28 +35,13 @@ namespace GenericDataStore.DatabaseConnector
 
         public bool UpdateValues(string tablename, Dictionary<string, string> fieldvalues, Dictionary<string, string> ids)
         {
-            try
+            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-                {
-                    string oString = @"UPDATE " + tablename + " SET " + string.Join(",", fieldvalues.Keys.Zip(fieldvalues.Values, (x, y) => x + " = " + y + "")) + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => x + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
-                    MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-                    myConnection.Open();
-                    oCmd.ExecuteNonQuery();
-                    myConnection.Close();
-                }
-            }
-            catch (Exception)
-            {
-
-                using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-                {
-                    string oString = @"UPDATE " + tablename + " SET " + string.Join(",", fieldvalues.Keys.Zip(fieldvalues.Values, (x, y) => x + " = " + y + "")) + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => x + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
-                    MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-                    myConnection.Open();
-                    oCmd.ExecuteNonQuery();
-                    myConnection.Close();
-                }
+                string oString = @"UPDATE  `" + tablename + "` SET " + string.Join(",", fieldvalues.Keys.Zip(fieldvalues.Values, (x, y) => "`" + x + "`" + " = " + y + "")) + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "`" + x + "`" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
+                MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
+                myConnection.Open();
+                oCmd.ExecuteNonQuery();
+                myConnection.Close();
             }
 
             return true;
@@ -73,7 +51,7 @@ namespace GenericDataStore.DatabaseConnector
         {
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"INSERT INTO [" + tablename + "] (" + string.Join(",", fieldvalues.Keys) + ") VALUES (" + string.Join(",", fieldvalues.Values) + ")";
+                string oString = @"INSERT INTO `" + tablename + "` (" + string.Join(",", fieldvalues.Keys) + ") VALUES (" + string.Join(",", fieldvalues.Values) + ")";
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -87,11 +65,10 @@ namespace GenericDataStore.DatabaseConnector
         {
 
             DataObject obj = new DataObject();
-            try
-            {
+  
                 using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
                 {
-                    string oString = @"SELECT * FROM " + tablename + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => x + " = " + y + ""));
+                    string oString = @"SELECT * FROM `" + tablename + "` WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "`" + x + "`" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
                     MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                     myConnection.Open();
                     using (MySqlDataReader oReader = oCmd.ExecuteReader())
@@ -119,41 +96,7 @@ namespace GenericDataStore.DatabaseConnector
                     }
                 }
 
-            }
-            catch (Exception)
-            {
-
-                using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-                {
-                    string oString = @"SELECT * FROM " + tablename + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => x + " = " + y + ""));
-                    MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-                    myConnection.Open();
-                    using (MySqlDataReader oReader = oCmd.ExecuteReader())
-                    {
-                        while (oReader.Read())
-                        {
-                            obj.Value = new List<Value>();
-                            for (int i = 0; i < oReader.FieldCount; i++)
-                            {
-                                if (oReader.GetName(i) != "DataObjectId" && oReader.GetName(i) != "AppUserId")
-                                {
-                                    Value value = new Value()
-                                    {
-                                        Name = oReader.GetName(i),
-                                        ValueString = oReader[i].ToString(),
-                                        ObjectTypeId = obj.ObjectTypeId,
-                                        ValueId = Guid.NewGuid()
-                                    };
-                                    obj.Value.Add(value);
-                                }
-                            }
-                        }
-
-                        myConnection.Close();
-                    }
-                }
-
-            }
+            
             return obj;
         }
         public void ExecuteQuery(string query)
@@ -225,92 +168,22 @@ namespace GenericDataStore.DatabaseConnector
             return types;
         }
 
-        public List<object> GetAllDataFromTableWithFilter(string tablename, Type classtype, string filter)
-        {
-            List<object> list = new List<object>();
-            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-            {
-                string oString = @"SELECT * FROM " + tablename + " WHERE " + filter;
-                MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-                myConnection.Open();
-                using (MySqlDataReader oReader = oCmd.ExecuteReader())
-                {
-                    while (oReader.Read())
-                    {
-                        object obj = Activator.CreateInstance(classtype);
-                        int idx = 0;
-                        foreach (var item in classtype.GetProperties())
-                        {
-                            var fieldvalue = oReader[idx];
-                            if (fieldvalue != DBNull.Value)
-                            {
-                                item.SetValue(obj, oReader[idx]);
-                            }
-
-                            idx++;
-                        }
-                        list.Add(obj);
-                    }
-
-                    myConnection.Close();
-                }
-            }
-            return list;
-
-        }
-
-        public List<object> GetAllDataFromTableWithOrder(string tablename, Type classtype, string order)
-        {
-            List<object> list = new List<object>();
-            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-            {
-                string oString = @"SELECT * FROM " + tablename;
-                if (order != "")
-                {
-                    oString += " ORDER BY " + order;
-                }
-                MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-                myConnection.Open();
-                using (MySqlDataReader oReader = oCmd.ExecuteReader())
-                {
-                    while (oReader.Read())
-                    {
-                        object obj = Activator.CreateInstance(classtype);
-                        int idx = 0;
-                        foreach (var item in classtype.GetProperties())
-                        {
-                            var fieldvalue = oReader[idx];
-                            if (fieldvalue != DBNull.Value)
-                            {
-                                item.SetValue(obj, oReader[idx]);
-                            }
-
-                            idx++;
-                        }
-                        list.Add(obj);
-                    }
-
-                    myConnection.Close();
-                }
-            }
-            return list;
-        }
         public List<DataObject> GetAllDataFromTable(ObjectType objtype, RootFilter? filter, bool chart, bool onlyfirstx = false)
         {
             List<DataObject> list = new List<DataObject>();
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"SELECT * FROM " + objtype.TableName + "";
+                string oString = @"SELECT * FROM `" + objtype.TableName + "`";
 
                 if (filter != null && filter.ValueFilters != null && filter.ValueFilters.Any())
                 {
-                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => x.Field + " "
+                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "`" + x.Field + "`" + " "
                     + GetOperatorAndValueString(objtype.Field.FirstOrDefault(y => y.Name == x.Field), x.Operator, x.Value)));
 
                 }
                 if (filter != null && filter.ValueSortingParams != null && filter.ValueSortingParams.Any())
                 {
-                    oString += " Order By " + filter.ValueSortingParams.FirstOrDefault().Field;
+                    oString += " Order By " + "`" + filter.ValueSortingParams.FirstOrDefault().Field + "`";
                     if (filter.ValueSortingParams.FirstOrDefault().Order == 1)
                     {
                         oString += " DESC";
@@ -318,8 +191,19 @@ namespace GenericDataStore.DatabaseConnector
                 }
                 if (filter != null && filter.ValueSkip != null && filter.ValueTake != null && filter.ValueTake > 0 && chart == false)
                 {
-
-                    //oString += @" LIMIT " + filter?.ValueTake + " OFFSET " + filter?.ValueSkip;
+                    if (filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
+                    {
+                        oString += " Order By " + "`" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "`";
+                    }
+                    oString += @" LIMIT " + filter.ValueTake + " OFFSET " + filter.ValueSkip;
+                }
+                else if (filter != null && filter.ValueSkip != null && filter.ValueTake != null && filter.ValueTake > 0 && chart == true && onlyfirstx == true)
+                {
+                    if (filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
+                    {
+                        oString += " Order By " + "`" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "`";
+                    }
+                    oString += @" LIMIT " + filter.ValueTake + " OFFSET " + filter.ValueSkip;
                 }
 
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
@@ -587,10 +471,10 @@ if (field.Type == "date")
 
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"SELECT COUNT(*) FROM " + objtype.TableName;
+                string oString = @"SELECT COUNT(*) FROM `" + objtype.TableName + "`";
                 if (filter != null && filter.ValueFilters != null && filter.ValueFilters.Any())
                 {
-                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => x.Field + " "
+                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "`" + x.Field + "`" + " "
                     + GetOperatorAndValueString(objtype.Field.FirstOrDefault(y => y.Name == x.Field), x.Operator, x.Value)));
                 }
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
@@ -658,88 +542,22 @@ ORDER BY
             return databaseTableRelations;
         }
 
-        //        public bool CreateUserIdField(string name, Guid userid)
-        //        {
-        //            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-        //            {
-        //                string oString = @"
-        //IF COL_LENGTH('" + name + @" ', 'AppUserId') IS NULL
-        //BEGIN
-        //ALTER TABLE " + name + @" 
-        //ADD AppUserId uniqueidentifier;
-        //END
-        //";
-        //                MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-        //                myConnection.Open();
-        //                using (MySqlCommand oReader = oCmd.ExecuteReader())
-        //                {
-        //                    while (oReader.Read())
-        //                    {
-
-        //                    }
-        //                    myConnection.Close();
-        //                }
-        //            }
-
-        //            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-        //            {
-        //                string o2String = @"
-        //UPDATE " + name + @" 
-        //SET AppUserId = '" + userid + @"';
-        //";
-        //                MySqlCommand o2Cmd = new MySqlCommand(o2String, myConnection);
-        //                myConnection.Open();
-        //                using (MySqlCommand o2Reader = o2Cmd.ExecuteReader())
-        //                {
-        //                    while (o2Reader.Read())
-        //                    {
-
-        //                    }
-
-        //                    myConnection.Close();
-        //                }
-        //            }
-
-
-        //            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-        //            {
-        //                string o3String = @"
-        //IF COL_LENGTH('" + name + @" ', 'DataObjectId') IS NULL 
-        //BEGIN
-        //ALTER TABLE " + name + @" 
-        //ADD DataObjectId uniqueidentifier NOT NULL  default newid() with values
-        //CREATE UNIQUE NONCLUSTERED INDEX IX_DataObjectId ON dbo." + name + @"
-        //(
-        //DataObjectId
-        //) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-        //END
-        //";
-        //                MySqlCommand o3Cmd = new MySqlCommand(o3String, myConnection);
-        //                myConnection.Open();
-        //                using (MySqlCommand o3Reader = o3Cmd.ExecuteReader())
-        //                {
-        //                    while (o3Reader.Read())
-        //                    {
-
-        //                    }
-        //                    myConnection.Close();
-        //                }
-        //            }
-
-
-
-        //            return true;
-
-
-        //        }
 
         public bool CreateTable(ObjectType objtype, string idtype)
         {
+            if(idtype == "  int NOT NULL IDENTITY(1,1) ")
+            {
+                idtype = "  int NOT NULL AUTO_INCREMENT ";
+            }
+            else if(idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
+            {
+                idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
+            }
 
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string pkey = objtype.Field.Where(x => x.Type == "id").Count() == 1 ? objtype.Field.Where(x => x.Type == "id").FirstOrDefault().Name : objtype.TableName + "Id";
-                string oString = @"CREATE TABLE " + objtype.Name + " (" + pkey + " uniqueidentifier NOT NULL DEFAULT NEWID(), " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) + ", PRIMARY KEY (" + pkey + "))";
+                var pkey = objtype.Field.Where(x => x.Type == "id").Count() > 0 ? objtype.Field.Where(x => x.Type == "id").Select(x => x.Name) : new List<string> { objtype.TableName + "Id" };
+                string oString = @"CREATE TABLE `" + objtype.Name + "` (" + string.Join(",", pkey.Select(x => "`" + x + "`" + idtype)) + " , " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => "`" + x.Name + "` " + GetType(x.Type))) + ", PRIMARY KEY (" + string.Join(",", pkey.Select(x => "`" + x + "`")) + "))";
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -750,15 +568,39 @@ ORDER BY
 
         public bool AddChild(ObjectType objtype, ObjectType parent, string idtype, string parentidtype, bool virtualconnection = false)
         {
+            if (idtype == "  int NOT NULL IDENTITY(1,1) ")
+            {
+                idtype = "  int NOT NULL AUTO_INCREMENT ";
+                parentidtype = " int ";
+            }
+            else if (idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
+            {
+                idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
+                parentidtype = " char(36) ";
+            }
 
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string pkey = objtype.Field.Where(x => x.Type == "id").Count() == 1 ? objtype.Field.Where(x => x.Type == "id").FirstOrDefault().Name : objtype.TableName + "Id";
-                string oString = @"CREATE TABLE " + objtype.Name + " (" + pkey + " uniqueidentifier NOT NULL DEFAULT NEWID(), " + parent.Name + "Id uniqueidentifier, " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) + ", PRIMARY KEY (" + pkey + "), FOREIGN KEY (" + parent.Name + "Id) REFERENCES " + parent.Name + "(" + parent.Field.FirstOrDefault(x => x.Type == "id").Name + "))";
-                MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-                myConnection.Open();
-                oCmd.ExecuteNonQuery();
-                myConnection.Close();
+                if (virtualconnection == false)
+                {
+                    string pkey = objtype.Field.Where(x => x.Type == "id").Count() == 1 ? objtype.Field.Where(x => x.Type == "id").FirstOrDefault().Name : objtype.TableName + "Id";
+                    string oString = @"CREATE TABLE `" + objtype.Name + "` (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) + ", PRIMARY KEY (" + pkey + "), FOREIGN KEY (" + parent.Name + "Id) REFERENCES " + parent.Name + "(" + parent.Field.FirstOrDefault(x => x.Type == "id").Name + "))";
+                    MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
+                    myConnection.Open();
+                    oCmd.ExecuteNonQuery();
+                    myConnection.Close();
+                }
+                else
+                {
+                    string pkey = objtype.Field.Where(x => x.Type == "id").Count() == 1 ? objtype.Field.Where(x => x.Type == "id").FirstOrDefault().Name : objtype.TableName + "Id";
+                    string oString = @"CREATE TABLE `" + objtype.Name + "` (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " +
+                        string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) +
+                        ", PRIMARY KEY (" + pkey + "), )";
+                    MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
+                    myConnection.Open();
+                    oCmd.ExecuteNonQuery();
+                    myConnection.Close();
+                }
             }
             return true;
         }
@@ -767,7 +609,7 @@ ORDER BY
         {
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"ALTER TABLE [" + tablename + "] DROP COLUMN " + columnname;
+                string oString = @"ALTER TABLE `" + tablename + "` DROP COLUMN `" + columnname + "`";
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -780,7 +622,7 @@ ORDER BY
         {
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"ALTER TABLE [" + tablename + "] ADD " + columnname + " " + GetType(columntype);
+                string oString = @"ALTER TABLE `" + tablename + "` ADD `" + columnname + "` " + GetType(columntype);
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -793,7 +635,7 @@ ORDER BY
         {
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"EXEC  sp_rename '" + tablename + "." + columnname + "', '" + newcolumnname + "', 'COLUMN'";
+                string oString = @"ALTER TABLE `" + tablename + "` RENAME COLUMN " + columnname + " TO " + newcolumnname + "";
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -806,7 +648,7 @@ ORDER BY
         {
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"ALTER TABLE [" + tablename + "] ALTER COLUMN " + columnname + " " + GetType(columntype);
+                string oString = @"ALTER TABLE `" + tablename + "` MODIFY  `" + columnname + "` " + GetType(columntype);
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -815,24 +657,12 @@ ORDER BY
             return true;
         }
 
-        //public bool UpdateColumnNullable(string tablename, string columnname, bool nullable)
-        //{
-        //    using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-        //    {
-        //        string oString = @"ALTER TABLE " + tablename + " ALTER COLUMN " + columnname + " " + GetType(columntype) + (nullable ? " NULL" : " NOT NULL");
-        //        MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-        //        myConnection.Open();
-        //        oCmd.ExecuteNonQuery();
-        //        myConnection.Close();
-        //    }
-        //    return true;
-        //}
-
+    
         public bool DropTable(string tablename)
         {
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"DROP TABLE [" + tablename + "]";
+                string oString = @"DROP TABLE `" + tablename + "`";
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -841,28 +671,28 @@ ORDER BY
             return true;
         }
 
-        public bool UpdateValue(string tablename, List<string> columnnames, List<string> newvalue, Field idfield, string idvalue)
-        {
-            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
-            {
-                string oString = @"UPDATE [" + tablename + "] SET " + string.Join(",", columnnames.Zip(newvalue, (x, y) => x + " = '" + y + "'")) + " WHERE " + idfield.Name + " = " + idvalue + ";";
-                MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-                myConnection.Open();
-                oCmd.ExecuteNonQuery();
-                myConnection.Close();
-            }
-            return true;
-        }
 
-        public bool CreateRealtion(string parenttable, string parentcolumn, string childtable, string childcolumn, string idtype, bool virtualconnection = false)
+        public bool CreateRealtion(string parenttable, string parentcolumn, string childtable, string childcolumn, string idtype, bool virtualrelation = false)
         {
-            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
+            try
             {
-                string oString = @"ALTER TABLE [" + childtable + "] ADD CONSTRAINT FK_" + parenttable + "_" + childtable + " FOREIGN KEY (" + childcolumn + ") REFERENCES " + parenttable + "(" + parentcolumn + ")";
-                MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
-                myConnection.Open();
-                oCmd.ExecuteNonQuery();
-                myConnection.Close();
+                this.AddColumn(childtable, childcolumn, idtype);
+
+            }
+            catch (Exception)
+            {
+
+            }
+            if (virtualrelation == false)
+            {
+                using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
+                {
+                    string oString = @"ALTER TABLE `" + childtable + "` ADD CONSTRAINT FK_" + parenttable + "_" + childtable + " FOREIGN KEY (`" + childcolumn + "`) REFERENCES `" + parenttable + "` (`" + parentcolumn + "`)";
+                    MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
+                    myConnection.Open();
+                    oCmd.ExecuteNonQuery();
+                    myConnection.Close();
+                }
             }
             return true;
         }
@@ -871,7 +701,7 @@ ORDER BY
         {
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"ALTER TABLE [" + childtable + "] DROP CONSTRAINT FK_" + parenttable + "_" + childtable;
+                string oString = @"ALTER TABLE `" + childtable + "` DROP CONSTRAINT FK_" + parenttable + "_" + childtable;
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -884,7 +714,7 @@ ORDER BY
         {
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
-                string oString = @"EXEC sp_rename '" + oldname + "', '" + newname + "'";
+                string oString = @"RENAME TABLE `" + oldname + "` TO `" + newname + "`";
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -901,19 +731,19 @@ ORDER BY
             }
             else if (originaltype == "numeric")
             {
-                return "float(53)";
+                return "double";
             }
             else if (originaltype == "date")
             {
-                return "DateTime";
+                return "Date";
             }
             else if (originaltype == "boolean")
             {
-                return "bool";
+                return "tinyint";
             }
             else if (originaltype == "id")
             {
-                return "uniqueidentifier";
+                return "char(36)";
             }
             else
             {

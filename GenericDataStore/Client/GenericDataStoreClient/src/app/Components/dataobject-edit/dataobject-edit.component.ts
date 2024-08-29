@@ -106,7 +106,7 @@ export class DataobjectEditComponent implements OnInit {
     this.fields.forEach(x=> {
       if(x.type == "boolean"){
         if(this.dataRec[i].valueString != null){
-          this.boolvalues.push(this.dataRec[i].valueString == "true" || this.dataRec[i].valueString == "True" ? true : false);
+          this.boolvalues.push(this.dataRec[i].valueString == "true" || this.dataRec[i].valueString == "True"|| this.dataRec[i].valueString == "1" || this.dataRec[i].valueString == 1 ? true : false);
         }
         else{
           this.boolvalues.push(false);

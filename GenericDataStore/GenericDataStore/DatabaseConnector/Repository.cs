@@ -9,16 +9,18 @@ namespace GenericDataStore.DatabaseConnector
         IDataConnector sQLConnector;
         public List<Type> types = new List<Type>();
         public List<ClassDescription> classDescriptions = new List<ClassDescription>();
-
+        public string sqltype { get; set; }
         public Repository(string connectstring,string type)
         {
             if (type.ToLower() == "mysql")
             {
                 sQLConnector = new MySqlConnector(connectstring);
+                sqltype = "mysql";
             }
             else if (type.ToLower() == "sql server")
             {
                 sQLConnector = new SQLConnector(connectstring);
+                sqltype = "sql server";
             }
         }
 
@@ -153,7 +155,7 @@ namespace GenericDataStore.DatabaseConnector
                 {
                     return "''";
                 }
-                return $"CONVERT(datetime,'{res.Split('.')[1] + "." + res.Split('.')[0] + "." + res.Split('.')[2]}')";
+                return $"'{res.Split('.')[2] + "." + res.Split('.')[1] + "." + res.Split('.')[0]}'";
             }
             else if (field.Type == "numeric")
             {
@@ -213,7 +215,14 @@ namespace GenericDataStore.DatabaseConnector
                 var valuesstring = GetValueString(item, obj);
                 if (valuesstring != "''")
                 {
-                    keyValuePairs.Add("["+item.Name+"]", valuesstring);
+                    if(sqltype == "mysql")
+                    {
+                        keyValuePairs.Add("`" + item.Name + "`", valuesstring);
+                    }
+                    else if (sqltype == "sql server")
+                    {
+                        keyValuePairs.Add("[" + item.Name + "]", valuesstring);
+                    }
                 }
             }
             return sQLConnector.InsertVlaues(typ.Name, keyValuePairs);
