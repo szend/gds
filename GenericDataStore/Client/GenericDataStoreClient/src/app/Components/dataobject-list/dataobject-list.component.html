@@ -1,4 +1,6 @@
 
+<meta name="keywords" [content]="data.description">
+    <meta name="description" [content]="data.description">
 
 <div *ngIf="data">
     <p-menubar *ngIf="GetAccess('f') && filterMetu.length > 0" [model]="filterMetu"></p-menubar>
