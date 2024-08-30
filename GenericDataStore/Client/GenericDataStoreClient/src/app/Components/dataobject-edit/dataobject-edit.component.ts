@@ -122,16 +122,28 @@ export class DataobjectEditComponent implements OnInit {
     this.fields.forEach(x=> {
       if(x.type == "date"){
         if(this.dataRec[j].valueString != null){
-          let datenum = this.dataRec[j].valueString.split('.');
-          if(datenum[2].length != 4){
-            if(datenum[2].length == 2){
-              datenum[2] = "20" + datenum[2];
+          if(this.dataRec[j].valueString.includes('.')){
+            let datenum = this.dataRec[j].valueString.split('.');
+            if(datenum[2].length != 4){
+              if(datenum[2].length == 2){
+                datenum[2] = "20" + datenum[2];
+            }
+            else if (datenum[2].length > 4){
+              datenum[2] = datenum[2].substring(0,4);
+            }
           }
-          else if (datenum[2].length > 4){
-            datenum[2] = datenum[2].substring(0,4);
+            this.datevalues.push(new Date(datenum[2],datenum[1] -1,datenum[0]));
           }
-        }
-          this.datevalues.push(new Date(datenum[2],datenum[1] -1,datenum[0]));
+          else if (this.dataRec[j].valueString.includes('/')){
+            let datenum = this.dataRec[j].valueString.split('/');
+            if(datenum[2].includes(' ')){
+              datenum[2] = datenum[2].split(' ')[0]
+            }
+           
+          
+            this.datevalues.push(new Date(datenum[2],datenum[0] -1,datenum[1]));
+          }
+
         }
         else{
           this.datevalues.push(null);

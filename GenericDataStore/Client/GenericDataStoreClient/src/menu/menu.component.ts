@@ -14,12 +14,14 @@ import { get } from 'http';
 import { InputTextModule } from 'primeng/inputtext';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { FormsModule } from '@angular/forms';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
 
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [MenubarModule, ButtonModule,CommonModule,AvatarModule,AvatarGroupModule,SidebarModule,MeterGroupModule,InputTextModule, KeyFilterModule, FormsModule],
+  imports: [MenubarModule, ButtonModule,CommonModule,AvatarModule,AvatarGroupModule,SidebarModule,MeterGroupModule,InputTextModule, KeyFilterModule, FormsModule, ProgressSpinnerModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
@@ -64,7 +66,7 @@ export class MenuComponent {
     this.items = [];
 
     this.apiService.GetTypeByFilter(undefined,true).subscribe(x =>{
-      let privatmenu : {label: string, icon: string, routerLink: string, items: any[]} =  { label: 'My lists', icon: 'pi pi-align-justify', routerLink: '/home', items:[]};
+      let privatmenu : {label: string, icon: string, routerLink: string, items: any[]} =  { label: 'My lists', icon: 'pi pi-align-justify', routerLink: '/mylists', items:[]};
       x.forEach((y: any)  => {
         let icon = y.private == true ? 'pi pi-lock' : 'pi pi-lock-open'
         let link = y.private == true ? 'private/' +y.objectTypeId+ '/'+ y.name : '/' +y.objectTypeId + '/' + y.name
@@ -141,6 +143,12 @@ export class MenuComponent {
   }
 
   Settings(){
+    this.sidebarVisible = true;
+  }
+
+  limitsloadnig : boolean = false;
+  Limits(){
+    this.limitsloadnig = true;
     this.apiService.GetSettingData().subscribe(x =>{
       let newlistspace : MeterItem[] = [];
       let newdataspace : MeterItem[] = [];
@@ -159,9 +167,7 @@ export class MenuComponent {
       this.currentlist = x.currentlist;
       this.maxexterndata = x.maxexterndata;
       this.currentexdata = x.currentexdata;
-
-      this.sidebarVisible = true;
-
+      this.limitsloadnig = false;
     });
   }
   Route(route : string){

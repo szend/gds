@@ -16,6 +16,7 @@ import { ContactComponent } from './home/contact/contact.component';
 import { PriceComponent } from './home/price/price.component';
 import { FeaturesComponent } from './home/features/features.component';
 import { ConfirmpaymentComponent } from './home/confirmpayment/confirmpayment.component';
+import { MylistsComponent } from './home/mylists/mylists.component';
 
 
 export const routes: Routes = [
@@ -27,6 +28,7 @@ export const routes: Routes = [
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
+      { path: 'mylists', component: MylistsComponent },
       { path: 'confirm/:intcount/:extcount/:listcount', component: ConfirmpaymentComponent},
       { path: 'contact', component: ContactComponent },
       { path: 'home', component: HomeComponent },

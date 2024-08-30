@@ -12,11 +12,14 @@
         <br><br>
         <p-button *ngIf="loggedIn == true"  class="buttonmargin" label="Subscriptions" (onClick)="Subscriptions()"></p-button>
         <br><br>
+        <p-button *ngIf="loggedIn == true"  class="buttonmargin" label="Limits" (onClick)="Limits()"></p-button>
+        <br><br>
         <div class="card">
             <p-meterGroup [value]="listspace"></p-meterGroup>
             <label>current: {{currentlist}} - max: {{maxlist}}</label>
         </div>
         <br><br>
+        <p-progressSpinner [style]="{'height' : '4rem', 'position' : 'absolute'}" [hidden]="!limitsloadnig" ariaLabel="loading"></p-progressSpinner>
         <div class="card">
             <p-meterGroup [value]="dataspace"></p-meterGroup>
             <label>current: {{currentpace}} - max: {{maxspace}}</label>
