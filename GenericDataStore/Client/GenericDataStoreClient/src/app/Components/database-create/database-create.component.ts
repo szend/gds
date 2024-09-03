@@ -48,6 +48,7 @@ export class DatabaseCreateComponent implements OnInit {
   options = [
     {label: 'SQL Server', value: 'SQL Server'},
     {label: 'MYSQL', value: 'MYSQL'},
+    {label: 'PostgreSQL', value: 'PostgreSQL'},
 
   ];
   idoptions = [

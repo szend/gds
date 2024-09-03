@@ -26,16 +26,10 @@ namespace GenericDataStore.DatabaseConnector
 
         public List<DatabaseTableRelations>? databaseTableRelations()
         {
-            try
-            {
+
                 return sQLConnector.GetConnections();
 
-            }
-            catch (Exception)
-            {
 
-                return null;
-            }
         }
         public void Create()
         {
@@ -155,7 +149,14 @@ namespace GenericDataStore.DatabaseConnector
                 {
                     return "''";
                 }
-                return $"'{res.Split('.')[2] + "." + res.Split('.')[1] + "." + res.Split('.')[0]}'";
+                try
+                {
+                    return $"'{res.Split('.')[2] + "." + res.Split('.')[1] + "." + res.Split('.')[0]}'";
+                }
+                catch (Exception)
+                {
+                    return "''";
+                }
             }
             else if (field.Type == "numeric")
             {

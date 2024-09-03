@@ -497,6 +497,21 @@ if (field.Type == "date")
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
                 string oString = @"
+
+SELECT 
+  `TABLE_SCHEMA`,              
+  `TABLE_NAME`,                    
+  `COLUMN_NAME`,                
+     
+  `REFERENCED_TABLE_NAME`,               
+  `REFERENCED_COLUMN_NAME`                 
+FROM
+  `INFORMATION_SCHEMA`.`KEY_COLUMN_USAGE`
+WHERE
+  `TABLE_SCHEMA` = SCHEMA()                
+  AND `REFERENCED_TABLE_NAME` IS NOT NULL;
+
+
 SELECT
     fk.name 'FK Name',
     tp.name 'Parent table',
@@ -526,12 +541,10 @@ ORDER BY
                     {
                         DatabaseTableRelations databaseTableRelation = new DatabaseTableRelations();
                         databaseTableRelation.FKName = oReader.GetString(0);
-                        databaseTableRelation.ParentTable = oReader.GetString(4);
-                        databaseTableRelation.ParentPropertyName = oReader.GetString(5);
-                        databaseTableRelation.ParentColumnId = oReader.GetInt32(6);
+                        databaseTableRelation.ParentTable = oReader.GetString(3);
+                        databaseTableRelation.ParentPropertyName = oReader.GetString(4);
                         databaseTableRelation.ChildTable = oReader.GetString(1);
                         databaseTableRelation.ChildPropertyName = oReader.GetString(2);
-                        databaseTableRelation.ChildTableId = oReader.GetInt32(3);
                         databaseTableRelations.Add(databaseTableRelation);
                     }
 

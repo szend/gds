@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using GenericDataStore.DatabaseConnector;
+using Microsoft.AspNetCore.Identity;
 
 namespace GenericDataStore.Models
 {
