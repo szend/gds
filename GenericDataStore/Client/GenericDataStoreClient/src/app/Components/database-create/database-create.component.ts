@@ -24,6 +24,7 @@ import { ApiService } from '../../Services/api.service';
 import { DataobjectListComponent } from '../dataobject-list/dataobject-list.component';
 import { DatabaseTablesComponent } from '../database-tables/database-tables.component';
 import { ChartComponent } from '../chart/chart.component';
+import { ExecuteQueryComponent } from '../execute-query/execute-query.component';
 
 @Component({
   selector: 'app-database-create',
@@ -111,6 +112,11 @@ export class DatabaseCreateComponent implements OnInit {
   ImportTables(){
     this.ref = this.dialogService.open(DatabaseTablesComponent,  { data: {id: this.database.databaseConnectionPropertyId, action: 'Connect'}, header: 'Connect tables', resizable: true});
   }
+
+  ExectQuery(){
+    this.ref = this.dialogService.open(ExecuteQueryComponent,  { data: {id: this.database.databaseConnectionPropertyId}, header: 'Execute SQL query', resizable: true});
+  }
+
 
   RefreshTables(){
     this.ref = this.dialogService.open(DatabaseTablesComponent,  { data: {id: this.database.databaseConnectionPropertyId, action: 'Refresh'}, header: 'Refresh tables', resizable: true});

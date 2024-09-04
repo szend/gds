@@ -17,7 +17,7 @@ namespace GenericDataStore.DatabaseConnector
 
         public DataObject GetByDataObjectId(string tablename, Dictionary<string, string> keyValuePairs);
 
-        public void ExecuteQuery(string query);
+        public string ExecuteQuery(string query);
 
         public List<string> GetAllTableName();
 

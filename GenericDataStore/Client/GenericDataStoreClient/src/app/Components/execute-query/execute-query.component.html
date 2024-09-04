@@ -1,0 +1,8 @@
+<label>Query</label>
+<textarea  style="width: 20rem;"  [(ngModel)]="query" pInputText></textarea>
+<p-progressSpinner [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
+
+<label>Result</label>
+<textarea  style="width: 20rem;"  [(ngModel)]="result" pInputText></textarea>
+
+<button  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Execute()">Run</button> 

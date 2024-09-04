@@ -99,15 +99,37 @@ namespace GenericDataStore.DatabaseConnector
             
             return obj;
         }
-        public void ExecuteQuery(string query)
+        public string ExecuteQuery(string query)
         {
-            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
+            string res = "";
+            using (SqlConnection myConnection = new SqlConnection(ConnectionString))
             {
-                MySqlCommand oCmd = new MySqlCommand(query, myConnection);
-                myConnection.Open();
-                oCmd.ExecuteNonQuery();
-                myConnection.Close();
+                try
+                {
+                    SqlCommand oCmd = new SqlCommand(query, myConnection);
+                    myConnection.Open();
+                    using (SqlDataReader oReader = oCmd.ExecuteReader())
+                    {
+                        while (oReader.Read())
+                        {
+                            for (int i = 0; i < oReader.FieldCount; i++)
+                            {
+                                res = res + oReader[i].ToString();
+                            }
+                            res += "\n";
+                        }
+
+                        myConnection.Close();
+                    }
+                }
+                catch (Exception e)
+                {
+                    res = e.Message;
+
+                }
+
             }
+            return res ?? "";
         }
 
         public List<string> GetAllTableName()
@@ -510,28 +532,6 @@ FROM
 WHERE
   `TABLE_SCHEMA` = SCHEMA()                
   AND `REFERENCED_TABLE_NAME` IS NOT NULL;
-
-
-SELECT
-    fk.name 'FK Name',
-    tp.name 'Parent table',
-    cp.name, cp.column_id,
-    tr.name 'Refrenced table',
-    cr.name, cr.column_id
-FROM 
-    sys.foreign_keys fk
-INNER JOIN 
-    sys.tables tp ON fk.parent_object_id = tp.object_id
-INNER JOIN 
-    sys.tables tr ON fk.referenced_object_id = tr.object_id
-INNER JOIN 
-    sys.foreign_key_columns fkc ON fkc.constraint_object_id = fk.object_id
-INNER JOIN 
-    sys.columns cp ON fkc.parent_column_id = cp.column_id AND fkc.parent_object_id = cp.object_id
-INNER JOIN 
-    sys.columns cr ON fkc.referenced_column_id = cr.column_id AND fkc.referenced_object_id = cr.object_id
-ORDER BY
-    tp.name, cp.column_id
 ";
                 MySqlCommand oCmd = new MySqlCommand(oString, myConnection);
                 myConnection.Open();

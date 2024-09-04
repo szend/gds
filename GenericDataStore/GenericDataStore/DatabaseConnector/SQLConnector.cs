@@ -99,16 +99,39 @@ namespace GenericDataStore.DatabaseConnector
             return obj;
         }
 
-        public void ExecuteQuery(string query)
+        public string ExecuteQuery(string query)
         {
+            string res = "";
             using (SqlConnection myConnection = new SqlConnection(ConnectionString))
             {
-                SqlCommand oCmd = new SqlCommand(query, myConnection);
-                myConnection.Open();
-                oCmd.ExecuteNonQuery();
-                myConnection.Close();
+                try
+                {
+                    SqlCommand oCmd = new SqlCommand(query, myConnection);
+                    myConnection.Open();
+                    using (SqlDataReader oReader = oCmd.ExecuteReader())
+                    {
+                        while (oReader.Read())
+                        {
+                            for (int i = 0; i < oReader.FieldCount; i++)
+                            {
+                                res = res + oReader[i].ToString();
+                            }
+                            res += "\n";
+                        }
+
+                        myConnection.Close();
+                    }
+                }
+                catch (Exception e)
+                {
+                    res = e.Message;
+
+                }
+
             }
+            return res ?? "";
         }
+        
 
         public List<string> GetAllTableName()
         {
@@ -663,7 +686,7 @@ ORDER BY
 
         public bool CreateRealtion(string parenttable, string parentcolumn, string childtable, string childcolumn, string idtype, bool virtualrelation = false)
         {
-            NpgsqlConnection
+            
             try
             {
                 this.AddColumn(childtable, childcolumn, idtype);

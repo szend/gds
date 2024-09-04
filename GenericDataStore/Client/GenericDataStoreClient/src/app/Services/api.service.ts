@@ -8,7 +8,7 @@ import { RootFilter } from '../Models/Parameters';
 })
 export class ApiService {
 
-  //baseUrl: string = "https://localhost:7053/api";
+//baseUrl: string = "https://localhost:7053/api";
 
   baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
 
@@ -24,6 +24,11 @@ export class ApiService {
   }
   GetTableNames(id: string):Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/DatabaseConnectionProperty/GetTableNames/`+ id );
+  }
+
+  ExecuteQuery(id: string, query : string):Observable<any> {
+    console.log(query);
+    return this.http.get<any>(`${this.baseUrl}/DatabaseConnectionProperty/ExecuteQuery/`+ id + '/' + query );
   }
 
 

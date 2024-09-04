@@ -22,6 +22,11 @@ namespace GenericDataStore.DatabaseConnector
                 sQLConnector = new SQLConnector(connectstring);
                 sqltype = "sql server";
             }
+            else if (type.ToLower() == "postgresql")
+            {
+                sQLConnector = new PostgreSqlConnector(connectstring);
+                sqltype = "postgresql";
+            }
         }
 
         public List<DatabaseTableRelations>? databaseTableRelations()
@@ -224,6 +229,14 @@ namespace GenericDataStore.DatabaseConnector
                     {
                         keyValuePairs.Add("[" + item.Name + "]", valuesstring);
                     }
+                    else if (sqltype == "postgresql")
+                    {
+                        keyValuePairs.Add("\"" + item.Name + "\"", valuesstring);
+                    }
+                    else
+                    {
+                        keyValuePairs.Add(item.Name, valuesstring);
+                    }
                 }
             }
             return sQLConnector.InsertVlaues(typ.Name, keyValuePairs);
@@ -263,6 +276,11 @@ namespace GenericDataStore.DatabaseConnector
         public bool RenameTable(string tablename, string newtablename)
         {
             return sQLConnector.RenameTable(tablename, newtablename);
+        }
+
+        public string ExecuteQuery(string query)
+        {
+            return sQLConnector.ExecuteQuery(query);
         }
 
     }

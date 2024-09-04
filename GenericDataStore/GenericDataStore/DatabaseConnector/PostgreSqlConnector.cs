@@ -1,5 +1,6 @@
 ﻿using GenericDataStore.Filtering;
 using GenericDataStore.Models;
+using Microsoft.Data.SqlClient;
 using MySqlConnector;
 using Npgsql;
 
@@ -18,7 +19,7 @@ namespace GenericDataStore.DatabaseConnector
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
 
-                string oString = @"DELETE FROM `" + tablename + "` WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "`" + x + "`" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
+                string oString = "DELETE FROM " + tablename + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "" + x + "" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -32,7 +33,7 @@ namespace GenericDataStore.DatabaseConnector
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"UPDATE  `" + tablename + "` SET " + string.Join(",", fieldvalues.Keys.Zip(fieldvalues.Values, (x, y) => "`" + x + "`" + " = " + y + "")) + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "`" + x + "`" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
+                string oString = "UPDATE  " + tablename + " SET " + string.Join(",", fieldvalues.Keys.Zip(fieldvalues.Values, (x, y) => "" + x + "" + " = " + y + "")) + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "" + x + "" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -46,7 +47,7 @@ namespace GenericDataStore.DatabaseConnector
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"INSERT INTO `" + tablename + "` (" + string.Join(",", fieldvalues.Keys) + ") VALUES (" + string.Join(",", fieldvalues.Values) + ")";
+                string oString = "INSERT INTO " + tablename + " (" + string.Join(",", fieldvalues.Keys) + ") VALUES (" + string.Join(",", fieldvalues.Values) + ")";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -63,7 +64,7 @@ namespace GenericDataStore.DatabaseConnector
 
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"SELECT * FROM `" + tablename + "` WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "`" + x + "`" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
+                string oString = "SELECT * FROM " + tablename + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "" + x + "" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 using (NpgsqlDataReader oReader = oCmd.ExecuteReader())
@@ -94,15 +95,37 @@ namespace GenericDataStore.DatabaseConnector
 
             return obj;
         }
-        public void ExecuteQuery(string query)
+        public string ExecuteQuery(string query)
         {
-            using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
+            string res = "";
+            using (SqlConnection myConnection = new SqlConnection(ConnectionString))
             {
-                NpgsqlCommand oCmd = new NpgsqlCommand(query, myConnection);
-                myConnection.Open();
-                oCmd.ExecuteNonQuery();
-                myConnection.Close();
+                try
+                {
+                    SqlCommand oCmd = new SqlCommand(query, myConnection);
+                    myConnection.Open();
+                    using (SqlDataReader oReader = oCmd.ExecuteReader())
+                    {
+                        while (oReader.Read())
+                        {
+                            for (int i = 0; i < oReader.FieldCount; i++)
+                            {
+                                res = res + oReader[i].ToString();
+                            }
+                            res += "\n";
+                        }
+
+                        myConnection.Close();
+                    }
+                }
+                catch (Exception e)
+                {
+                    res = e.Message;
+
+                }
+
             }
+            return res ?? "";
         }
 
         public List<string> GetAllTableName()
@@ -111,7 +134,7 @@ namespace GenericDataStore.DatabaseConnector
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
                 string dbname = ConnectionString.Split(';').FirstOrDefault(x => x.Contains("Initial Catalog") || x.Contains("Database")).Split('=')[1];
-                string oString = "SHOW TABLES";
+                string oString = "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';";
                 //                string oString = @"
                 //SELECT TABLE_NAME
                 //FROM INFORMATION_SCHEMA.TABLES
@@ -142,9 +165,6 @@ namespace GenericDataStore.DatabaseConnector
         public List<Type> GetAllTable(List<string> tablesname)
         {
             List<Type> types = new List<Type>();
-
-            string dbname = ConnectionString.Split(';').FirstOrDefault(x => x.Contains("Initial Catalog") || x.Contains("Database")).Split('=')[1];
-
             int idx = 0;
             foreach (var item in tablesname)
             {
@@ -168,17 +188,17 @@ namespace GenericDataStore.DatabaseConnector
             List<DataObject> list = new List<DataObject>();
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"SELECT * FROM `" + objtype.TableName + "`";
+                string oString = "SELECT * FROM " + objtype.TableName + "";
 
                 if (filter != null && filter.ValueFilters != null && filter.ValueFilters.Any())
                 {
-                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "`" + x.Field + "`" + " "
+                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "" + x.Field + "" + " "
                     + GetOperatorAndValueString(objtype.Field.FirstOrDefault(y => y.Name == x.Field), x.Operator, x.Value)));
 
                 }
                 if (filter != null && filter.ValueSortingParams != null && filter.ValueSortingParams.Any())
                 {
-                    oString += " Order By " + "`" + filter.ValueSortingParams.FirstOrDefault().Field + "`";
+                    oString += " Order By " + "" + filter.ValueSortingParams.FirstOrDefault().Field + "";
                     if (filter.ValueSortingParams.FirstOrDefault().Order == 1)
                     {
                         oString += " DESC";
@@ -188,7 +208,7 @@ namespace GenericDataStore.DatabaseConnector
                 {
                     if (filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
                     {
-                        oString += " Order By " + "`" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "`";
+                        oString += " Order By " + "" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "";
                     }
                     oString += @" LIMIT " + filter.ValueTake + " OFFSET " + filter.ValueSkip;
                 }
@@ -196,7 +216,7 @@ namespace GenericDataStore.DatabaseConnector
                 {
                     if (filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
                     {
-                        oString += " Order By " + "`" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "`";
+                        oString += " Order By " + "" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "";
                     }
                     oString += @" LIMIT " + filter.ValueTake + " OFFSET " + filter.ValueSkip;
                 }
@@ -385,64 +405,47 @@ if (field.Type == "date")
                 return $"'{res}'";
             }
         }
+
         public string CreateClass(string name)
         {
             string result = "";
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
                 string? oString = @"
-                SET @table := '" + name + @"';
-                SET group_concat_max_len = 2048;
-                SELECT 
-                    CONCAT('public class ', @table, '\n{\n', GROUP_CONCAT(DISTINCT  a.property_ SEPARATOR '\n'), '\n}') class_
-                FROM 
-                    (SELECT
-                        CONCAT(
-                            CASE
-                            WHEN COLUMN_KEY = 'PRI' THEN CONCAT('[PrimaryDbKey]')
-                            ELSE ''
-                            END,
-                        '\tpublic ',
-                        CASE 
-                            WHEN DATA_TYPE = 'bigint' THEN CONCAT('long',IF(IS_NULLABLE = 'NO' , '', '?'))  
-                            WHEN DATA_TYPE = 'BINARY' THEN CONCAT('byte[]',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'bit' THEN CONCAT('bool',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'char' THEN CONCAT('string')
-                            WHEN DATA_TYPE = 'date' THEN CONCAT('DateTime',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'datetime' THEN CONCAT('DateTime',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'datetime2' THEN CONCAT('DateTime',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'datetimeoffset' THEN CONCAT('DateTimeOffset',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'decimal' THEN CONCAT('decimal',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'double' THEN CONCAT('double',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'enum' THEN CONCAT('enum',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'float' THEN CONCAT('float',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'image' THEN CONCAT('byte[]',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'int' THEN CONCAT('int',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'money' THEN CONCAT('decimal',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'nchar' THEN CONCAT('char',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'ntext' THEN CONCAT('string')
-                            WHEN DATA_TYPE = 'numeric' THEN CONCAT('decimal',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'nvarchar' THEN CONCAT('string')
-                            WHEN DATA_TYPE = 'real' THEN CONCAT('double',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'smalldatetime' THEN CONCAT('DateTime',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'smallint' THEN CONCAT('short',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'smallmoney' THEN CONCAT('decimal',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'text' THEN CONCAT('string')
-                            WHEN DATA_TYPE = 'time' THEN CONCAT('TimeSpan',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'timestamp' THEN CONCAT('DateTime',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'tinyint' THEN CONCAT('bool',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'uniqueidentifier' THEN CONCAT('Guid',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'varbinary' THEN CONCAT('byte[]',IF(IS_NULLABLE = 'NO' , '', '?'))
-                            WHEN DATA_TYPE = 'varchar' THEN CONCAT('string')
-                            WHEN DATA_TYPE = 'longtext' THEN CONCAT('string')
-                            ELSE CONCAT('_UNKNOWN_',IF(IS_NULLABLE = 'NO' , '', '?'))
-                        END, ' ', 
-                        COLUMN_NAME, ' {get; set;}') AS property_
-                    FROM INFORMATION_SCHEMA.COLUMNS
-                    WHERE table_name = @table) a
-                ;
-                ";
+SELECT 'public ' ||
+  case
+    when data_type = 'uuid' THEN 'Guid'
+    when data_type = 'text' then 'string'
+    when data_type = 'json' then 'string'
+    when data_type = 'integer' then 'int'
+    when data_type = 'boolean' then 'bool'
+    when data_type = 'bigint' then 'long'
+    when data_type = 'timestamp with time zone' then 'DateTimeOffset'
+    when data_type = 'timestamp without time zone' then 'DateTime'
+        when data_type = 'money' then 'decimal'
+    when data_type = 'numeric' then 'decimal'
+    when data_type = 'jsonb' then 'string'
+      when data_type = 'real' then 'float'
+    when data_type = 'ARRAY' then
+        (case when udt_name = '_text' then 'string'
+            when udt_name = '_uuid' then 'Guid'
+            when udt_name = '_int4' then 'int'
+         else data_type end)
+                                                                     || '[]'
+    else data_type
+    end
+  ||
+  case
+    when is_nullable = 'YES' and (data_type = 'uuid' or data_type = 'integer' or data_type = 'boolean' or data_type = 'timestamp with time zone' or data_type = 'numeric' or data_type = 'real') THEN '?'
+    else '' end
+  ||
+  ' ' || column_name || ' { get; set; } '
 
+  as sql
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name   = '" + name + @"';
+                ";
 
 
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
@@ -457,19 +460,21 @@ if (field.Type == "date")
                     myConnection.Close();
                 }
             }
-            result = result.Replace("public class", "public partial class");
+            result = "public partial class " + name + " { " + result + " }";
             return result;
         }
+
+
 
         public int GetCount(ObjectType objtype, RootFilter? filter = null)
         {
 
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"SELECT COUNT(*) FROM `" + objtype.TableName + "`";
+                string oString = "SELECT COUNT(*) FROM " + objtype.TableName + "";
                 if (filter != null && filter.ValueFilters != null && filter.ValueFilters.Any())
                 {
-                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "`" + x.Field + "`" + " "
+                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "" + x.Field + "" + " "
                     + GetOperatorAndValueString(objtype.Field.FirstOrDefault(y => y.Name == x.Field), x.Operator, x.Value)));
                 }
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
@@ -492,41 +497,17 @@ if (field.Type == "date")
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
                 string oString = @"
-
-SELECT 
-  `TABLE_SCHEMA`,              
-  `TABLE_NAME`,                    
-  `COLUMN_NAME`,                
-     
-  `REFERENCED_TABLE_NAME`,               
-  `REFERENCED_COLUMN_NAME`                 
-FROM
-  `INFORMATION_SCHEMA`.`KEY_COLUMN_USAGE`
-WHERE
-  `TABLE_SCHEMA` = SCHEMA()                
-  AND `REFERENCED_TABLE_NAME` IS NOT NULL;
-
-
 SELECT
-    fk.name 'FK Name',
-    tp.name 'Parent table',
-    cp.name, cp.column_id,
-    tr.name 'Refrenced table',
-    cr.name, cr.column_id
+tc.constraint_name, tc.table_name, kcu.column_name, 
+ccu.table_name AS foreign_table_name,
+ccu.column_name AS foreign_column_name 
 FROM 
-    sys.foreign_keys fk
-INNER JOIN 
-    sys.tables tp ON fk.parent_object_id = tp.object_id
-INNER JOIN 
-    sys.tables tr ON fk.referenced_object_id = tr.object_id
-INNER JOIN 
-    sys.foreign_key_columns fkc ON fkc.constraint_object_id = fk.object_id
-INNER JOIN 
-    sys.columns cp ON fkc.parent_column_id = cp.column_id AND fkc.parent_object_id = cp.object_id
-INNER JOIN 
-    sys.columns cr ON fkc.referenced_column_id = cr.column_id AND fkc.referenced_object_id = cr.object_id
-ORDER BY
-    tp.name, cp.column_id
+information_schema.table_constraints AS tc 
+JOIN information_schema.key_column_usage AS kcu
+  ON tc.constraint_name = kcu.constraint_name
+JOIN information_schema.constraint_column_usage AS ccu
+  ON ccu.constraint_name = tc.constraint_name
+WHERE constraint_type = 'FOREIGN KEY'
 ";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
@@ -555,17 +536,17 @@ ORDER BY
         {
             if (idtype == "  int NOT NULL IDENTITY(1,1) ")
             {
-                idtype = "  int NOT NULL AUTO_INCREMENT ";
+                idtype = "  SERIAL PRIMARY KEY ";
             }
             else if (idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
             {
-                idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
+                idtype = "  uuid DEFAULT gen_random_uuid() ";
             }
 
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
                 var pkey = objtype.Field.Where(x => x.Type == "id").Count() > 0 ? objtype.Field.Where(x => x.Type == "id").Select(x => x.Name) : new List<string> { objtype.TableName + "Id" };
-                string oString = @"CREATE TABLE `" + objtype.Name + "` (" + string.Join(",", pkey.Select(x => "`" + x + "`" + idtype)) + " , " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => "`" + x.Name + "` " + GetType(x.Type))) + ", PRIMARY KEY (" + string.Join(",", pkey.Select(x => "`" + x + "`")) + "))";
+                string oString = "CREATE TABLE " + objtype.Name + " (" + string.Join(",", pkey.Select(x => "" + x + "" + idtype)) + " , " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => "" + x.Name + " " + GetType(x.Type))) + ", PRIMARY KEY (" + string.Join(",", pkey.Select(x => "" + x + "")) + "))";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -573,6 +554,10 @@ ORDER BY
             }
             return true;
         }
+
+
+
+
 
         public bool AddChild(ObjectType objtype, ObjectType parent, string idtype, string parentidtype, bool virtualconnection = false)
         {
@@ -592,7 +577,7 @@ ORDER BY
                 if (virtualconnection == false)
                 {
                     string pkey = objtype.Field.Where(x => x.Type == "id").Count() == 1 ? objtype.Field.Where(x => x.Type == "id").FirstOrDefault().Name : objtype.TableName + "Id";
-                    string oString = @"CREATE TABLE `" + objtype.Name + "` (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) + ", PRIMARY KEY (" + pkey + "), FOREIGN KEY (" + parent.Name + "Id) REFERENCES " + parent.Name + "(" + parent.Field.FirstOrDefault(x => x.Type == "id").Name + "))";
+                    string oString = "CREATE TABLE " + objtype.Name + " (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) + ", PRIMARY KEY (" + pkey + "), FOREIGN KEY (" + parent.Name + "Id) REFERENCES " + parent.Name + "(" + parent.Field.FirstOrDefault(x => x.Type == "id").Name + "))";
                     NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                     myConnection.Open();
                     oCmd.ExecuteNonQuery();
@@ -601,7 +586,7 @@ ORDER BY
                 else
                 {
                     string pkey = objtype.Field.Where(x => x.Type == "id").Count() == 1 ? objtype.Field.Where(x => x.Type == "id").FirstOrDefault().Name : objtype.TableName + "Id";
-                    string oString = @"CREATE TABLE `" + objtype.Name + "` (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " +
+                    string oString = "CREATE TABLE " + objtype.Name + " (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " +
                         string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) +
                         ", PRIMARY KEY (" + pkey + "), )";
                     NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
@@ -617,7 +602,7 @@ ORDER BY
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"ALTER TABLE `" + tablename + "` DROP COLUMN `" + columnname + "`";
+                string oString = "ALTER TABLE " + tablename + " DROP COLUMN " + columnname + "";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -630,7 +615,7 @@ ORDER BY
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"ALTER TABLE `" + tablename + "` ADD `" + columnname + "` " + GetType(columntype);
+                string oString = "ALTER TABLE " + tablename + " ADD " + columnname + " " + GetType(columntype);
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -643,7 +628,7 @@ ORDER BY
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"ALTER TABLE `" + tablename + "` RENAME COLUMN " + columnname + " TO " + newcolumnname + "";
+                string oString = "ALTER TABLE " + tablename + " RENAME COLUMN " + columnname + " TO " + newcolumnname + "";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -656,7 +641,7 @@ ORDER BY
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"ALTER TABLE `" + tablename + "` MODIFY  `" + columnname + "` " + GetType(columntype);
+                string oString = "ALTER TABLE " + tablename + " MODIFY  " + columnname + " " + GetType(columntype);
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -670,7 +655,7 @@ ORDER BY
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"DROP TABLE `" + tablename + "`";
+                string oString = "DROP TABLE " + tablename + "";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -695,7 +680,7 @@ ORDER BY
             {
                 using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
                 {
-                    string oString = @"ALTER TABLE `" + childtable + "` ADD CONSTRAINT FK_" + parenttable + "_" + childtable + " FOREIGN KEY (`" + childcolumn + "`) REFERENCES `" + parenttable + "` (`" + parentcolumn + "`)";
+                    string oString = "ALTER TABLE " + childtable + " ADD CONSTRAINT FK_" + parenttable + "_" + childtable + " FOREIGN KEY (" + childcolumn + ") REFERENCES " + parenttable + " (" + parentcolumn + ")";
                     NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                     myConnection.Open();
                     oCmd.ExecuteNonQuery();
@@ -709,7 +694,7 @@ ORDER BY
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"ALTER TABLE `" + childtable + "` DROP CONSTRAINT FK_" + parenttable + "_" + childtable;
+                string oString = "ALTER TABLE " + childtable + " DROP CONSTRAINT FK_" + parenttable + "_" + childtable;
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -722,7 +707,7 @@ ORDER BY
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = @"RENAME TABLE `" + oldname + "` TO `" + newname + "`";
+                string oString = "RENAME TABLE " + oldname + " TO " + newname + "";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();

@@ -410,6 +410,28 @@ namespace GenericDataStore.Controllers
             db = db.OrderByDescending(x => x.Default);
             return new JsonResult(db, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
+        
+        [HttpGet("ExecuteQuery/{dbid}/{query}")]
+        [Authorize(Policy = "Full")]
+        public async Task<IActionResult> ExecuteQuery(Guid dbid, string query)
+        {
+            Guid? userid = this.DbContext.Users.FirstOrDefault(x => x.UserName == "admin")?.Id;
+            var db = DbContext.DatabaseConnectionProperty.FirstOrDefault(x => x.AppUserId == userid && x.DatabaseConnectionPropertyId == dbid);
+            if (db == null)
+            {
+                return BadRequest("Database not found");
+            }
+            if (userid != null)
+            {
+              Repository Repository = new Repository(db.ConnectionString, db.DatabaseType);
+
+              string res = Repository.ExecuteQuery(query);
+              return new JsonResult(res, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+            }
+
+            return BadRequest();
+        }
 
 
     }
