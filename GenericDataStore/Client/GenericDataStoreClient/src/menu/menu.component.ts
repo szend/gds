@@ -74,7 +74,7 @@ export class MenuComponent {
         privatmenu.items.push(listitem)
       });
       this.items = [
-        { label: 'Home', icon: 'pi pi-home', routerLink: '/home'},
+        { label: 'Dashboard', icon: 'pi pi-home', routerLink: '/dashboard'},
         { label: 'Price', icon: 'pi pi-euro', routerLink: '/price'},
         { label: 'Contact', icon: 'pi pi-comment', routerLink: '/contact'},
         { label: 'Features', icon: 'pi pi-info-circle', routerLink: '/features'},

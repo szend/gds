@@ -18,6 +18,7 @@
         public string? CalculationMethod { get; set; }
 
         public string? ColorMethod { get; set; }
+        public int? Position { get; set; }
 
 
         public virtual ICollection<Option> Option { get; set; }
