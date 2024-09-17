@@ -1,71 +1,205 @@
 <p-messages></p-messages>
 
-<label>Complex calculated fields can slow down loading, especially if it's from a child!</label>
+<h1>Follow the calculated value builder steps:</h1>
+<p-card>
+<p-stepper>
+    <p-stepperPanel header="Name and type">
+        <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+            <div class="flex flex-column">
+                <div style="display: grid;" class="border-2 border-dashed surface-border border-round surface-ground flex-auto justify-content-center align-items-center font-medium">
+                    <div style="display: inline-grid;">
+                        <label>Name</label>
+                        <input   [(ngModel)]="name"  pInputText/>
+                    </div>
+                   <div style="display: inline-grid;">
+                    <label>Choose Type</label>
+                    <p-dropdown [style]="{ 'margin-bottom': '2rem'}"[options]="options" [(ngModel)]="chtype" dataKey="code" optionLabel="name" [showClear]="true">
+                    </p-dropdown>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-end">
+                <p-button *ngIf="name && chtype"
+                    label="Add condition" 
+                    icon="pi pi-arrow-right" 
+                    iconPos="right" 
+                    (onClick)="nextCallback.emit()" />
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel header="Condition">
+        <ng-template pTemplate="content" let-nextCallback="nextCallback" let-prevCallback="prevCallback" let-index="index">
+            <div class="flex flex-column">
+                <div style="display: grid;" class="border-2 border-dashed surface-border border-round surface-ground flex-auto justify-content-center align-items-center font-medium">
+                    <label> <b>If </b></label>
+
+<!-- con1 -->
+                    <div>
+                        <p-dropdown [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="chssourcecon1" [options]="chssourceopt" dataKey="code" optionLabel="name" [showClear]="true"  [placeholder]="'Select source'">
+                        </p-dropdown>
+    
+                        <label *ngIf="chssourcecon1?.code == 'property'">Select property:</label>
+                        <p-dropdown *ngIf="chssourcecon1?.code == 'property'"  [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="propcon1" [options]="fields" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                        </p-dropdown>
+                        
+                        <label *ngIf="chssourcecon1?.code == 'connected table'">Select parent or child:</label>
+                        <p-dropdown *ngIf="chssourcecon1?.code == 'connected table'"  [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="chldorparntcon1"  [options]="chldorparntopt" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                        </p-dropdown>
+    
+                        <label *ngIf="chldorparntcon1 && chssourcecon1?.code == 'connected table'">Select table:</label>
+                        <p-dropdown  *ngIf="chldorparntcon1 && chssourcecon1?.code == 'connected table' && chldorparntcon1.name == 'child'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecttablecon1"  [options]="childtables" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                        </p-dropdown>
+                        <p-dropdown  *ngIf="chldorparntcon1 && chssourcecon1?.code == 'connected table' && chldorparntcon1.name == 'parent'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecttablecon1"  [options]="partenttables" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                        </p-dropdown>
+    
+                        <label *ngIf="connecttablecon1 && chldorparntcon1 && chssourcecon1?.code == 'connected table'">Select property:</label>
+                        <p-dropdown *ngIf="connecttablecon1 && chldorparntcon1 && chssourcecon1?.code == 'connected table'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecpropcon1" [options]="connecttablecon1.field" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                        </p-dropdown>
+    
+                        <label *ngIf="connecttablecon1 && chldorparntcon1 && connecpropcon1 && chssourcecon1?.code == 'connected table' && chldorparntcon1.name == 'child'">Select function:</label>
+                        <p-dropdown *ngIf="connecttablecon1 && chldorparntcon1 && connecpropcon1 && chssourcecon1?.code == 'connected table'  && chldorparntcon1.name == 'child'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecfunccon1" [options]="connecfuncopt" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                        </p-dropdown>
+    
+    
+                        <input *ngIf="chssourcecon1?.code == 'manual input'"  style="margin-bottom: 2rem; margin-right: 1rem; width: 20rem;" [(ngModel)]="manualcon1" pInputText/>
+                    </div>
+<!-- con2 -->
+                <label><b>is </b></label>
+                <div>
+                    <p-dropdown [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="conselectedoperator" [options]="conoperators"  dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+
+                </div>
+<!-- con3 -->
+                <label><b>to </b></label>
+                <div>
+                    <p-dropdown [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="chssourcecon2" [options]="chssourceopt" dataKey="code" optionLabel="name" [showClear]="true"  [placeholder]="'Select source'">
+                    </p-dropdown>
+
+                    <label *ngIf="chssourcecon2?.code == 'property'">Select property:</label>
+                    <p-dropdown *ngIf="chssourcecon2?.code == 'property'"  [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="propcon2" [options]="fields" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+                    
+                    <label *ngIf="chssourcecon2?.code == 'connected table'">Select parent or child:</label>
+                    <p-dropdown *ngIf="chssourcecon2?.code == 'connected table'"  [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="chldorparntcon2"  [options]="chldorparntopt" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+
+                    <label *ngIf="chldorparntcon2 && chssourcecon2?.code == 'connected table'">Select table:</label>
+                    <p-dropdown  *ngIf="chldorparntcon2 && chssourcecon2?.code == 'connected table' && chldorparntcon2.name == 'child'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecttablecon2"  [options]="childtables" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+                    <p-dropdown  *ngIf="chldorparntcon2 && chssourcecon2?.code == 'connected table' && chldorparntcon2.name == 'parent'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecttablecon2"  [options]="partenttables" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+
+                    <label *ngIf="connecttablecon2 && chldorparntcon2 && chssourcecon2?.code == 'connected table'">Select property:</label>
+                    <p-dropdown *ngIf="connecttablecon2 && chldorparntcon2 && chssourcecon2?.code == 'connected table'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecpropcon2" [options]="connecttablecon2.field" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+
+                    <label *ngIf="connecttablecon2 && chldorparntcon2 && connecpropcon2 && chssourcecon2?.code == 'connected table' && chldorparntcon2.name == 'child'">Select function:</label>
+                    <p-dropdown *ngIf="connecttablecon2 && chldorparntcon2 && connecpropcon2 && chssourcecon2?.code == 'connected table'  && chldorparntcon2.name == 'child'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecfunccon2" [options]="connecfuncopt" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+
+
+                    <input *ngIf="chssourcecon2?.code == 'manual input'"  style="margin-bottom: 2rem; margin-right: 1rem; width: 20rem;" [(ngModel)]="manualcon2" pInputText/>
+                </div>
+
+                <!-- conend -->
+                <button *ngIf="conselectedoperator && (manualcon1 || (connecfunccon1 || chldorparntcon1?.name == 'parent') || propcon1) && (manualcon2 || (connecfunccon2 || chldorparntcon2?.name == 'parent') || propcon2)" style="margin-bottom: 1rem; margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="AddCondition()">Add condition</button> 
+
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-between">
+                <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+                <button *ngIf="conditions.length == 0" style="margin-bottom: 1rem; margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="nextCallback.emit()">Skip</button> 
+                <p-button
+                    label="Select value" 
+                    icon="pi pi-arrow-right" 
+                    iconPos="right" 
+                    (onClick)="nextCallback.emit()" />
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel header="Select value">
+        <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
+            <div class="flex flex-column">
+                <div style="display: grid;" class="border-2 border-dashed surface-border border-round surface-ground flex-auto align-items-center font-medium">
+                    <label *ngIf="conditions.length > 0">To condition:</label>
+                    <p-dropdown *ngIf="conditions.length > 0" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="selectedcondition" [options]="conditions" [showClear]="true"  [placeholder]="'Select condition'">
+                    </p-dropdown>
+                    <label>Value from:</label>
+                    <p-dropdown [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="chssource" [options]="chssourceopt" dataKey="code" optionLabel="name" [showClear]="true"  [placeholder]="'Select source'">
+                    </p-dropdown>
+
+                    <label *ngIf="chssource?.code == 'property'">Select property:</label>
+                    <p-dropdown *ngIf="chssource?.code == 'property'"  [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="prop" [options]="fields" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+                    <button *ngIf="prop && chssource?.code == 'property'" style="margin-bottom: 2rem; width: 5rem" pButton pRipple class="p-button p-mr-2" (click)="AddFromProp()">Add</button> 
+                    
+                    <label *ngIf="chssource?.code == 'connected table'">Select parent or child:</label>
+                    <p-dropdown *ngIf="chssource?.code == 'connected table'"  [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="chldorparnt"  [options]="chldorparntopt" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+
+                    <label *ngIf="chldorparnt && chssource?.code == 'connected table'">Select table:</label>
+                    <p-dropdown  *ngIf="chldorparnt && chssource?.code == 'connected table' && chldorparnt.name == 'child'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecttable"  [options]="childtables" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+                    <p-dropdown  *ngIf="chldorparnt && chssource?.code == 'connected table' && chldorparnt.name == 'parent'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecttable"  [options]="partenttables" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+
+                    <label *ngIf="connecttable && chldorparnt && chssource?.code == 'connected table'">Select property:</label>
+                    <p-dropdown *ngIf="connecttable && chldorparnt && chssource?.code == 'connected table'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecprop" [options]="connecttable.field" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+
+                    <label *ngIf="connecttable && chldorparnt && connecprop && chssource?.code == 'connected table' && chldorparnt.name == 'child'">Select function:</label>
+                    <p-dropdown *ngIf="connecttable && chldorparnt && connecprop && chssource?.code == 'connected table'  && chldorparnt.name == 'child'" [style]="{ 'margin-bottom': '2rem'}" [(ngModel)]="connecfunc" [options]="connecfuncopt" dataKey="name" optionLabel="name" [showClear]="true"  [placeholder]="'Select'">
+                    </p-dropdown>
+                    <button *ngIf="connecprop && connecttable && chldorparnt && chssource?.code == 'connected table' && (chldorparnt.name == 'parent' || connecfunc)" style="margin-bottom: 2rem; width: 5rem" pButton pRipple class="p-button p-mr-2" (click)="AddFromTable()">Add</button> 
+
+
+                    <input *ngIf="chssource?.code == 'manual input'"  style="margin-bottom: 2rem; margin-right: 1rem; width: 20rem;" [(ngModel)]="manual" pInputText/>
+                    <button *ngIf="manual && chssource?.code == 'manual input'" style="margin-bottom: 2rem; width: 5rem" pButton pRipple class="p-button p-mr-2" (click)="AddManual()">Add</button> 
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-between">
+                <p-button 
+                    label="Add condition" 
+                    icon="pi pi-arrow-left" 
+                    (onClick)="prevCallback.emit()" />
+                    <button pButton  *ngIf="calculationString" pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+                    <p-button 
+                    label="Add operator"  *ngIf="calculationString"
+                    icon="pi pi-arrow-right" 
+                    iconPos="right" 
+                    (onClick)="nextCallback.emit()" />
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel header="Select operator">
+        <ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
+            <div class="flex flex-column">
+                <div style="display: grid;" class="border-2 border-dashed surface-border border-round surface-ground flex-auto justify-content-center align-items-center font-medium">
+                    <label>Operators:</label>
+                    <p-dropdown *ngIf="chtype.code == 'numeric'" [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}"[options]="numoperators" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+                    <p-dropdown  *ngIf="chtype.code == 'text'" [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}"[options]="textoperators" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+                    <p-dropdown  *ngIf="chtype.code == 'boolean'" [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}"[options]="booloperators" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-between">
+                <!-- <p-button label="Add another value" icon="pi pi-arrow-left" (onClick)="RemoveFromCalc(prevCallback)" /> -->
+                <p-button label="Add another value" icon="pi pi-arrow-right" (onClick)="prevCallback.emit()" />
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+</p-stepper>
+</p-card>
 <br>
-<button style="margin-bottom: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ShowDesc()">Show description</button> 
-<br><br>
-<label>Name</label>
-<input  style="margin-bottom: 1rem; margin-right: 1rem; width: 20rem;"  [(ngModel)]="name"  pInputText/>
-<label>Choose Type</label>
-<p-dropdown [style]="{ 'margin-bottom': '2rem'}"[options]="options" [(ngModel)]="chtype" dataKey="code" optionLabel="name" [showClear]="true">
-</p-dropdown>
 
+<h1>Or write a script:</h1>
+
+<button style="margin-bottom: 1rem; margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ShowDesc()">Show script description</button> 
+<button *ngIf="chtype && name" style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
 
 <br>
-<h3 >numeric:</h3>
-<div class="grid" >
-    <div *ngFor="let prop of fields; index as i">
-    
-        <div  *ngIf="'numeric' == prop.type" class="col-4" style="display: grid; margin: 1rem; padding: 1rem;">
-            <label >{{prop.name}}</label>
-            <button icon="pi pi-plus" style="margin-bottom: 1rem; top: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddToCalc(prop)"></button> 
-        </div>
+<div class="grid" *ngIf="chtype && name">
+    <textarea rows="5" cols="50" pInputTextarea [(ngModel)]="calculationString"></textarea>
 </div>
-</div>
-<h3 >text/option:</h3>
-<div class="grid" >
-    <div *ngFor="let prop of fields; index as i">
-    
-        <div  *ngIf="'text' == prop.type || 'option' == prop.type " class="col-4" style="display: grid; margin: 1rem; padding: 1rem;">
-            <label >{{prop.name}}</label>
-            <button icon="pi pi-plus" style="margin-bottom: 1rem; top: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddToCalc(prop)"></button> 
-        </div>
-</div>
-</div>
-<h3 >boolean:</h3>
-<div class="grid" >
-    <div *ngFor="let prop of fields; index as i">
-    
-        <div  *ngIf="'boolean' == prop.type" class="col-4" style="display: grid; margin: 1rem; padding: 1rem;">
-            <label >{{prop.name}}</label>
-            <button icon="pi pi-plus" style="margin-bottom: 1rem; top: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddToCalc(prop)"></button> 
-        </div>
-</div>
-</div>
-<h3 >operators/functions:</h3>
-<div class="grid" *ngIf="chtype">
-    <div *ngIf="chtype.code == 'numeric'">
-        <p-dropdown [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}"[options]="numoperators" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
-        <p-dropdown [placeholder]="'Select function'" [style]="{ 'margin-bottom': '2rem'}"[options]="numfunctions" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
-    
-    </div>
-    <div *ngIf="chtype.code == 'text'">
-        <p-dropdown [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}"[options]="textoperators" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
-        <p-dropdown [placeholder]="'Select function'" [style]="{ 'margin-bottom': '2rem'}"[options]="textfunctions" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
-    
-    </div>
-    <div *ngIf="chtype.code == 'boolean'">
-        <p-dropdown [placeholder]="'Select operator'" [style]="{ 'margin-bottom': '2rem'}"[options]="booloperators" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
-        <p-dropdown [placeholder]="'Select function'" [style]="{ 'margin-bottom': '2rem'}"[options]="boolfunctions" (onChange)="AddOperator($event)" dataKey="code" optionLabel="name" [showClear]="true"></p-dropdown>
-    
-    </div>
-
-</div>
-<div class="grid" *ngIf="chtype">
-
-    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="calculationString"></textarea>
-
-</div>
-<br><br>
-<button style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
-
+<label *ngIf="!chtype || !name">Enter the name and the type first</label>

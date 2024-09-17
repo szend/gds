@@ -645,7 +645,20 @@ namespace GenericDataStore.Controllers
                         foreach (var obj in item.DataObject)
                         {
                             var val = obj.Value.FirstOrDefault(x => x.Name == field.Name);
-                            values.Add(val?.ValueString != "" && val?.ValueString != null ? Boolean.Parse(val?.ValueString) : null);
+                            if(val.ValueString == "1")
+                            {
+                                values.Add(true);
+
+                            }
+                            else if (val.ValueString == "0")
+                            {
+                                values.Add(false);
+
+                            }
+                            else
+                            {
+                                values.Add(val?.ValueString != "" && val?.ValueString != null ? Boolean.Parse(val?.ValueString) : null);
+                            }
                         }
                         //var grval = values.OrderBy(x => x);
                         var groupvalues = values.GroupBy(x => x).Select(x => new { Name = x.Key, Count = x.Count() }).ToList();
@@ -949,22 +962,23 @@ namespace GenericDataStore.Controllers
 
             var child = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == Guid.Parse(childid));
             var parent = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == Guid.Parse(parentid));
+
             var parentfield = DbContext.Field.FirstOrDefault(x => x.ObjectTypeId == parent.ObjectTypeId && x.Type == "id");
             var db = DbContext.DatabaseConnectionProperty.FirstOrDefault(x => x.DatabaseConnectionPropertyId == child.DatabaseConnectionPropertyId);
             var Repository = GetRepo(child.DatabaseConnectionPropertyId);
             if (db.DatabaseConnectionPropertyId != parent.DatabaseConnectionPropertyId)
             {
-                Repository.CreateRelation(parent.Name, child.Name, parentfield.Name, parent.Name + "Id", db.DefaultIdType,true);
+                Repository.CreateRelation(parent.Name, child.Name, parentfield.Name, parent.Name + "ParentId", db.DefaultIdType,true);
             }
             else
             {
-                Repository.CreateRelation(parent.Name, child.Name, parentfield.Name, parent.Name + "Id", db.DefaultIdType);
+                Repository.CreateRelation(parent.Name, child.Name, parentfield.Name, parent.Name + "ParentId", db.DefaultIdType);
             }
             child.Field.Add(new Field()
             {
 
-                Name = parent.Name + "Id",
-                PropertyName = parent.Name + "Id",
+                Name = parent.Name + "ParentId",
+                PropertyName = parent.Name + "ParentId",
                 Type = "foreignkey",
                 ObjectTypeId = child.ObjectTypeId
             });
@@ -974,7 +988,7 @@ namespace GenericDataStore.Controllers
                 ParentObjecttypeId = parent.ObjectTypeId,
                 ChildTable = child.Name,
                 ParentTable = parent.Name,
-                ChildPropertyName = parent.Name + "Id",
+                ChildPropertyName = parent.Name + "ParentId",
                 ParentPropertyName = parentfield.Name,
                 Virtual = child.DatabaseConnectionPropertyId != parent.DatabaseConnectionPropertyId,
                 FKName = child.Name + parent.Name + "FK"
@@ -1361,6 +1375,39 @@ namespace GenericDataStore.Controllers
                 return new JsonResult(new List<string>(), new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             }
             return new JsonResult(connections.Select(x => x.ChildTable), new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        }
+
+        [HttpGet("GetConnectedTables/{id}/")]
+        [Authorize(Policy = "Full")]
+        public virtual async Task<IActionResult> GetConnectedTables(Guid id)
+        {
+
+            var type = this.DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == id);
+            if(type != null)
+            {
+                var connectedchilds = this.DbContext.DatabaseTableRelations.Where(x => x.ParentObjecttypeId == type.ObjectTypeId).ToList();
+                var connectedparents = this.DbContext.DatabaseTableRelations.Where(x => x.ChildObjecttypeId == type.ObjectTypeId).ToList();
+                List<ObjectType> childobjects = new List<ObjectType>();
+                foreach (var chld in connectedchilds)
+                {
+                    ObjectType t = this.DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == chld.ChildObjecttypeId);
+                    t.Field = this.DbContext.Field.Where(x => x.ObjectTypeId == t.ObjectTypeId).ToList();
+                    childobjects.Add(t);
+                }
+                List<ObjectType> parentobjects = new List<ObjectType>();
+                foreach (var chld in connectedparents)
+                {
+                    ObjectType t = this.DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == chld.ParentObjecttypeId);
+                    t.Field = this.DbContext.Field.Where(x => x.ObjectTypeId == t.ObjectTypeId).ToList();
+                    parentobjects.Add(t);
+                }
+
+                return new JsonResult(new {parents = parentobjects, childs = childobjects}, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+            }
+
+            return BadRequest();
+
         }
 
         [HttpPost("EditAllFiltered")]

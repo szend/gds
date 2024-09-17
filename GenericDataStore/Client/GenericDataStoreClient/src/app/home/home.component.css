@@ -1,0 +1,61 @@
+
+  header {
+    height: 200px;
+    background-color: transparent;
+    font-size: 30px;
+    text-align: center;
+    padding-top: 30px;
+  }
+  .container {
+    width: 90%;
+    margin: 0 auto;
+  }
+  .section {
+    background-color: transparent;
+    overflow: hidden;
+  }
+  
+  .items {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    list-style: none;
+  }
+  
+  .item {
+    min-width: 1000px;
+    height: 700px;
+    background-color: transparent;
+    margin-right: 20px;
+    line-height: 70px;
+    font-size: 24px;
+    color: black;
+  }
+  .spacer {
+    height: 300px;
+    text-align: center;
+    line-height: 300px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  
+  footer {
+    position: relative;
+    z-index: 0;
+    font-size: 10vmin;
+  }
+  
+  .site-main {
+    position: relative;
+    padding: 20px;
+    min-height: 200vh;
+    z-index: 100;
+  }
+  .site-main h1 {
+    font-size: 10vmin;
+  }
+  .site-main p {
+    font-size: 24px;
+  }

@@ -83,30 +83,15 @@ namespace GenericDataStore.DatabaseConnector
 
         public bool CreateTable(ObjectType objtype, string idtype)
         {
-            if(idtype == "int")
-            {
-                idtype = "  int NOT NULL IDENTITY(1,1) ";
-            }
-            else
-            {
-                idtype = "  uniqueidentifier NOT NULL DEFAULT NEWID() ";
-            }
+            string parenttype = GetParentIdType(idtype);
+            idtype = GetIdType(idtype);
             return sQLConnector.CreateTable(objtype,idtype);
         }
 
         public bool AddChild(ObjectType objtype,ObjectType parent, string idtype, bool virtualconnection = false)
         {
-            string parenttype = "uniqueidentifier";
-            if (idtype == "int")
-            {
-                idtype = "  int NOT NULL IDENTITY(1,1) ";
-                parenttype = "int";
-            }
-            else
-            {
-                idtype = "  uniqueidentifier NOT NULL DEFAULT NEWID() ";
-                parenttype = "uniqueidentifier";
-            }
+            string parenttype = GetParentIdType(idtype);
+            idtype = GetIdType(idtype);
             return sQLConnector.AddChild(objtype,parent,idtype,parenttype,virtualconnection);
         }
 
@@ -143,11 +128,7 @@ namespace GenericDataStore.DatabaseConnector
         private string GetValueString(Field field, DataObject obj)
         {
             var res = obj.Value.FirstOrDefault(x => x.Name == field.Name).ValueString;
-            if(res == null || res == "")
-            {
-                return "''";
-            }
-            else
+
             if(field.Type == "date")
             {
                 if(res == "NA")
@@ -184,8 +165,15 @@ namespace GenericDataStore.DatabaseConnector
                 }
                 catch (Exception)
                 {
-
-                    return "''";
+                    if (this.sqltype == "postgresql")
+                    {
+                        return $"false";
+                    }
+                    return "'0'";
+                }
+                if(this.sqltype == "postgresql")
+                {
+                    return $"{(res == "true" || res == "True" ? "true" : "false")}";
                 }
                 return $"{(res == "true" || res == "True" ? 1 : 0)}";
              }
@@ -254,17 +242,8 @@ namespace GenericDataStore.DatabaseConnector
 
         public bool CreateRelation(string tablename1, string tablename2, string columnname1, string columnname2, string idtype, bool virtualconnection = false)
         {
-            string parenttype = "uniqueidentifier";
-            if (idtype == "int")
-            {
-                idtype = "  int NOT NULL IDENTITY(1,1) ";
-                parenttype = "int";
-            }
-            else
-            {
-                idtype = "  uniqueidentifier NOT NULL DEFAULT NEWID() ";
-                parenttype = "uniqueidentifier";
-            }
+            string parenttype = GetParentIdType(idtype);
+            idtype = GetIdType(idtype);
             return sQLConnector.CreateRealtion(tablename1, columnname1, tablename2, columnname2,parenttype, virtualconnection);
         }
 
@@ -281,6 +260,91 @@ namespace GenericDataStore.DatabaseConnector
         public string ExecuteQuery(string query)
         {
             return sQLConnector.ExecuteQuery(query);
+        }
+
+        private string GetIdType(string idtype)
+        {
+            if (sqltype == "postgresql")
+            {
+                if (idtype == "int")
+                {
+                    idtype = "  SERIAL ";
+                }
+                else
+                {
+                    idtype = "  uuid DEFAULT gen_random_uuid() ";
+                }
+            }
+            else if (sqltype == "mysql")
+            {
+                if (idtype == "int")
+                {
+                    idtype = "  int NOT NULL AUTO_INCREMENT ";
+                }
+                else
+                {
+                    idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
+                }
+            }
+            else if (sqltype == "sql server")
+            {
+                if (idtype == "int")
+                {
+                    idtype = "  int NOT NULL IDENTITY(1,1) ";
+                }
+                else
+                {
+                    idtype = "  uniqueidentifier NOT NULL DEFAULT NEWID() ";
+                }
+            }
+
+            return idtype;
+        }
+
+        private string GetParentIdType(string idtype)
+        {
+            string parenttype = "uniqueidentifier";
+            if (sqltype == "postgresql")
+            {
+                if (idtype == "int")
+                {
+                    idtype = "  SERIAL PRIMARY KEY ";
+                    parenttype = "integer";
+                }
+                else
+                {
+                    idtype = "  uuid DEFAULT gen_random_uuid() ";
+                    parenttype = "uuid";
+                }
+            }
+            else if (sqltype == "mysql")
+            {
+                if (idtype == "int")
+                {
+                    idtype = "  int NOT NULL AUTO_INCREMENT ";
+                    parenttype = "int";
+                }
+                else
+                {
+                    idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
+                    parenttype = "char(36)";
+                }
+            }
+            else if (sqltype == "sql server")
+            {
+                if (idtype == "int")
+                {
+                    idtype = "  int NOT NULL IDENTITY(1,1) ";
+                    parenttype = "int";
+                }
+                else
+                {
+                    idtype = "  uniqueidentifier NOT NULL DEFAULT NEWID() ";
+                    parenttype = "uniqueidentifier";
+                }
+            }
+
+            return parenttype;
         }
 
     }

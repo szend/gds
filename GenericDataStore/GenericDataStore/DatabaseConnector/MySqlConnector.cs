@@ -102,19 +102,19 @@ namespace GenericDataStore.DatabaseConnector
         public string ExecuteQuery(string query)
         {
             string res = "";
-            using (SqlConnection myConnection = new SqlConnection(ConnectionString))
+            using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
                 try
                 {
-                    SqlCommand oCmd = new SqlCommand(query, myConnection);
+                    MySqlCommand oCmd = new MySqlCommand(query, myConnection);
                     myConnection.Open();
-                    using (SqlDataReader oReader = oCmd.ExecuteReader())
+                    using (MySqlDataReader oReader = oCmd.ExecuteReader())
                     {
                         while (oReader.Read())
                         {
                             for (int i = 0; i < oReader.FieldCount; i++)
                             {
-                                res = res + oReader[i].ToString();
+                                res = res + "| " + oReader[i].ToString() + " |";
                             }
                             res += "\n";
                         }
@@ -325,6 +325,10 @@ namespace GenericDataStore.DatabaseConnector
                     break;
 
                 case "contains":
+                    if (field.Type == "boolean")
+                    {
+                        return "= " + GetValueString(field, res);
+                    }
                     return "LIKE '%" + res + "%' ";
 
                     break;
@@ -379,7 +383,8 @@ if (field.Type == "date")
                 {
                     return "''";
                 }
-                return $"CONVERT(datetime,'{res.ToString().Split('.')[1] + "." + res.ToString().Split('.')[0] + "." + res.ToString().Split('.')[2]}')";
+                return $" STR_TO_DATE('{res.ToString().Split('/')[0] + "." + (int.Parse(res.ToString().Split('/')[1]) + 1).ToString() + "." + res.ToString().Split('/')[2].Split(' ')[0]}','%m.%d.%Y')";
+
             }
             else if (field.Type == "numeric")
             {
@@ -558,14 +563,14 @@ WHERE
 
         public bool CreateTable(ObjectType objtype, string idtype)
         {
-            if(idtype == "  int NOT NULL IDENTITY(1,1) ")
-            {
-                idtype = "  int NOT NULL AUTO_INCREMENT ";
-            }
-            else if(idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
-            {
-                idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
-            }
+            //if(idtype == "  int NOT NULL IDENTITY(1,1) ")
+            //{
+            //    idtype = "  int NOT NULL AUTO_INCREMENT ";
+            //}
+            //else if(idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
+            //{
+            //    idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
+            //}
 
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
@@ -581,16 +586,16 @@ WHERE
 
         public bool AddChild(ObjectType objtype, ObjectType parent, string idtype, string parentidtype, bool virtualconnection = false)
         {
-            if (idtype == "  int NOT NULL IDENTITY(1,1) ")
-            {
-                idtype = "  int NOT NULL AUTO_INCREMENT ";
-                parentidtype = " int ";
-            }
-            else if (idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
-            {
-                idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
-                parentidtype = " char(36) ";
-            }
+            //if (idtype == "  int NOT NULL IDENTITY(1,1) ")
+            //{
+            //    idtype = "  int NOT NULL AUTO_INCREMENT ";
+            //    parentidtype = " int ";
+            //}
+            //else if (idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
+            //{
+            //    idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
+            //    parentidtype = " char(36) ";
+            //}
 
             using (MySqlConnection myConnection = new MySqlConnection(ConnectionString))
             {
@@ -755,6 +760,14 @@ WHERE
                 return "tinyint";
             }
             else if (originaltype == "id")
+            {
+                return "char(36)";
+            }
+            else if (originaltype == "int")
+            {
+                return "int";
+            }
+            else if (originaltype == "char(36)")
             {
                 return "char(36)";
             }

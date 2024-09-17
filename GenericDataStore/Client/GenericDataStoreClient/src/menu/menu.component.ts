@@ -76,47 +76,48 @@ export class MenuComponent {
       this.items = [
         { label: 'Home', icon: 'pi pi-home', routerLink: '/home'},
         { label: 'Price', icon: 'pi pi-euro', routerLink: '/price'},
-        { label: 'Contact', icon: 'pi pi-megaphone', routerLink: '/contact'},
+        { label: 'Contact', icon: 'pi pi-comment', routerLink: '/contact'},
         { label: 'Features', icon: 'pi pi-info-circle', routerLink: '/features'},
         { label: 'MyDatabases',icon: 'pi pi-database', routerLink: '/connection/databases'},
         { label: 'Messages',icon: 'pi pi-comments', routerLink: '/messages'},
       ];
       this.items.push(privatmenu);
-      this.getCategories();
+      // this.getCategories();
       this.loggedIn = true;
       
     }, () =>{
       this.items = [
         { label: 'Home', icon: 'pi pi-home', routerLink: '/home'},
         { label: 'Price', icon: 'pi pi-euro', routerLink: '/price'},
-        { label: 'Contact', icon: 'pi pi-megaphone', routerLink: '/contact'},
+        { label: 'Contact', icon: 'pi pi-comment', routerLink: '/contact'},
         { label: 'Features', icon: 'pi pi-info-circle', routerLink: '/features'},
+        { label: 'Login', icon: 'pi pi-sign-in', routerLink: '/login'},
+        { label: 'Register', icon: 'pi pi-user-plus', routerLink: '/register'},
       ];
-      this.getCategories();
-      this.items.push(        { label: 'Login', icon: 'pi pi-sign-in', routerLink: '/login'},
-        { label: 'Register', icon: 'pi pi-user-plus', routerLink: '/register'});
-
+      // this.getCategories();
+      // this.items.push(        { label: 'Login', icon: 'pi pi-sign-in', routerLink: '/login'},
+      //   { label: 'Register', icon: 'pi pi-user-plus', routerLink: '/register'});
     })
 
    
   
   }
 
-  getCategories(){
-    this.apiService.GetAllCategory().subscribe(x => {
-      if(this.items.length == 2 || this.items[2].label != 'Categories'){
-      let categorymenu : {label: string, icon: string, routerLink: string, items: any[]} =  { label: 'Categories', icon: 'pi pi-tags', routerLink: '/home', items:[]};
-      x.forEach((y: any)  => {
-        let listitem =  { label: y.cat, icon: 'pi pi-tag', routerLink: '/list/'+ y.cat};
-        categorymenu.items.push(listitem)
-      });
+  // getCategories(){
+  //   this.apiService.GetAllCategory().subscribe(x => {
+  //     if(this.items.length == 2 || this.items[2].label != 'Categories'){
+  //     let categorymenu : {label: string, icon: string, routerLink: string, items: any[]} =  { label: 'Categories', icon: 'pi pi-tags', routerLink: '/home', items:[]};
+  //     x.forEach((y: any)  => {
+  //       let listitem =  { label: y.cat, icon: 'pi pi-tag', routerLink: '/list/'+ y.cat};
+  //       categorymenu.items.push(listitem)
+  //     });
       
-      this.items.push(categorymenu);
-      this.items = [...this.items];
-    }
-    });
+  //     this.items.push(categorymenu);
+  //     this.items = [...this.items];
+  //   }
+  //   });
   
-  }
+  // }
 
   Logout(){
     this.apiService.Logout().subscribe(x => {

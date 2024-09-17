@@ -36,7 +36,7 @@
     </div>
 </div>
 <p-fileUpload  *ngIf="editable" #fileUploader   mode="basic"  [style]="{'display' : 'inline-block'}"  (uploadHandler)="importFile($event)" chooseLabel="Create from file" [customUpload]="true"></p-fileUpload>
-<i  pTooltip="Create the table and fields, then Import elements from excel. The first line must contain field names. Same file structure as in the export file.
+<i *ngIf="editable" pTooltip="Create the table and fields, then Import elements from excel. The first line must contain field names. Same file structure as in the export file.
  Check if every field type is correct, especially if you have an option (category) or date type. If you select an option for a field the program will generate every option based on your data" class="pi pi-question-circle" style="font-size: 2rem"></i>
 
    
@@ -44,10 +44,10 @@
 
 <div  class="grid">
         <div *ngFor="let prop of props; index as i" >
-            <p-card [subheader]="" [style]="{ margin: '2rem', 'background-color': '#9fc4c6'}" class="col-4">
+            <p-card [subheader]="" [style]="{ margin: '2rem', 'background-color': '#A79277'}" class="col-4">
                 <ng-template pTemplate="header">
                     <div class="grid">
-                        <div class="col" style="display: flex;">
+                        <div class="col" style="display: flex; margin-left: 1rem;">
                             <h1>{{prop.name}}</h1>
                         </div>
                         <div class="col-fixed" style="display: flex;">
@@ -57,11 +57,11 @@
 
                 </ng-template>
                 <p-inputGroup class="col" class="col-4">
-                    <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-4">
+                    <div  style="display: grid;" class="col-4">
                         <label>Name of the property</label>
                         <input  style="margin-bottom: 1rem; width: 20rem;"  [(ngModel)]="prop.name"  pInputText/>
                         <div style="display: flex;">
-                            <label *ngIf="editable">Type of the property</label>
+                            <label >Type of the property</label>
                             <i  pTooltip="Define which type of data you want to store in this field. Select text if it is simple characters, number if it is numeric, date if date, boolean if true/false, option if category (you can define the categories if you select), and image if you want to store images." class="pi pi-question-circle" style="font-size: 1rem"></i>
                         </div>
                         <p-dropdown  [style]="{ 'margin-bottom': '2rem'}"[options]="options" [(ngModel)]="prop.type" dataKey="code" optionLabel="name" (onChange)="SetType($event,i)" [showClear]="true"
@@ -87,7 +87,7 @@
 
         </div>
         <div>
-            <p-card  [style]="{ margin: '2rem', 'background-color': '#9fc4c6'}" class="col-4">
+            <p-card  [style]="{ margin: '2rem', 'background-color': '#A79277'}" class="col-4">
                 <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-4">
                     <button style="margin-bottom: 1rem; width: 10rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddProperty()">New Field</button> 
                 </div>

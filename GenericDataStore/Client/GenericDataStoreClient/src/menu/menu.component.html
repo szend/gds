@@ -1,9 +1,15 @@
+
+
+
 <p-menubar *ngIf="items.length > 2" class="menu" [model]="items">
     <ng-template pTemplate="end">
-        <input #search (keyup.enter)="Search($event,search)" style="margin-right: 1rem;" type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" />
+        <!-- <input #search (keyup.enter)="Search($event,search)" style="margin-right: 1rem;" type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" /> -->
         <p-button (onClick)="Settings()" *ngIf="loggedIn == true" [label]="username != undefined ? username[0] : ''">
         </p-button> 
-
+        <!-- <p-button style="margin-right: 1rem;" (onClick)="Route('login')" *ngIf="!loggedIn" [label]="'Login'">
+        </p-button> 
+        <p-button style="margin-right: 1rem;" (onClick)="Route('register')" *ngIf="!loggedIn" [label]="'Register'">
+        </p-button>  -->
 
     </ng-template></p-menubar>
 

@@ -147,6 +147,7 @@ export class DataobjectListComponent  implements OnInit {
  
   }
 
+ 
 
   InitData(privatelist: boolean){
     this.rootFilter.filters = [];
@@ -155,6 +156,7 @@ export class DataobjectListComponent  implements OnInit {
       privatelist = true;
     }
     localStorage.removeItem('private');
+    this.private = privatelist;
 
     if(localStorage.getItem('name')){
       this.name = localStorage.getItem('name') ?? "";
@@ -355,7 +357,7 @@ export class DataobjectListComponent  implements OnInit {
     this.loading = true;
     this.apiService.ChartData(this.rootFilter).subscribe(x => {
       this.loading = false;
-      this.ref = this.dialogService.open(ChartComponent,  { data: {filter : this.rootFilter,dataRec: x, name : this.name,id: this.id, private: this.private}, header: 'Chart', resizable: true});
+      this.ref = this.dialogService.open(ChartComponent,  { data: {fields: this.fields ,filter : this.rootFilter,dataRec: x, name : this.name,id: this.id, private: this.private}, header: 'Chart', resizable: true});
       this.ref.onClose.subscribe(x => {
        // this.Refresh();
       });
@@ -442,7 +444,8 @@ export class DataobjectListComponent  implements OnInit {
   Export() {
     var filter : RootFilter = this.rootFilter;
     filter.valueTake = 0;
-    this.apiService.GetTypeByFilter(this.rootFilter,false).subscribe(x =>{
+    this.apiService.GetTypeByFilter(this.rootFilter,this.private ?? false).subscribe(x =>{
+      console.log(this.private);
       let xldata: { [x: string]: any; }[] = [];
       let idx = 0;
       let expdata : any[] = x[0].dataObject;
@@ -594,38 +597,8 @@ export class DataobjectListComponent  implements OnInit {
           }
         });
       }
-
-      if(false){
-        
-        this.data.dataObject = this.data.dataObject.filter((x: any) => {
-          let res = true;
-          this.rootFilter.valueFilters?.forEach(f => {
-            let value = x.value.find((y: { name: any; }) => y.name == f.field)?.valueString;
-
-            if(value){
-              if(f.operator == 'contains'){
-                res = res && value.includes(f.value);
-              }
-              if(f.operator == 'equals'){
-                res = res && value == f.value;
-              }
-              if(f.operator == 'startsWith'){
-                res = res && value.startsWith(f.value);
-              }
-              if(f.operator == 'endsWith'){
-                res = res && value.endsWith(f.value);
-              }
-            }
-            else{
-              res = false;
-            }
-          });
-          return res;
-        });
-      }
-      else{
         this.Refresh(false);
-      }   
+      
 
 }
 

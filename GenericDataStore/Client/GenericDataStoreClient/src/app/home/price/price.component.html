@@ -1,330 +1,663 @@
-<p-tabView>
-<p-tabPanel header="Store data online">
-    <div class="grid">
-<div class="col-4">
 
-<p-card header="Free" subheader="0€">
-<p>
-     Free version of the program. You can use it for free.
-    <br><br>
-     Your space is limited to 50 data rows and 2 tables.
-</p>
 
-<ng-template pTemplate="footer">
-    <div class="flex gap-3 mt-1">
-    </div>
-</ng-template>
-</p-card>
-</div>
-
-<div class="col-4">
-     <p-card header="Basic Internal 1k" subheader="0.59€/1000 data row/month">
-          <p>
-               You can use all the features of the program.
-               <br>
-               You can create 3 list and you can have 1000 data row.
-          </p>
-     <ng-template pTemplate="footer">
-         <div class="flex gap-3 mt-1">
-             <p-button (onClick)="Select('https://buy.stripe.com/8wMg0h5fD7gx6cgfYY')" label="Select" class="w-full" styleClass="w-full" />
-         </div>
-     </ng-template>
-     </p-card>
-</div>
-    
-<div class="col-4">
-<p-card header="Basic Internal 2k" subheader="0.96€/2000 data row/month">
-<p>
-     You can use all the features of the program.
-     <br>
-     You can create 4 list and you can have 2000 data row.
-</p>
-<ng-template pTemplate="footer">
-    <div class="flex gap-3 mt-1">
-        <p-button (onClick)="Select('https://buy.stripe.com/7sIg0h7nL0S91W0289')"  label="Select" class="w-full" styleClass="w-full" />
-    </div>
-</ng-template>
-</p-card>
-</div>
-    
-<div class="col-4">
-<p-card header="Basic Internal 10k" subheader="2.96€/10000 data row/month">
-<p>
-     You can use all the features of the program.
-     <br>
-     You can create 10 list and you can have 10000 data row.
-</p>
-<ng-template pTemplate="footer">
-    <div class="flex gap-3 mt-1">
-        <p-button (onClick)="Select('https://buy.stripe.com/9AQaFX7nL44l7gk6oq')"  label="Select" class="w-full" styleClass="w-full" />
-    </div>
-</ng-template>
-</p-card>
-</div>
-
-<div class="col-4">
-     <p-card header="Premium Internal 50k" subheader="6.96€/50000 data row/month">
-     <p>
-          You can use all the features of the program.
-          <br>
-          You can create 20 list and you can have 50000 data row.
-     </p>
-     <ng-template pTemplate="footer">
-         <div class="flex gap-3 mt-1">
-             <p-button  (onClick)="Select('https://buy.stripe.com/dR66pHfUh0S9dEIaEH')" label="Select" class="w-full" styleClass="w-full" />
-         </div>
-     </ng-template>
-     </p-card>
+<div *ngIf="options == 'intro'" class=" px-4 py-8 md:px-6 lg:px-8">
+     <div class="text-900 font-bold text-6xl mb-4 text-center">Pricing Plans</div>
+     <div class="text-700 text-xl mb-6 text-center line-height-3">Select how do you want to use the program</div>
+ 
+     <div class="grid">
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Store data online</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">All features</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Create tables manually or from Excel file</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Choose from our databases and store your data in there</span>
+                         </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
+                     <button (click)="SelectOption('online')" pButton pRipple label="See options" class="p-3 w-full mt-auto"></button>
+                 </div>
+             </div>
+         </div>
+ 
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Connect your database</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">All features</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Connect your databases and tables</span>
+                         </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                     <button (click)="SelectOption('connect')" pButton pRipple label="See options" class="p-3 w-full mt-auto"></button>
+                 </div>
+             </div>
+         </div>
+ 
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Download</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">All features</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Store images</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Company logo</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Optional customization</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Optional deployment support</span>
+                         </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                     <button (click)="SelectOption('download')" pButton pRipple label="See options" class="p-3 w-full mt-auto"></button>
+                 </div>
+             </div>
+         </div>
      </div>
+ </div>
 
-<div class="col-4">
-          <p-card header="Premium Internal 200k" subheader="14.96€/200000 data row/month">
-               <p>
-                    You can use all the features of the program.
-                    <br>
-                    You can create 50 list and you can have 200000 data row.
-               </p>
-          <ng-template pTemplate="footer">
-              <div class="flex gap-3 mt-1">
-                  <p-button (onClick)="Select('https://buy.stripe.com/eVadS96jH8kB304eUY')" label="Select" class="w-full" styleClass="w-full" />
-              </div>
-          </ng-template>
-          </p-card>
-</div>
 
-<div class="col-4">
-     <p-card header="Premium Internal 1M" subheader="39.96€/1000000 data row/month">
-          <p>
-               You can use all the features of the program.
-               <br>
-               You can create 100 list and you can have 1000000 data row.
-          </p>
-     <ng-template pTemplate="footer">
-         <div class="flex gap-3 mt-1">
-             <p-button (onClick)="Select('https://buy.stripe.com/9AQ6pHazX0S97gkdQV')" label="Select" class="w-full" styleClass="w-full" />
-         </div>
-     </ng-template>
-     </p-card>
-</div>
+ <div *ngIf="options == 'online'" class=" px-4 py-8 md:px-6 lg:px-8">
+     <button  icon="pi pi-arrow-left" (click)="SelectOption('intro')" pButton pRipple label="Back" class="p-3 mt-auto"></button>
+     <div class="text-900 font-bold text-6xl mb-4 text-center">Online Pricing</div> 
+     <div class="grid">
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Free</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <div class="flex align-items-center">
+                         <span class="font-bold text-2xl text-900">0€</span>
+                         <span class="ml-2 font-medium text-600">per month</span>
+                     </div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Active after registration</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">data row limit: 50</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">table limit: 2</span>
+                         </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
+                 </div>
+             </div>
+         </div>
+ 
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Basic Internal 1k</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <div class="flex align-items-center">
+                         <span class="font-bold text-2xl text-900">0.59€</span>
+                         <span class="ml-2 font-medium text-600">per month</span>
+                     </div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">data row limit: 1000</span>
+                          </li>
+                          <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">table limit: 3</span>
+                          </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                      <p-button (onClick)="Select('https://buy.stripe.com/8wMg0h5fD7gx6cgfYY')" label="Buy Now" class="w-full" styleClass="w-full" />
+                 </div>
+             </div>
+         </div>
+ 
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Basic Internal 2k</div>
+                     <div class="text-600">Plan description</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <div class="flex align-items-center">
+                         <span class="font-bold text-2xl text-900">0.96€</span>
+                         <span class="ml-2 font-medium text-600">per month</span>
+                     </div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">data row limit: 2000</span>
+                          </li>
+                          <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">table limit: 4</span>
+                          </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                      <p-button (onClick)="Select('https://buy.stripe.com/7sIg0h7nL0S91W0289')" label="Buy Now" class="w-full" styleClass="w-full" />
+                 </div>
+             </div>
+         </div>
 
-<div class="col-4">
-     <p-card header="Enterprise Internal 10M" subheader="249.96€/10000000 data row/month">
-          <p>
-               You can use all the features of the program.
-               <br>
-               You can create 200 list and you can have 10000000 data row.
-          </p>
-     <ng-template pTemplate="footer">
-         <div class="flex gap-3 mt-1">
-             <p-button (onClick)="Select('https://buy.stripe.com/eVag0h5fDgR7fMQ3ci')" label="Select" class="w-full" styleClass="w-full" />
-         </div>
-     </ng-template>
-     </p-card>
-</div>
+         <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Basic Internal 10k</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">2.96€</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">data row limit: 10000</span>
+                     </li>
+                     <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">table limit: 10</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Select('https://buy.stripe.com/9AQaFX7nL44l7gk6oq')" label="Buy Now" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
 
-<div class="col-4">
-               <p-card header="Unique" subheader="unique">
-               <p>
-                    If you have a large number of data, or you have a special demand, you can contact us for a unique offer.
-                   <br>
-               </p>
-               <ng-template pTemplate="footer">
-                   <div class="flex gap-3 mt-1">
-                       <p-button (onClick)="Contact()" label="Select" class="w-full" styleClass="w-full" />
-                   </div>
-               </ng-template>
-               </p-card>
-</div>
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Premium Internal 50k</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">6.96</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">data row limit: 50000</span>
+                     </li>
+                     <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">table limit: 20</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Select('https://buy.stripe.com/dR66pHfUh0S9dEIaEH')" label="Buy Now" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
 
-    </div>     
-</p-tabPanel>
-<p-tabPanel header="Store data on your server and use the program online">
-    
-    
-<div class="grid">
-<div class="col-4">
-    <p-card header="Free" subheader="0€">
-        <p>
-     Free version of the program. You can use it for free.
-  <br><br>
-     You can add 1 databases and connect 2 table but if you have more than 2000 rows you, can not add more.
-        </p>
-    </p-card>
-</div>
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Premium Internal 200k</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">14.96€</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">data row limit: 200000</span>
+                     </li>
+                     <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">table limit: 50</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Select('https://buy.stripe.com/eVadS96jH8kB304eUY')" label="Buy Now" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
 
-<div class="col-4">
-     <p-card header="Basic External 2k" subheader="0.96€/2000 data row/month">
-     <p>
-          You can use all the features of the program.
-          <br>
-          You can import 4 list and you can have 2000 data row in external databases.
-     </p>
-     <ng-template pTemplate="footer">
-         <div class="flex gap-3 mt-1">
-             <p-button (onClick)="Select('https://buy.stripe.com/eVa4hz0ZnfN3dEIeV2')"  label="Select" class="w-full" styleClass="w-full" />
-         </div>
-     </ng-template>
-     </p-card>
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Premium Internal 1M</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">39.96€</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">data row limit: 1000000</span>
+                     </li>
+                     <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">table limit: 100</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Select('https://buy.stripe.com/9AQ6pHazX0S97gkdQV')" label="Buy Now" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
+
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Enterprise Internal 10M</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">249.96€</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">data row limit: 10000000</span>
+                     </li>
+                     <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">table limit: 200</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Select('https://buy.stripe.com/eVag0h5fDgR7fMQ3ci')" label="Buy Now" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
+
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Unique</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">unique</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">If you have a large number of data, or you have a special demand, you can contact us for a unique offer.</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Contact()"  label="Contact" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
+
      </div>
+ </div>
 
-<div class="col-4">
-     <p-card header="Basic External 10k" subheader="2.96€/10000 data row/month">
-     <p>
-          You can use all the features of the program.
-          <br>
-          You can import 10 list and you can have 10000 data row in external databases.
-     </p>
-     <ng-template pTemplate="footer">
-         <div class="flex gap-3 mt-1">
-             <p-button (onClick)="Select('https://buy.stripe.com/fZe29r23r44lasw3cl')"  label="Select" class="w-full" styleClass="w-full" />
-         </div>
-     </ng-template>
-     </p-card>
+ <div *ngIf="options == 'connect'" class=" px-4 py-8 md:px-6 lg:px-8">
+     <button  icon="pi pi-arrow-left" (click)="SelectOption('intro')" pButton pRipple label="Back" class="p-3 mt-auto"></button>
+     <div class="text-900 font-bold text-6xl mb-4 text-center">Connect database pricing</div> 
+     <div class="grid">
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Free</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <div class="flex align-items-center">
+                         <span class="font-bold text-2xl text-900">0€</span>
+                         <span class="ml-2 font-medium text-600">per month</span>
+                     </div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Active after registration</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">external data row limit: 2000</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">table limit: 2</span>
+                         </li>
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">database limit: 1</span>
+                         </li>
+                         
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
+                 </div>
+             </div>
+         </div>
+ 
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Basic External 10k</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <div class="flex align-items-center">
+                         <span class="font-bold text-2xl text-900">2.96€</span>
+                         <span class="ml-2 font-medium text-600">per month</span>
+                     </div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">external data row limit: 10000</span>
+                          </li>
+                          <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">table limit: 10</span>
+                          </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                      <p-button (onClick)="Select('https://buy.stripe.com/fZe29r23r44lasw3cl')" label="Buy Now" class="w-full" styleClass="w-full" />
+                 </div>
+             </div>
+         </div>
+ 
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Basic External 50k</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <div class="flex align-items-center">
+                         <span class="font-bold text-2xl text-900">4.96€</span>
+                         <span class="ml-2 font-medium text-600">per month</span>
+                     </div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">external data row limit: 50000</span>
+                          </li>
+                          <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">table limit: 20</span>
+                          </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                      <p-button (onClick)="Select('https://buy.stripe.com/3cs8xP7nLasJgQU14e')" label="Buy Now" class="w-full" styleClass="w-full" />
+                 </div>
+             </div>
+         </div>
+
+         <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Premium External 200k</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">9.96€</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">external data row limit: 200000</span>
+                     </li>
+                     <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">table limit: 50</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Select('https://buy.stripe.com/6oEeWd8rPbwNbwA14f')" label="Buy Now" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
+
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Premium External 1M</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">15.96</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">external data row limit: 1000000</span>
+                     </li>
+                     <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">table limit: 100</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Select('https://buy.stripe.com/28o3dvbE1fN31W05kw')" label="Buy Now" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
+
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Premium External 10M</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">69.96€</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">external data row limit: 10000000</span>
+                     </li>
+                     <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">table limit: 200</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Select('https://buy.stripe.com/6oE9BT23r6ctbwAfZb')" label="Buy Now" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
+
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Enterprise External 50M</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">149.96€</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">external data row limit: 50000000</span>
+                     </li>
+                     <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">table limit: 400</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Select('https://buy.stripe.com/5kA6pHazXasJeIM3cq')" label="Buy Now" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
+
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Unique</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">unique</span>
+                      <span class="ml-2 font-medium text-600">per month</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">If you have a large number of data, or you have a special demand, you can contact us for a unique offer.</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Contact()" label="Contact" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
+      
      </div>
+ </div>
 
-<div class="col-4">
-          <p-card header="Basic External 50k" subheader="4.96€/50000 data row/month">
-          <p>
-               You can use all the features of the program.
-               <br>
-               You can import 20 list and you can have 50000 data row in external databases.
-          </p>
-          <ng-template pTemplate="footer">
-              <div class="flex gap-3 mt-1">
-                  <p-button (onClick)="Select('https://buy.stripe.com/3cs8xP7nLasJgQU14e')"  label="Select" class="w-full" styleClass="w-full" />
-              </div>
-          </ng-template>
-          </p-card>
-</div>
+ <div *ngIf="options == 'download'" class=" px-4 py-8 md:px-6 lg:px-8">
+     <button  icon="pi pi-arrow-left" (click)="SelectOption('intro')" pButton pRipple label="Back" class="p-3 mt-auto"></button>
+     <div class="text-900 font-bold text-6xl mb-4 text-center">Download Pricing</div> 
+     <div class="grid">
 
-<div class="col-4">
-               <p-card header="Premium External 200k" subheader="9.96€/200000 data row/month">
-               <p>
-                    You can use all the features of the program.
-                    <br>
-                    You can import 50 list and you can have 200000 data row in external databases.
-               </p>
-               <ng-template pTemplate="footer">
-                   <div class="flex gap-3 mt-1">
-                       <p-button (onClick)="Select('https://buy.stripe.com/6oEeWd8rPbwNbwA14f')"  label="Select" class="w-full" styleClass="w-full" />
-                   </div>
-               </ng-template>
-               </p-card>
-</div>
-
-
-<div class="col-4">
-                    <p-card header="Premium External 1M" subheader="15.96€/1000000 data row/month">
-                    <p>
-                         You can use all the features of the program.
-                         <br>
-                         You can import 100 list and you can have 1000000 data row in external databases.
-                    </p>
-                    <ng-template pTemplate="footer">
-                        <div class="flex gap-3 mt-1">
-                            <p-button (onClick)="Select('https://buy.stripe.com/28o3dvbE1fN31W05kw')"  label="Select" class="w-full" styleClass="w-full" />
-                        </div>
-                    </ng-template>
-                    </p-card>
-</div>
-
-<div class="col-4">
-                         <p-card header="Premium External 10M" subheader="69.96€/10000000 data row/month">
-                         <p>
-                              You can use all the features of the program.
-                              <br>
-                              You can import 200 list and you can have 10000000 data row in external databases.
-                         </p>
-                         <ng-template pTemplate="footer">
-                             <div class="flex gap-3 mt-1">
-                                 <p-button (onClick)="Select('https://buy.stripe.com/6oE9BT23r6ctbwAfZb')"  label="Select" class="w-full" styleClass="w-full" />
-                             </div>
-                         </ng-template>
-                         </p-card>
-</div>
-     
-<div class="col-4">
-                              <p-card header="Enterprise External 50M" subheader="149.96€/50000000 data row/month">
-                              <p>
-                                   You can use all the features of the program.
-                                   <br>
-                                   You can import 400 list and you can have 50000000 data row in external databases.
-                              </p>
-                              <ng-template pTemplate="footer">
-                                  <div class="flex gap-3 mt-1">
-                                      <p-button (onClick)="Select('https://buy.stripe.com/5kA6pHazXasJeIM3cq')"  label="Select" class="w-full" styleClass="w-full" />
-                                  </div>
-                              </ng-template>
-                              </p-card>
-</div>
-
-<div class="col-4">
-    <p-card header="Unique" subheader="unique">
-        <p>
-     If you have a large number of data, or you have a special demand, you can contact us for a unique offer.
-            <br>
-        </p>
-        <ng-template pTemplate="footer">
-            <div class="flex gap-3 mt-1">
-                <p-button label="Select" class="w-full" styleClass="w-full" />
-            </div>
-        </ng-template>
-    </p-card>
-</div>
-</div>     
-
-</p-tabPanel>
-<p-tabPanel header="Store data and run the program on your server">
-    
-<div class="grid">
-<div class="col-4">
-    <p-card header="Free" subheader="0€">
-        <p>
-     Free for all public health care institutions, public schools, public universities, public libraries, public museums, public archives, public research institutions,
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 h-full flex flex-column" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Free</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <div class="flex align-items-center">
+                         <span class="font-bold text-2xl text-900">0€</span>
+                         <span class="ml-2 font-medium text-600">per month</span>
+                     </div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                             <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                             <span class="text-900">Free for all public health care institutions, public schools, public universities, public libraries, public museums, public archives, public research institutions,
      or other public institution with a public service mission.
-        </p>
-        <br><br>
-        <ng-template pTemplate="footer">
-            <div class="flex gap-3 mt-1">
-                <p-button label="Select" class="w-full" styleClass="w-full" />
-            </div>
-        </ng-template>
-    </p-card>
-</div>
+</span>
+                         </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
+                     <p-button (onClick)="Contact()" label="Contact" class="w-full" styleClass="w-full" />
+                 </div>
+             </div>
+         </div>
+ 
+         <div class="col-12 lg:col-4">
+             <div class="p-3 h-full">
+                 <div class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
+                     <div class="text-900 font-medium text-xl mb-2">Basic</div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <div class="flex align-items-center">
+                         <span class="font-bold text-2xl text-900">100€</span>
+                         <span class="ml-2 font-medium text-600">per forever</span>
+                     </div>
+                     <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                     <ul class="list-none p-0 m-0 flex-grow-1">
+                         <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">no limitation</span>
+                          </li>
+                          <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">get latest version for 2 year</span>
+                          </li>
+                         <li class="flex align-items-center mb-3">
+                              <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                              <span class="text-900">for private use only</span>
+                          </li>
+                     </ul>
+                     <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                      <p-button (onClick)="Select('https://buy.stripe.com/fZecO5fUhgR76cgfZ5')" label="Buy Now" class="w-full" styleClass="w-full" />
+                 </div>
+             </div>
+         </div>
 
-<div class="col-4">
-    <p-card header="Basic" subheader="100€">
-        <p>
-     You can use all the features of the program for internal use.
-            <br><br>
-     You can use the program on your server forever and 
-     you will get the latest version of the program for 1 year.
- 
-            <br>
-        </p>
-        <ng-template pTemplate="footer">
-            <div class="flex gap-3 mt-1">
-             <p-button (onClick)="Select('https://buy.stripe.com/fZecO5fUhgR76cgfZ5')"  label="Select" class="w-full" styleClass="w-full" />
-            </div>
-        </ng-template>
-    </p-card>
-</div>
+      <div class="col-12 lg:col-4">
+          <div class="p-3 h-full">
+              <div class="shadow-2 p-3 flex flex-column surface-card" style="border-radius: 6px">
+                  <div class="text-900 font-medium text-xl mb-2">Unique</div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <div class="flex align-items-center">
+                      <span class="font-bold text-2xl text-900">unique</span>
+                  </div>
+                  <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
+                  <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                         <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                         <span class="text-900">If you want to use it on a public site, or you have a special demand, you can contact us for a unique offer.</span>
+                     </li>
+                  </ul>
+                  <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
+                   <p-button (onClick)="Contact()"  label="Contact" class="w-full" styleClass="w-full" />
+               </div>
+          </div>
+      </div>
+      
+     </div>
+ </div>
 
-<div class="col-4">
-    <p-card header="Unique" subheader="unique">
-        <p>
-     If you want to use it on a public site, or you have a special demand, you can contact us for a unique offer.
-            <br><br><br>
-        </p>
-        <ng-template pTemplate="footer">
-            <div class="flex gap-3 mt-1">
-                <p-button label="Select" class="w-full" styleClass="w-full" />
-            </div>
-        </ng-template>
-    </p-card>
-</div>
-</div>     
-</p-tabPanel>
-    </p-tabView>
-    
-    
+
+
+ <div class="block-content">
+     <div class="ng-star-inserted">
+          <div class=" px-4 py-8 md:px-6 lg:px-8">
+               <div class="grid">
+                    <div class="col-12 md:col-4 flex flex-column align-items-center mb-3 md:mb-0">
+                         <span class="inline-flex align-items-center justify-content-center bg-red-500 border-circle w-3rem h-3rem mb-4">
+                              <i class="pi pi-times text-white text-2xl">
+
+                              </i>
+                         </span>
+                         <span class="text-900 text-xl font-medium mb-4">Cancel any time</span>
+                    </div>
+                    <div class="col-12 md:col-4 flex flex-column align-items-center mb-3 md:mb-0">
+                         <span class="inline-flex align-items-center justify-content-center bg-cyan-500 border-circle w-3rem h-3rem mb-4">
+                              <i class="pi pi-money-bill text-white text-2xl">
+
+                              </i>
+                         </span>
+                         <span class="text-900 text-xl font-medium mb-4">No additional costs</span>
+                    </div><div class="col-12 md:col-4 flex flex-column align-items-center">
+                         <span class="inline-flex align-items-center justify-content-center bg-orange-500 border-circle w-3rem h-3rem mb-4">
+                              <i class="pi pi-shield text-white text-2xl"></i>
+                         </span>
+                         <span class="text-900 text-xl font-medium mb-4">Secure payment with Stripe</span>
+                         </div>
+                    </div>
+               </div>
+          </div>
+     </div>
+     <app-footer></app-footer>

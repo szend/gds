@@ -8,16 +8,15 @@ import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TabViewModule } from 'primeng/tabview';
-
-import e from 'express';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DataobjectEditComponent } from '../../Components/dataobject-edit/dataobject-edit.component';
+import { FooterComponent } from '../footer/footer.component';
 
 
 @Component({
   selector: 'app-searchview',
   standalone: true,
-  imports: [DataViewModule,CardModule,TagModule,ButtonModule,CommonModule,ProgressSpinnerModule,TabViewModule],
+  imports: [DataViewModule,CardModule,TagModule,ButtonModule,CommonModule,ProgressSpinnerModule,TabViewModule,FooterComponent],
   providers: [DialogService],
   templateUrl: './searchview.component.html',
   styleUrl: './searchview.component.css'

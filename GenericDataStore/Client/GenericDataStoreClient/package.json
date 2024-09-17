@@ -27,6 +27,7 @@
     "chartjs-chart-treemap": "^2.3.1",
     "echarts": "^5.5.1",
     "express": "^4.18.2",
+    "gsap": "^3.12.5",
     "leader-line": "^1.0.7",
     "localstorage-polyfill": "^1.0.1",
     "moment": "^2.30.1",

@@ -9,6 +9,7 @@ namespace GenericDataStore.DatabaseConnector
     public class PostgreSqlConnector : IDataConnector
     {
         public string ConnectionString { get; set; }
+
         public PostgreSqlConnector(string connectionString)
         {
             ConnectionString = connectionString;
@@ -19,7 +20,7 @@ namespace GenericDataStore.DatabaseConnector
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
 
-                string oString = "DELETE FROM " + tablename + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "" + x + "" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
+                string oString = "DELETE FROM \"" + tablename + "\" WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "\"" + x + "\"" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -33,7 +34,7 @@ namespace GenericDataStore.DatabaseConnector
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "UPDATE  " + tablename + " SET " + string.Join(",", fieldvalues.Keys.Zip(fieldvalues.Values, (x, y) => "" + x + "" + " = " + y + "")) + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "" + x + "" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
+                string oString = "UPDATE  \"" + tablename + "\" SET " + string.Join(",", fieldvalues.Keys.Zip(fieldvalues.Values, (x, y) => "\"" + x + "\"" + " = " + y + "")) + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "\"" + x + "\"" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -47,7 +48,7 @@ namespace GenericDataStore.DatabaseConnector
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "INSERT INTO " + tablename + " (" + string.Join(",", fieldvalues.Keys) + ") VALUES (" + string.Join(",", fieldvalues.Values) + ")";
+                string oString = "INSERT INTO \"" + tablename + "\" (" + string.Join(",", fieldvalues.Keys) + ") VALUES (" + string.Join(",", fieldvalues.Values) + ")";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -64,7 +65,7 @@ namespace GenericDataStore.DatabaseConnector
 
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "SELECT * FROM " + tablename + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "" + x + "" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
+                string oString = "SELECT * FROM \"" + tablename + "\" WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "\"" + x + "\"" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 using (NpgsqlDataReader oReader = oCmd.ExecuteReader())
@@ -98,19 +99,19 @@ namespace GenericDataStore.DatabaseConnector
         public string ExecuteQuery(string query)
         {
             string res = "";
-            using (SqlConnection myConnection = new SqlConnection(ConnectionString))
+            using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
                 try
                 {
-                    SqlCommand oCmd = new SqlCommand(query, myConnection);
+                    NpgsqlCommand oCmd = new NpgsqlCommand(query, myConnection);
                     myConnection.Open();
-                    using (SqlDataReader oReader = oCmd.ExecuteReader())
+                    using (NpgsqlDataReader oReader = oCmd.ExecuteReader())
                     {
                         while (oReader.Read())
                         {
                             for (int i = 0; i < oReader.FieldCount; i++)
                             {
-                                res = res + oReader[i].ToString();
+                                res = res + "| " + oReader[i].ToString() + " |";
                             }
                             res += "\n";
                         }
@@ -188,17 +189,17 @@ namespace GenericDataStore.DatabaseConnector
             List<DataObject> list = new List<DataObject>();
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "SELECT * FROM " + objtype.TableName + "";
+                string oString = "SELECT * FROM \"" + objtype.TableName + "\"";
 
                 if (filter != null && filter.ValueFilters != null && filter.ValueFilters.Any())
                 {
-                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "" + x.Field + "" + " "
+                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "\"" + x.Field + "\"" + " "
                     + GetOperatorAndValueString(objtype.Field.FirstOrDefault(y => y.Name == x.Field), x.Operator, x.Value)));
 
                 }
                 if (filter != null && filter.ValueSortingParams != null && filter.ValueSortingParams.Any())
                 {
-                    oString += " Order By " + "" + filter.ValueSortingParams.FirstOrDefault().Field + "";
+                    oString += " Order By " + "\"" + filter.ValueSortingParams.FirstOrDefault().Field + "\"";
                     if (filter.ValueSortingParams.FirstOrDefault().Order == 1)
                     {
                         oString += " DESC";
@@ -208,7 +209,7 @@ namespace GenericDataStore.DatabaseConnector
                 {
                     if (filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
                     {
-                        oString += " Order By " + "" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "";
+                        oString += " Order By " + "\"" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "\"";
                     }
                     oString += @" LIMIT " + filter.ValueTake + " OFFSET " + filter.ValueSkip;
                 }
@@ -216,7 +217,7 @@ namespace GenericDataStore.DatabaseConnector
                 {
                     if (filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
                     {
-                        oString += " Order By " + "" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "";
+                        oString += " Order By " + "\"" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "\"";
                     }
                     oString += @" LIMIT " + filter.ValueTake + " OFFSET " + filter.ValueSkip;
                 }
@@ -318,6 +319,10 @@ namespace GenericDataStore.DatabaseConnector
                     break;
 
                 case "contains":
+                    if (field.Type == "boolean")
+                    {
+                        return "= " + GetValueString(field, res);
+                    }
                     return "LIKE '%" + res + "%' ";
 
                     break;
@@ -368,11 +373,12 @@ namespace GenericDataStore.DatabaseConnector
             else
 if (field.Type == "date")
             {
-                if (res == "NA")
+                if (res == "NA" || res == null)
                 {
                     return "''";
                 }
-                return $"CONVERT(datetime,'{res.ToString().Split('.')[1] + "." + res.ToString().Split('.')[0] + "." + res.ToString().Split('.')[2]}')";
+                return $"'{res.ToString().Split('/')[0] + "/" + (int.Parse(res.ToString().Split('/')[1]) + 1).ToString() + "/" + res.ToString().Split('/')[2].Split(' ')[0]}'";
+                //return $"CONVERT(datetime,'{res.ToString().Split('.')[1] + "." + res.ToString().Split('.')[0] + "." + res.ToString().Split('.')[2]}')";
             }
             else if (field.Type == "numeric")
             {
@@ -398,7 +404,7 @@ if (field.Type == "date")
 
                     return "''";
                 }
-                return $"{(res.ToString() == "true" || res.ToString() == "True" ? 1 : 0)}";
+                return $"{(res.ToString() == "true" || res.ToString() == "True" ? "true" : "false")}";
             }
             else
             {
@@ -408,17 +414,28 @@ if (field.Type == "date")
 
         public string CreateClass(string name)
         {
-            string result = "";
-            using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
-            {
-                string? oString = @"
-SELECT 'public ' ||
+            string? oString = @"
+SELECT 
+case 
+when column_name = (SELECT c.column_name 
+FROM information_schema.table_constraints tc 
+JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_name)  
+JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema 
+  AND tc.table_name = c.table_name AND ccu.column_name = c.column_name 
+WHERE constraint_type = 'PRIMARY KEY' and tc.table_name = '"+ name + @"') THEN '[PrimaryDbKey] '
+    else ''
+    end 
+ || 
+'public ' ||
   case
     when data_type = 'uuid' THEN 'Guid'
+    when data_type = 'character varying' THEN 'string'
     when data_type = 'text' then 'string'
     when data_type = 'json' then 'string'
     when data_type = 'integer' then 'int'
     when data_type = 'boolean' then 'bool'
+    when data_type = 'numeric' then 'double'
+    when data_type = 'date' then 'DateTime'
     when data_type = 'bigint' then 'long'
     when data_type = 'timestamp with time zone' then 'DateTimeOffset'
     when data_type = 'timestamp without time zone' then 'DateTime'
@@ -432,20 +449,20 @@ SELECT 'public ' ||
             when udt_name = '_int4' then 'int'
          else data_type end)
                                                                      || '[]'
-    else data_type
+    else 'string'
     end
-  ||
-  case
-    when is_nullable = 'YES' and (data_type = 'uuid' or data_type = 'integer' or data_type = 'boolean' or data_type = 'timestamp with time zone' or data_type = 'numeric' or data_type = 'real') THEN '?'
-    else '' end
   ||
   ' ' || column_name || ' { get; set; } '
 
-  as sql
-FROM information_schema.columns
+  as sql 
+FROM information_schema.columns 
 WHERE table_schema = 'public'
   AND table_name   = '" + name + @"';
                 ";
+            string result = "";
+            using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
+            {
+
 
 
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
@@ -454,13 +471,16 @@ WHERE table_schema = 'public'
                 {
                     while (oReader.Read())
                     {
-                        result = oReader.GetString(0);
+                        for (int i = 0; i < oReader.FieldCount; i++)
+                        {
+                            result = result + " " + oReader[i].ToString() + " ";
+                        }        
                     }
 
                     myConnection.Close();
                 }
             }
-            result = "public partial class " + name + " { " + result + " }";
+            result = "public class " + name + " { " + result + " }";
             return result;
         }
 
@@ -471,10 +491,10 @@ WHERE table_schema = 'public'
 
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "SELECT COUNT(*) FROM " + objtype.TableName + "";
+                string oString = "SELECT COUNT(*) FROM \"" + objtype.TableName + "\"";
                 if (filter != null && filter.ValueFilters != null && filter.ValueFilters.Any())
                 {
-                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "" + x.Field + "" + " "
+                    oString += " WHERE " + string.Join(" AND ", filter.ValueFilters.Select(x => "\"" + x.Field + "\"" + " "
                     + GetOperatorAndValueString(objtype.Field.FirstOrDefault(y => y.Name == x.Field), x.Operator, x.Value)));
                 }
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
@@ -534,19 +554,19 @@ WHERE constraint_type = 'FOREIGN KEY'
 
         public bool CreateTable(ObjectType objtype, string idtype)
         {
-            if (idtype == "  int NOT NULL IDENTITY(1,1) ")
-            {
-                idtype = "  SERIAL PRIMARY KEY ";
-            }
-            else if (idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
-            {
-                idtype = "  uuid DEFAULT gen_random_uuid() ";
-            }
+            //if (idtype == "  int NOT NULL IDENTITY(1,1) ")
+            //{
+            //    idtype = "  SERIAL PRIMARY KEY ";
+            //}
+            //else if (idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
+            //{
+            //    idtype = "  uuid DEFAULT gen_random_uuid() ";
+            //}
 
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
                 var pkey = objtype.Field.Where(x => x.Type == "id").Count() > 0 ? objtype.Field.Where(x => x.Type == "id").Select(x => x.Name) : new List<string> { objtype.TableName + "Id" };
-                string oString = "CREATE TABLE " + objtype.Name + " (" + string.Join(",", pkey.Select(x => "" + x + "" + idtype)) + " , " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => "" + x.Name + " " + GetType(x.Type))) + ", PRIMARY KEY (" + string.Join(",", pkey.Select(x => "" + x + "")) + "))";
+                string oString = "CREATE TABLE \"" + objtype.Name + "\" (" + string.Join(",", pkey.Select(x => "\"" + x + "\"" + idtype)) + " , " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => "\"" + x.Name + "\" " + GetType(x.Type))) + ", PRIMARY KEY (" + string.Join(",", pkey.Select(x => "\"" + x + "\"")) + "))";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -561,23 +581,23 @@ WHERE constraint_type = 'FOREIGN KEY'
 
         public bool AddChild(ObjectType objtype, ObjectType parent, string idtype, string parentidtype, bool virtualconnection = false)
         {
-            if (idtype == "  int NOT NULL IDENTITY(1,1) ")
-            {
-                idtype = "  int NOT NULL AUTO_INCREMENT ";
-                parentidtype = " int ";
-            }
-            else if (idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
-            {
-                idtype = "  char(36) NOT NULL DEFAULT (uuid()) ";
-                parentidtype = " char(36) ";
-            }
+            //if (idtype == "  int NOT NULL IDENTITY(1,1) ")
+            //{
+            //    idtype = "  SERIAL PRIMARY KEY ";
+            //    parentidtype = " serial ";
+            //}
+            //else if (idtype == "  uniqueidentifier NOT NULL DEFAULT NEWID() ")
+            //{
+            //    idtype = "  uuid DEFAULT gen_random_uuid() ";
+            //    parentidtype = " char(36) ";
+            //}
 
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
                 if (virtualconnection == false)
                 {
                     string pkey = objtype.Field.Where(x => x.Type == "id").Count() == 1 ? objtype.Field.Where(x => x.Type == "id").FirstOrDefault().Name : objtype.TableName + "Id";
-                    string oString = "CREATE TABLE " + objtype.Name + " (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) + ", PRIMARY KEY (" + pkey + "), FOREIGN KEY (" + parent.Name + "Id) REFERENCES " + parent.Name + "(" + parent.Field.FirstOrDefault(x => x.Type == "id").Name + "))";
+                    string oString = "CREATE TABLE \"" + objtype.Name + "\" (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " + string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) + ", PRIMARY KEY (" + pkey + "), FOREIGN KEY (" + parent.Name + "Id) REFERENCES " + parent.Name + "(" + parent.Field.FirstOrDefault(x => x.Type == "id").Name + "))";
                     NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                     myConnection.Open();
                     oCmd.ExecuteNonQuery();
@@ -586,7 +606,7 @@ WHERE constraint_type = 'FOREIGN KEY'
                 else
                 {
                     string pkey = objtype.Field.Where(x => x.Type == "id").Count() == 1 ? objtype.Field.Where(x => x.Type == "id").FirstOrDefault().Name : objtype.TableName + "Id";
-                    string oString = "CREATE TABLE " + objtype.Name + " (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " +
+                    string oString = "CREATE TABLE \"" + objtype.Name + "\" (" + pkey + idtype + " , " + parent.Name + "Id " + parentidtype + ", " +
                         string.Join(",", objtype.Field.Where(x => x.Type != "id").Select(x => x.Name + " " + GetType(x.Type))) +
                         ", PRIMARY KEY (" + pkey + "), )";
                     NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
@@ -602,7 +622,7 @@ WHERE constraint_type = 'FOREIGN KEY'
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "ALTER TABLE " + tablename + " DROP COLUMN " + columnname + "";
+                string oString = "ALTER TABLE \"" + tablename + "\" DROP COLUMN \"" + columnname + "\"";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -615,7 +635,7 @@ WHERE constraint_type = 'FOREIGN KEY'
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "ALTER TABLE " + tablename + " ADD " + columnname + " " + GetType(columntype);
+                string oString = "ALTER TABLE \"" + tablename + "\" ADD \"" + columnname + "\" " + GetType(columntype);
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -628,7 +648,7 @@ WHERE constraint_type = 'FOREIGN KEY'
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "ALTER TABLE " + tablename + " RENAME COLUMN " + columnname + " TO " + newcolumnname + "";
+                string oString = "ALTER TABLE \"" + tablename + "\" RENAME COLUMN \"" + columnname + "\" TO \"" + newcolumnname + "\"";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -641,7 +661,7 @@ WHERE constraint_type = 'FOREIGN KEY'
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "ALTER TABLE " + tablename + " MODIFY  " + columnname + " " + GetType(columntype);
+                string oString = "ALTER TABLE \"" + tablename + "\" MODIFY  \"" + columnname + "\" " + GetType(columntype);
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -655,7 +675,7 @@ WHERE constraint_type = 'FOREIGN KEY'
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "DROP TABLE " + tablename + "";
+                string oString = "DROP TABLE \"" + tablename + "\"";
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -670,7 +690,6 @@ WHERE constraint_type = 'FOREIGN KEY'
             try
             {
                 this.AddColumn(childtable, childcolumn, idtype);
-
             }
             catch (Exception)
             {
@@ -680,7 +699,7 @@ WHERE constraint_type = 'FOREIGN KEY'
             {
                 using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
                 {
-                    string oString = "ALTER TABLE " + childtable + " ADD CONSTRAINT FK_" + parenttable + "_" + childtable + " FOREIGN KEY (" + childcolumn + ") REFERENCES " + parenttable + " (" + parentcolumn + ")";
+                    string oString = "ALTER TABLE \"" + childtable + "\" ADD CONSTRAINT FK_" + parenttable + "_" + childtable + " FOREIGN KEY (\"" + childcolumn + "\") REFERENCES " + parenttable + " (\"" + parentcolumn + "\")";
                     NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                     myConnection.Open();
                     oCmd.ExecuteNonQuery();
@@ -694,7 +713,7 @@ WHERE constraint_type = 'FOREIGN KEY'
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "ALTER TABLE " + childtable + " DROP CONSTRAINT FK_" + parenttable + "_" + childtable;
+                string oString = "ALTER TABLE \"" + childtable + "\" DROP CONSTRAINT FK_" + parenttable + "_" + childtable;
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -707,7 +726,8 @@ WHERE constraint_type = 'FOREIGN KEY'
         {
             using (NpgsqlConnection myConnection = new NpgsqlConnection(ConnectionString))
             {
-                string oString = "RENAME TABLE " + oldname + " TO " + newname + "";
+                string oString = "ALTER TABLE \"" + oldname + "\" RENAME TO \"" + newname + "\"";
+
                 NpgsqlCommand oCmd = new NpgsqlCommand(oString, myConnection);
                 myConnection.Open();
                 oCmd.ExecuteNonQuery();
@@ -724,19 +744,35 @@ WHERE constraint_type = 'FOREIGN KEY'
             }
             else if (originaltype == "numeric")
             {
-                return "double";
+                return "numeric";
             }
             else if (originaltype == "date")
             {
-                return "Date";
+                return "date";
             }
             else if (originaltype == "boolean")
             {
-                return "tinyint";
+                return "bool";
             }
             else if (originaltype == "id")
             {
                 return "char(36)";
+            }
+            else if (originaltype == "foreignkey")
+            {
+                return "char(36)";
+            }
+            else if (originaltype == "serial")
+            {
+                return "serial";
+            }
+            else if (originaltype == "integer")
+            {
+                return "integer";
+            }
+            else if (originaltype == "uuid")
+            {
+                return "uuid";
             }
             else
             {

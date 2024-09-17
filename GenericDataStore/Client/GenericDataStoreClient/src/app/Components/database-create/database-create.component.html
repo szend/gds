@@ -1,57 +1,51 @@
 <p-progressSpinner [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
-<p-tabView>
-    <p-tabPanel header="Properties">
-        <div  class="grid">
+<div  >
 
 
-                    <div class="col-4" style="margin: 1rem; padding: 1rem;">
-                        <label>Name</label>
-                        <input  style="width: 20rem;"  [(ngModel)]="database.databaseName" pInputText/>           
-                    </div>
-                    <br>
-                    <br>
-                    <div class="col-4" style="margin: 1rem; padding: 1rem;">
-                        <label>Connection String</label>
-                        <textarea  style="width: 20rem;"  [(ngModel)]="database.connectionString" pInputText></textarea>
-                    </div>
-                    <br>
-                    <br>
-                    <div class="col-4" style=" margin: 1rem; padding: 1rem;">
-                        <label>Database Type</label>  
-                        <p-dropdown optionLabel="label" [options]="options" [dataKey]="'value'" (onChange)="OptionSelect($event)"  [showClear]="true"
-                         [placeholder]="database.databaseType ?? 'Select connection type'"></p-dropdown>       
-                    </div>
-                    <br>
-                    <br>
-                    <div class="col-4" style=" margin: 1rem; padding: 1rem;">
-                        <label>Default ID type</label>  
-                        <p-dropdown optionLabel="label" [options]="idoptions" [dataKey]="'value'" (onChange)="IdTypeSelect($event)"  [showClear]="true"
-                         [placeholder]=" database.defaultIdType ?? 'Select default id type'"></p-dropdown>       
-                    </div>
-                    <br>
-                    <br>
-                    <div class="col-4" style="margin: 1rem; padding: 1rem;">
-                        <label>Public</label>
+    <div style="display: grid; margin: 1rem; padding: 1rem;">
+        <label>Name</label>
+        <input  style="width: 20rem;"  [(ngModel)]="database.databaseName" pInputText/>           
+    </div>
+    <br>
+    <br>
+    <div  style="display: grid; margin: 1rem; padding: 1rem;">
+        <label>Connection String</label>
+        <textarea  style="width: 20rem;"  [(ngModel)]="database.connectionString" pInputText></textarea>
+    </div>
+    <br>
+    <br>
+    <div style="display: grid; margin: 1rem; padding: 1rem;">
+        <label>Database Type</label>  
+        <p-dropdown optionLabel="label" [options]="options" [dataKey]="'value'" (onChange)="OptionSelect($event)"  [showClear]="true"
+         [placeholder]="database.databaseType ?? 'Select connection type'"></p-dropdown>       
+    </div>
+    <br>
+    <br>
+    <div style="display: grid; margin: 1rem; padding: 1rem;">
+        <label>Default ID type</label>  
+        <p-dropdown optionLabel="label" [options]="idoptions" [dataKey]="'value'" (onChange)="IdTypeSelect($event)"  [showClear]="true"
+         [placeholder]=" database.defaultIdType ?? 'Select default id type'"></p-dropdown>       
+    </div>
+    <br>
+    <br>
+    <div style="display: grid; margin: 1rem; padding: 1rem;">
+        <label>Public</label>
 
-                            <p-triStateCheckbox [(ngModel)]="database.public" />
-                            <br>
-                       
-                    </div>
+            <p-triStateCheckbox [(ngModel)]="database.public" />
+            <br>
+       
+    </div>
 
-            
-        </div>
-    </p-tabPanel>
 
-</p-tabView>
-
+</div>
 
     <button   style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
     <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="ImportTables()">Connect tables</button> 
     <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="RefreshTables()">Refresh tables</button> 
     <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Chart()">Diagram</button>
+    <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ExectQuery()">Run query</button> 
     <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button-danger p-mr-2" (click)="DisconnectTables()">Disconnect tables</button> 
     <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button-danger p-mr-2" (click)="DisconnectDatabase()">Disconnect database</button> 
-    <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button-danger p-mr-2" (click)="ExectQuery()">Run query</button> 
 
 
 

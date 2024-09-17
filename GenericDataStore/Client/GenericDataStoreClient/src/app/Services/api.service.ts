@@ -53,6 +53,10 @@ export class ApiService {
   DeleteDatabase(id: string):Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/DatabaseConnectionProperty/DeleteDatabase/`+ id );
   }
+
+  GetConnectedTables(id: string):Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/ObjectType/GetConnectedTables/`+ id );
+  }
   
   GetAllType():Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/ObjectType/GetByFilter/` , null );

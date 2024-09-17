@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 
 namespace GenericDataStore.Filtering
 {
@@ -7,20 +8,20 @@ namespace GenericDataStore.Filtering
         private string[] _operators = { "-", "+", "/", "*", "^", "!", "|", "&", "=", "!=", "<", ">", "<=", ">=", "->", "<-" ,":-" , ":+"};
         private int[] _operatorsvalue = { 0, 0, 1, 1, 2,2,2,2,2,2,2,2,2,2,2,2,2,2 };
         private Func<object?, object, object>[] _operations = {
-        (a1, a2) => double.Parse(a1.ToString().Replace('.', ',')) - double.Parse(a2.ToString().Replace('.', ',')),
-        (a1, a2) => double.Parse(a1.ToString().Replace('.', ',')) + double.Parse(a2.ToString().Replace('.', ',')),
-        (a1, a2) => double.Parse(a1.ToString().Replace('.', ',')) / double.Parse(a2.ToString().Replace('.', ',')),
-        (a1, a2) => double.Parse(a1.ToString().Replace('.', ',')) * double.Parse(a2.ToString().Replace('.', ',')),
-        (a1, a2) => Math.Pow( double.Parse(a1.ToString().Replace('.', ',')),  double.Parse(a2.ToString().Replace('.', ','))),
+        (a1, a2) => double.Parse(a1.ToString().Replace(',', '.'),CultureInfo.InvariantCulture) - double.Parse(a2.ToString().Replace(',', '.'),CultureInfo.InvariantCulture),
+        (a1, a2) => double.Parse(a1.ToString().Replace(',', '.'),CultureInfo.InvariantCulture) + double.Parse(a2.ToString().Replace(',', '.'),CultureInfo.InvariantCulture),
+        (a1, a2) => double.Parse(a1.ToString().Replace(',', '.'),CultureInfo.InvariantCulture) / double.Parse(a2.ToString().Replace(',', '.'),CultureInfo.InvariantCulture),
+        (a1, a2) => double.Parse(a1.ToString().Replace(',', '.'),CultureInfo.InvariantCulture) * double.Parse(a2.ToString().Replace(',', '.'),CultureInfo.InvariantCulture),
+        (a1, a2) => Math.Pow( double.Parse(a1.ToString().Replace(',', '.'),CultureInfo.InvariantCulture),  double.Parse(a2.ToString().Replace(',', '.'),CultureInfo.InvariantCulture)),
         (a1, a2) =>  ! bool.Parse(a2.ToString()),
         (a1, a2) => bool.Parse(a1.ToString()) ||  bool.Parse(a2.ToString()),
         (a1, a2) => bool.Parse(a1.ToString()) && bool.Parse(a2.ToString()),
         (a1, a2) =>  a1.ToString() ==  a2.ToString(),
         (a1, a2) => a1.ToString() !=  a2.ToString(),
-         (a1, a2) => double.Parse(a1.ToString().Replace('.', ',')) < double.Parse(a2.ToString().Replace('.', ',')),
-         (a1, a2) => double.Parse(a1.ToString().Replace('.', ',')) > double.Parse(a2.ToString().Replace('.', ',')),
-         (a1, a2) => double.Parse(a1.ToString().Replace('.', ',')) <= double.Parse(a2.ToString().Replace('.', ',')),
-         (a1, a2) => double.Parse(a1.ToString().Replace('.', ',')) >= double.Parse(a2.ToString().Replace('.', ',')),
+         (a1, a2) => double.Parse(a1.ToString().Replace(',', '.'),CultureInfo.InvariantCulture) < double.Parse(a2.ToString().Replace(',', '.'),CultureInfo.InvariantCulture),
+         (a1, a2) => double.Parse(a1.ToString().Replace(',', '.'),CultureInfo.InvariantCulture) > double.Parse(a2.ToString().Replace(',', '.'),CultureInfo.InvariantCulture),
+         (a1, a2) => double.Parse(a1.ToString().Replace(',', '.'),CultureInfo.InvariantCulture) <= double.Parse(a2.ToString().Replace(',', '.'),CultureInfo.InvariantCulture),
+         (a1, a2) => double.Parse(a1.ToString().Replace(',', '.'),CultureInfo.InvariantCulture) >= double.Parse(a2.ToString().Replace(',', '.'),CultureInfo.InvariantCulture),
          (a1, a2) => a1.ToString().Contains(a2.ToString()),
          (a1, a2) => a2.ToString().Contains(a1.ToString()),
          (a1, a2) => a1.ToString().Replace(a2.ToString(),""),

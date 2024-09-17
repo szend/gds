@@ -114,7 +114,7 @@ namespace GenericDataStore.DatabaseConnector
                         {
                             for (int i = 0; i < oReader.FieldCount; i++)
                             {
-                                res = res + oReader[i].ToString();
+                                res = res + "| " + oReader[i].ToString() + " |";
                             }
                             res += "\n";
                         }
@@ -326,6 +326,10 @@ WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='" + dbname + "'";
                     break;
 
                 case "contains":
+                    if(field.Type == "boolean")
+                    {
+                        return "= " + GetValueString(field, res);
+                    }
                     return "LIKE '%" + res + "%' ";
 
                     break;
@@ -380,7 +384,9 @@ if (field?.Type == "date")
                 {
                     return "''";
                 }
-                return $"CONVERT(datetime,'{res.ToString().Split('.')[1] + "." + res.ToString().Split('.')[0] + "." + res.ToString().Split('.')[2]}')";
+                return $"CONVERT(datetime,'{res.ToString().Split('/')[0] + "." + (int.Parse(res.ToString().Split('/')[1]) + 1).ToString() + "." + res.ToString().Split('/')[2].Split(' ')[0]}')";
+
+                //return $"CONVERT(datetime,'{res.ToString().Split('.')[1] + "." + res.ToString().Split('.')[0] + "." + res.ToString().Split('.')[2]}')";
             }
             else if (field.Type == "numeric")
             {

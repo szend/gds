@@ -265,6 +265,7 @@ namespace GenericDataStore.Controllers
                 var db = DbContext.DatabaseConnectionProperty.FirstOrDefault(x => x.DatabaseConnectionPropertyId == type.DatabaseConnectionPropertyId);
                 Repository Repository = new Repository(db.ConnectionString,db.DatabaseType);
                 Repository.CreateValue(type, dataObject);
+                this.DbContext.SaveChanges();
 
             }
        

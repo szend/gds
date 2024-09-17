@@ -260,6 +260,7 @@ public optionsnum = {
 };
 
   public dataRec: any;
+  public fields: any;
 
   ngAfterViewInit(): void {
     }
@@ -289,6 +290,9 @@ public optionsnum = {
       }
       if(this.config.data.private){
         this.name = this.config.data.private;
+      }
+      if(this.config.data.fields){
+        this.fields = this.config.data.fields;
       }
     }
     
@@ -821,19 +825,19 @@ ChartClickOption(event: {element:{ datasetIndex: number, index : number}},chart:
 
 AddNewChart(type: string){
     if(type == "numeric"){
-        this.ref = this.dialogService.open(ChartCreateComponent,  { data: {charttype: 'numeric',id: this.id, filter: this.config.data.filter, options: this.optionsnum, typeoptions: this.typeoptions}, header: 'Create Chart'});
+        this.ref = this.dialogService.open(ChartCreateComponent,  { data: {fields: this.fields ,charttype: 'numeric',id: this.id, filter: this.config.data.filter, options: this.optionsnum, typeoptions: this.typeoptions}, header: 'Create Chart'});
         this.ref.onClose.subscribe(x => {
             this.dataRec.numbers = [x.chartdata].concat(this.dataRec.numbers);
         });
     }
     else if(type == "text"){
-        this.ref = this.dialogService.open(ChartCreateComponent,  { data: {charttype: 'text',id: this.id, filter: this.config.data.filter, options: this.optionsopt, typeoptions: this.typeoptionslogical}, header: 'Create Chart'});
+        this.ref = this.dialogService.open(ChartCreateComponent,  { data: {fields: this.fields ,charttype: 'text',id: this.id, filter: this.config.data.filter, options: this.optionsopt, typeoptions: this.typeoptionslogical}, header: 'Create Chart'});
         this.ref.onClose.subscribe(x => {
             this.dataRec.options = [x.chartdata].concat(this.dataRec.options);
         });
     }
     else if(type == "logical"){
-        this.ref = this.dialogService.open(ChartCreateComponent,  { data: {charttype: 'logical',id: this.id, filter: this.config.data.filter, options: this.optionsopt, typeoptions: this.typeoptionslogical}, header: 'Create Chart'});
+        this.ref = this.dialogService.open(ChartCreateComponent,  { data: {fields: this.fields ,charttype: 'logical',id: this.id, filter: this.config.data.filter, options: this.optionsopt, typeoptions: this.typeoptionslogical}, header: 'Create Chart'});
         this.ref.onClose.subscribe(x => {
             this.dataRec.booleans = [x.chartdata].concat(this.dataRec.booleans);
         });

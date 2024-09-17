@@ -6,12 +6,157 @@ genericdatastore, generic data store, database editor, without sql,
    create relation between tables with different database. create relation between database tables with different database online">
     <meta name="description" content="Database editor tool. Manage and analyse your data online without sql. Connnect your databases, edit, create, delete data and tables, see chart, create calculated field and coloring, use built in AI tools.">
 
-<div class="grid" style="margin: 3rem;">
-    <div class="col-2">
-        <button pButton pRipple class="p-button-success" (click)="CreateNew()">Create new</button> 
-    </div>
+
+
+
+<div class="bluelinear" style="display: block;">
+
+    <div id="one" class="description panel">
+        <div><h1 style="color: black !important; font-weight: 500 !important;">The new generation of database management</h1>
+          <div style="background-color: transparent !important;" class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
+            <div class="grid">
+                <div class="col-12 md:col-4 mb-4 px-5">
+                    <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                        <i class="pi pi-cloud text-4xl text-black-alpha-90"></i>
+                    </span>
+                    <div class="text-900 text-xl mb-3 font-medium">Several data source</div>
+                    <span class="text-700 line-height-3">Connect your MySql, PostgreSql, MSSQL databases, import from excel file, or store your data in our cloud.</span>
+                </div>
+                <div class="col-12 md:col-4 mb-4 px-5">
+                    <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                        <i class="pi pi-file-edit text-4xl text-black-alpha-90"></i>
+                    </span>
+                    <div class="text-900 text-xl mb-3 font-medium">CRUD for your tables and rows</div>
+                    <span class="text-700 line-height-3">Create, read, update and delete tables and rows in one second.</span>
+                </div>
+                <div class="col-12 md:col-4 mb-4 px-5">
+                    <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                        <i class="pi pi-chart-line text-4xl text-black-alpha-90"></i>
+                    </span>
+                    <div class="text-900 text-xl mb-3 font-medium">Analyze your data</div>
+                    <span class="text-700 line-height-3">With auto generated or custom diagrams, filters, calculated and colored fields.</span>
+                </div>
+                <div class="col-12 md:col-4 mb-4 px-5">
+                    <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                        <i class="pi pi-microchip-ai text-4xl text-black-alpha-90"></i>
+                    </span>
+                    <div class="text-900 text-xl mb-3 font-medium">Train your AI</div>
+                    <span class="text-700 line-height-3">Train AI with your data and use it for different purposes like value prediction or categorization.</span>
+                </div>
+                <div class="col-12 md:col-4 mb-4 px-5">
+                    <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                        <i class="pi pi-sitemap text-4xl text-black-alpha-90"></i>
+                    </span>
+                    <div class="text-900 text-xl mb-3 font-medium">Create relations</div>
+                    <span class="text-700 line-height-3">Create relations between tables from same, or from different datasources. Filter and navigate easily between parent and child table. </span>
+                </div>
+                <div class="col-12 md:col-4 md:mb-4 mb-0 px-3">
+                    <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                        <i class="pi pi-check-circle text-4xl text-black-alpha-90"></i>
+                    </span>
+                    <div class="text-900 text-xl mb-3 font-medium">Easy to use</div>
+                    <span class="text-700 line-height-3">No need to SQL or IT knowledge.</span>
+                </div>
+            </div>
+        </div>
+
+        </div>
+      </div>
+
+
+
+    
+      <div>
+        <div class="page-wrapper">
+            <header>Main features</header>
+          <section class="section">
+            <div class="container">
+              <ul class="items scrollx-section">
+                <li class="item">
+                    <div >
+                        <p>List with filter and sort option for every column</p>
+                        <img src="assets/demoimg/filter.png" alt="Image" style="height: 60%; width: 60%;">
+                    </div>
+                </li>
+                <li class="item">
+                    <div >
+                        <p >Custom and auto generated charts</p>
+                        <img src="assets/demoimg/diagramnum.png" alt="Image" style="height: 50%; width: 50%;">
+                        <br>
+                        <img src="assets/demoimg/diagramopt.png" alt="Image" style="height: 50%; width: 50%;">
+        
+        
+                    </div>
+                </li>
+                <li class="item">
+                    <div>
+                        <p >Colored fields based on values</p>
+                        <img src="assets/demoimg/colorfield.png" alt="Image" style="height: 60%; width: 60%;">
+                    </div>
+                </li>
+                <li class="item">
+                    <div>
+                    <p >Calculated fields</p>
+                    <img src="assets/demoimg/calculatedfield.png" alt="Image" style="height: 60%; width: 60%;">
+                    </div>
+                </li>
+                <li class="item">
+                    <div >
+                        <p>Edit values</p>
+                        <img src="assets/demoimg/editparent.png" alt="Image" style="height: 60%; width: 60%;">
+                    </div>
+                </li>
+                <li class="item">
+                    <div >
+                        <p>Navigation from parent object into child</p>
+                        <img src="assets/demoimg/editchild.png" alt="Image" style="height: 60%; width: 60%;">
+                    </div>
+                </li>
+                <li class="item">
+                    <div>
+                        <p>Database diagrams</p>
+                        <img src="assets/demoimg/diagramdb.png" alt="Image" style="height: 60%; width: 60%;">
+                        </div>
+                </li>
+                <li class="item">
+                    <div>
+                        <p>Create value prediction with AI</p>
+                        <img src="assets/demoimg/predictcreate.png" alt="Image" style="height: 60%; width: 60%;">
+                        </div>
+                </li>
+                <li class="item">
+                    <div>
+                        <p>Import and export from excel. Export example:</p>
+                        <img src="assets/demoimg/Excel.png" alt="Image" style="height: 60%; width: 60%;">
+                        </div>
+                </li>
+                <li class="item">
+                    <div >
+                        <p style="height: 40%; width: 40%;">Create and edit connection</p>
+                        <img src="assets/demoimg/connectdb.png" alt="Image" style="height: 60%; width: 60%;">
+                    </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+          <section class="section">
+            <div class="container">
+              <ul class="items scrollx-section">
+                <li style="line-height: 0px !important;" class="item">
+                    <div >
+                        <p style="color: black !important;">Check the demo list in guest mode (no admin functions)
+                         <button style="vertical-align: middle;" pButton pRipple class="p-button-success" (click)="GoToType('08dccc07-a636-4061-82c8-d47f5e4b0823/demo')">Demo</button> 
+                        </p>
+                    </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+          </div>
+      </div>
+
+
 </div>
 
 
-
-<app-list-view #list></app-list-view>
+<app-footer></app-footer>

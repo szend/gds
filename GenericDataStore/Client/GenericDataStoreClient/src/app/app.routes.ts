@@ -10,13 +10,12 @@ import { ListViewComponent } from './home/list-view/list-view.component';
 import { SearchviewComponent } from './home/searchview/searchview.component';
 import { DatabaseListComponent } from './Components/database-list/database-list.component';
 import { PageViewComponent } from './Components/page-view/page-view.component';
-import { OfferComponent } from './home/offer/offer.component';
-import { OfferlistComponent } from './home/offerlist/offerlist.component';
 import { ContactComponent } from './home/contact/contact.component';
 import { PriceComponent } from './home/price/price.component';
 import { FeaturesComponent } from './home/features/features.component';
 import { ConfirmpaymentComponent } from './home/confirmpayment/confirmpayment.component';
 import { MylistsComponent } from './home/mylists/mylists.component';
+import { DashboardComponent } from './home/dashboard/dashboard.component';
 
 
 export const routes: Routes = [
@@ -31,11 +30,11 @@ export const routes: Routes = [
       { path: 'mylists', component: MylistsComponent },
       { path: 'confirm/:intcount/:extcount/:listcount', component: ConfirmpaymentComponent},
       { path: 'contact', component: ContactComponent },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'home', component: HomeComponent },
       { path: 'messages', component: MessageComponent },
       { path: 'features', component: FeaturesComponent },
       { path: 'price', component: PriceComponent },
-      { path: 'getalloffer', component: OfferlistComponent },
       { path: 'connection/databases', component: DatabaseListComponent },
       { path: 'list/:category', component: ListViewComponent },
       { path: 'search/:searchstring', component: SearchviewComponent },

@@ -78,7 +78,7 @@
                         <label *ngIf="col.type != 'image' && col.type != 'boolean'">
                          {{ getValue(row.value, col) }}
                         </label>
-                        <label *ngIf="col.type == 'boolean'">
+                        <label *ngIf="col.type == 'boolean' && getValue(row.value, col) != '' && getValue(row.value, col) != undefined && getValue(row.value, col) != null">
                             <i  *ngIf="getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true || getValue(row.value, col) == 1 || getValue(row.value, col) == '1' " class="pi pi-check" style="font-size: 1rem"></i>
     
                             <i  *ngIf="(getValue(row.value, col) == 'false' || getValue(row.value, col) == 'False' || getValue(row.value, col) == false) " class="pi pi-times" style="font-size: 1rem"></i>

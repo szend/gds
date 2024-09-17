@@ -12,8 +12,7 @@ namespace GenericDataStore.DatabaseConnector
     {
         public static Type Create(string classstring, string name)
         {
-            try
-            {
+
                 string codeToCompile = "using System; using GenericDataStore.DatabaseConnector; namespace GenericDataStoreGenerated { " + classstring + " }";
                 SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(codeToCompile);
                 string assemblyName = Path.GetRandomFileName();
@@ -35,7 +34,7 @@ namespace GenericDataStore.DatabaseConnector
 
                     if (!result.Success)
                     {
-                        return null;
+                        throw new Exception(classstring);
 
                     }
                     else
@@ -48,12 +47,8 @@ namespace GenericDataStore.DatabaseConnector
                         return myTableType;
                     }
                 }            
-            }
-            catch (Exception)
-            {
+            
 
-                return null;
-            }
 
         }
     
@@ -67,17 +62,6 @@ namespace GenericDataStore.DatabaseConnector
 
             }
         }
-
-        public class ForeignDbKeyAttribute : System.Attribute
-        {
-            public string ConnectedTableName { get; set; }
-            public ForeignDbKeyAttribute(string connecttable)
-            {
-                ConnectedTableName = connecttable;
-        }
-    }
-
-
 }
 
 
