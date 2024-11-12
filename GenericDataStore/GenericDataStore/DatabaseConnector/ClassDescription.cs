@@ -10,6 +10,7 @@ namespace GenericDataStore.DatabaseConnector
     public class ClassDescription
     {
         public string ClassName { get; set; }
+
         public List<PropertyDescription> Properties { get; set; }
 
         public Type Type { get; set; }
@@ -21,6 +22,7 @@ namespace GenericDataStore.DatabaseConnector
             foreach (var property in t.GetProperties())
             {
                 bool key = false;
+                string colname = "";
                 var attr = property.GetCustomAttributes(true);
                 foreach (var a in attr)
                 {
@@ -28,12 +30,17 @@ namespace GenericDataStore.DatabaseConnector
                     {
                         key = true;
                     }
+                    if (a is GenericDataStore.DatabaseConnector.FieldNameAttribute)
+                    {
+                        colname = (a as GenericDataStore.DatabaseConnector.FieldNameAttribute).Name;
+                    }
                 }
                 Properties.Add(new PropertyDescription
                 {
                     PropertyName = property.Name,
                     PropertyType = property.PropertyType,
-                    Key = key
+                    Key = key,
+                    DbColumnName = colname
                 });
             }
 
@@ -44,6 +51,7 @@ namespace GenericDataStore.DatabaseConnector
     public class PropertyDescription
     {
         public string PropertyName { get; set; }
+        public string DbColumnName { get; set; }
         public Type PropertyType { get; set; }
         public bool Key { get; set; }
         public PropertyDescription()

@@ -16,7 +16,9 @@ import { FooterComponent } from './footer/footer.component';
 import { gsap, Power2, Elastic  } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-
+import { ScrollTopModule } from 'primeng/scrolltop';
+import { ContactComponent } from './contact/contact.component';
+import { DataobjectListComponent } from '../Components/dataobject-list/dataobject-list.component';
 
 
 
@@ -24,7 +26,9 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ButtonModule, DialogModule, DynamicDialogModule, CommonModule,CardModule,DataViewModule, ListViewComponent,TagModule,AnimateOnScrollModule,FooterComponent],
+  imports: [ButtonModule, DialogModule, DynamicDialogModule, CommonModule,CardModule,DataViewModule, ListViewComponent,TagModule,AnimateOnScrollModule,FooterComponent,ScrollTopModule,
+    ContactComponent,DataobjectListComponent
+  ],
   providers: [DialogService],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
@@ -40,13 +44,30 @@ export class HomeComponent implements OnInit {
   public loggedin : boolean = true;
   @ViewChild('list', {static: false}) list: ListViewComponent | undefined;
 
+  replacetexts : any[] = [
+    {text : "Replace your unreadable API response", src: "assets/demoimg/apiresponse.png"},
+    {text : "Replace your Excel file", src: "assets/demoimg/Excel.png"},
+    {text : "Replace your complex SQL query", src: "assets/demoimg/sql.png"}
+  ];
 
+  withtexts : any[] = [
+    {text : "Manageable list", src: "assets/demoimg/table.gif"},
+    {text : "Live dashboard", src: "assets/demoimg/dashboard.gif"},
+    {text : "Auto generated and custom chart", src: "assets/demoimg/charts.gif"}
+  ]
+
+  replacetext : string = this.replacetexts[0].text;
+  withtext : string = this.withtexts[0].text;
+  replacesrc : string = this.replacetexts[0].src;
+  withsrc : string = this.withtexts[0].src;
+
+  repidx = 1;
+  withidx = 1;
   ngOnInit() {
     gsap.registerPlugin(ScrollTrigger,ScrollToPlugin);
     
     let items = gsap.utils.toArray(".items"),
     pageWrapper = document.querySelector(".page-wrapper");
-
 items.forEach((container : any, i) => {
   let localItems = container.querySelectorAll(".item"),
       distance = () => {
@@ -54,6 +75,21 @@ items.forEach((container : any, i) => {
             containerBounds = container.getBoundingClientRect();
         return Math.max(0, lastItemBounds.right - containerBounds.right);
       };
+      const exp = gsap.timeline()
+      exp.to('.experience-middle', {
+        '--progress1': 1,
+        duration: 5,
+        smoothOrigin: true,
+        scrollTrigger: {
+          trigger: '.experience',
+          start: 'top top',
+          end: '+=5000',
+          scrub: true,
+          markers: false,
+          pin: '.experience',
+        },
+      });
+
   gsap.to(container, {
     x: () => -distance(), // make sure it dynamically calculates things so that it adjusts to resizes
     ease: "none",
@@ -67,8 +103,38 @@ items.forEach((container : any, i) => {
       invalidateOnRefresh: true // will recalculate any function-based tween values on resize/refresh (making it responsive)
     }
   })
+
 });
-    
+
+
+// gsap.from("#zoom-out h2", {
+//   scale: 930, stagger: 0.25, duration: 3,
+//   scrollTrigger: {
+//       trigger: "#zoom-out",
+//       pin: true,
+//       end: `+=${innerHeight * 1.3}`,
+//       scrub: 3,
+//       markers: false
+//   }
+// });
+
+// zoom-in
+gsap.to("#zoom-in h2", {
+  scale: 600, stagger: 0.25, duration: 3,
+  scrollTrigger: {
+      trigger: "#zoom-in",
+      pin: true,
+      end: `+=${innerHeight * 1.3}`,
+      scrub: 3,
+      markers: false
+  }
+});
+
+
+  
+
+
+
     this.Refresh()
   }
 

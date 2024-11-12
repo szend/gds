@@ -344,11 +344,15 @@
 </p-stepper>
 </p-card>
 <br>
+<button *ngIf="cahrtdata" style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Add()">Add to others</button> 
+<button *ngIf="cahrtdata" style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddToDashboard()">Add to dashboard</button> 
 
 <h1>Or write a script:</h1>
 
 <button style="margin-bottom: 1rem; margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ShowDesc()">Show script description</button> 
 <button *ngIf="ycalculation && xcalculation" style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+<button *ngIf="cahrtdata" style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Add()">Add to others</button> 
+<button *ngIf="cahrtdata" style="margin-bottom: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddToDashboard()">Add to dashboard</button> 
 
 <br>
 <div class="grid" *ngIf="selectedoption">

@@ -7,6 +7,7 @@ using MySqlConnector;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GenericDataStore.DatabaseConnector
 {
@@ -213,17 +214,17 @@ namespace GenericDataStore.DatabaseConnector
                 }
                 if (filter != null && filter.ValueSkip != null && filter.ValueTake != null && filter.ValueTake > 0 && chart == false)
                 {
-                    if (filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
+                    if ((filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any()) && objtype.Field.FirstOrDefault(x => x.Type == "id") != null)
                     {
-                        oString += " Order By " + "`" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "`";
+                        oString += " Order By " + "`" + objtype.Field.FirstOrDefault(x => x.Type == "id")?.Name + "`";
                     }
                     oString += @" LIMIT " + filter.ValueTake + " OFFSET " + filter.ValueSkip;
                 }
                 else if (filter != null && filter.ValueSkip != null && filter.ValueTake != null && filter.ValueTake > 0 && chart == true && onlyfirstx == true)
                 {
-                    if (filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
+                    if ((filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any()) && objtype.Field.FirstOrDefault(x => x.Type == "id") != null)
                     {
-                        oString += " Order By " + "`" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "`";
+                        oString += " Order By " + "`" + objtype.Field.FirstOrDefault(x => x.Type == "id")?.Name + "`";
                     }
                     oString += @" LIMIT " + filter.ValueTake + " OFFSET " + filter.ValueSkip;
                 }
@@ -255,7 +256,7 @@ namespace GenericDataStore.DatabaseConnector
                             else
                             {
                                 var fieldvalue = oReader[item.Name];
-                                if (fieldvalue != DBNull.Value && item.PropertyName != "AppUserId" && item.PropertyName != "DataObjectId")
+                                if (fieldvalue != DBNull.Value && item.Name != "AppUserId" && item.Name != "DataObjectId")
                                 {
                                     Value value = new Value()
                                     {
@@ -431,10 +432,10 @@ if (field.Type == "date")
                     (SELECT
                         CONCAT(
                             CASE
-                            WHEN COLUMN_KEY = 'PRI' THEN CONCAT('[PrimaryDbKey]')
+                            WHEN COLUMN_KEY = 'PRI' THEN CONCAT(' [PrimaryDbKey] ')
                             ELSE ''
                             END,
-                        '\tpublic ',
+                      CONCAT(' [FieldName(" + "\"" + "',COLUMN_NAME ," + "'\"" + @")] '), '\tpublic ',
                         CASE 
                             WHEN DATA_TYPE = 'bigint' THEN CONCAT('long',IF(IS_NULLABLE = 'NO' , '', '?'))  
                             WHEN DATA_TYPE = 'BINARY' THEN CONCAT('byte[]',IF(IS_NULLABLE = 'NO' , '', '?'))
@@ -777,6 +778,14 @@ WHERE
             }
         }
 
+        public List<Type> GetAllTableApi(List<DatabaseTableRelations> relations,string name)
+        {
+            throw new NotImplementedException();
+        }
 
+        public List<DataObject> GetAllDataFromTableApi(ObjectType objtype, IMemoryCache memoryCache, RootFilter? filter, bool chart = false, bool onlyfirstx = false)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

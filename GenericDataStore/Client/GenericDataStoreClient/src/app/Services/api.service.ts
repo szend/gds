@@ -8,26 +8,59 @@ import { RootFilter } from '../Models/Parameters';
 })
 export class ApiService {
 
-//baseUrl: string = "https://localhost:7053/api";
+baseUrl: string = "https://localhost:7053/api";
 
-  baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
+ // baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
 
  // baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
 
   constructor(public http: HttpClient) { }
 
+  AddToDashboard(dashtable : any):Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/DashboardTable/AddToDashboard/` , dashtable );
+  }
+
+  SaveDashboard(dashtable : string, size : number, position: number):Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/DashboardTable/SaveDashboard/` + dashtable + '/' + size+ '/' + position );
+  }
+
+  RemoveFromDashboard(id : string):Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/DashboardTable/RemoveFromDashboard/` + id );
+  }
+
+  AddToDashboardChart(chart : any):Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/Chart/AddToDashboard/` , chart );
+  }
+
+  AddToDashboardCharts(charts : any[]):Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/Chart/AddToDashboardArray/` , charts );
+  }
+
+
+  SaveChartDashboard(chart : string, size : number, position: number):Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/Chart/SaveChartDashboard/` + chart + '/' + size+ '/' + position );
+  }
+
+  RemoveFromDashboardChart(id : string):Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/Chart/RemoveFromDashboard/` + id );
+  }
+
   Connect(db : any):Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/DatabaseConnectionProperty/Connect/` , db );
   }
+
   EditConnection(db : any):Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/DatabaseConnectionProperty/Edit/` , db );
   }
+  EditConnectionAPI(db : any):Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/DatabaseConnectionProperty/Editapi/` , db );
+  }
+
   GetTableNames(id: string):Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/DatabaseConnectionProperty/GetTableNames/`+ id );
   }
 
   ExecuteQuery(id: string, query : string):Observable<any> {
-    console.log(query);
     return this.http.get<any>(`${this.baseUrl}/DatabaseConnectionProperty/ExecuteQuery/`+ id + '/' + query );
   }
 
@@ -36,12 +69,21 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/DatabaseConnectionProperty/GetDatabases` );
   }
 
+  GetAPIs():Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/DatabaseConnectionProperty/GetApis` );
+  }
+
   GetPublicDatabases():Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/DatabaseConnectionProperty/GetPublicDatabases` );
   }
 
   ImportTables(id: string, alltable : string[]):Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/DatabaseConnectionProperty/ImportTables/`+ id,alltable );
+  }
+
+  
+  ImportApiTables(id: string):Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/DatabaseConnectionProperty/ImportApiTables/`+ id );
   }
 
   RefreshTables(id: string, alltable : string[]):Observable<any> {
@@ -58,9 +100,18 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/ObjectType/GetConnectedTables/`+ id );
   }
   
+  GetDashboardData():Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/ObjectType/GetDashboardData/` );
+  }
+
+  GetDashboardDataOther(id: string):Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/ObjectType/GetDashboardDataOther/`+ id  );
+  }
+
   GetAllType():Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/ObjectType/GetByFilter/` , null );
   }
+
 
   GetCount(rootfilter : RootFilter | undefined):Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/ObjectType/GetCount/` , rootfilter );
@@ -73,6 +124,14 @@ export class ApiService {
     else{
       return this.http.post<any>(`${this.baseUrl}/ObjectType/GetByFilter/` , rootfilter );
     }
+  }
+
+  GetAllPublicDashboard():Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/ObjectType/GetAllPublicDashboard/` ); 
+}
+
+  GetTypeByChart(chart : any | undefined, privatelist: boolean = false, value : any,label : any):Observable<any> {
+      return this.http.post<any>(`${this.baseUrl}/ObjectType/GetTypeByChart/`+privatelist+'/'+value+'/'+label , chart ); 
   }
 
   GetPage(rootfilter : RootFilter | undefined, id: string, name : string):Observable<any> {
@@ -145,6 +204,19 @@ export class ApiService {
 
   ListOwner(id : string):Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/Users/ListOwner/`+ id );
+  }
+
+  SetDashoardPublic():Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/Users/SetDashoardPublic/`);
+  }
+
+  SetDashoardNonPublic():Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/Users/SetDashoardNonPublic/`);
+  }
+
+
+  IsDashboardPublic():Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/Users/IsDashboardPublic/`);
   }
 
   SetLimit(datacount : number, extdatacount : number, listcount : number, str : string):Observable<any> {
@@ -243,6 +315,14 @@ SaveCalculatedField(calculatedfield : any):Observable<any> {
 
 SaveCalculatedColor(calculatedcolor : any):Observable<any> {
   return this.http.post<any>(`${this.baseUrl}/ObjectType/SaveCalculatedColor`, calculatedcolor);
+}
+
+SaveCalculatedColorLabel(calculatedcolor : any):Observable<any> {
+  return this.http.post<any>(`${this.baseUrl}/ObjectType/SaveCalculatedColorLabel`, calculatedcolor);
+}
+
+SaveCalculatedSize(calculatedcolor : any):Observable<any> {
+  return this.http.post<any>(`${this.baseUrl}/ObjectType/SaveCalculatedSize`, calculatedcolor);
 }
 
 CreateCalculatedChart(calculatedcolor : any):Observable<any> {

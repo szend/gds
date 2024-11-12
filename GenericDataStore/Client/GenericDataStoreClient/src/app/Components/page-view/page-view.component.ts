@@ -20,7 +20,7 @@ export class PageViewComponent implements OnInit {
   id : string | null = null;
   data: any
   page : string | null = null;
-  public rootFilter : RootFilter = { valueFilters: [], valueSortingParams: [], filters: [], logic: 'and', sortingParams: [], skip: 0, take:0, valueSkip: 0, valueTake:0};
+  public rootFilter : RootFilter = {parentValueSortingParams: [],parentValueFilters: [], valueFilters: [], valueSortingParams: [], filters: [], logic: 'and', sortingParams: [], skip: 0, take:0, valueSkip: 0, valueTake:0};
 
   constructor(public apiService: ApiService,protected route: ActivatedRoute) { }
   ngOnInit(): void {

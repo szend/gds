@@ -29,7 +29,9 @@
     </div>
 </div>
 
-    <button pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+    <button pButton pRipple class="p-button-success p-mr-2 mr-2" (click)="Save()">Save</button> 
+    <button pButton pRipple class="p-button-success p-mr-2" (click)="SaveClose()">Save & Close</button> 
+
 
     <p-toast position="top-right"  (onClose)="onReject()" [baseZIndex]="5000">
         <ng-template let-message pTemplate="message">

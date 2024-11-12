@@ -15,14 +15,13 @@ namespace GenericDataStore.Controllers
     public class DatabaseConnectionPropertyController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
-        private readonly IMemoryCache _memoryCache;
 
-        public DatabaseConnectionPropertyController(IMemoryCache memoryCache, ILogger<DatabaseConnectionProperty> logger, ApplicationDbContext dbContext, UserManager<AppUser> userManager)
+        public DatabaseConnectionPropertyController(ILogger<DatabaseConnectionProperty> logger, ApplicationDbContext dbContext, UserManager<AppUser> userManager)
         {
             this.Logger = logger;
             this.DbContext = dbContext;
             this.userManager = userManager;
-            _memoryCache = memoryCache;
+
         }
 
         protected ILogger<DatabaseConnectionProperty> Logger { get; set; }
@@ -54,6 +53,8 @@ namespace GenericDataStore.Controllers
 
             return Ok();
         }
+
+    
 
 
         [HttpPost("Edit")]
@@ -156,7 +157,7 @@ namespace GenericDataStore.Controllers
                                 typestring = "id";
 
                             }
-                            else if (item2.PropertyType == typeof(int) || item2.PropertyType == typeof(int?) || item2.PropertyType == typeof(double) || item2.PropertyType == typeof(double) || item2.PropertyType == typeof(float) || item2.PropertyType == typeof(float?))
+                            else if (item2.PropertyType == typeof(int) || item2.PropertyType == typeof(int?) || item2.PropertyType == typeof(double) || item2.PropertyType == typeof(double?) || item2.PropertyType == typeof(float) || item2.PropertyType == typeof(float?))
                             {
                                 typestring = "numeric";
                             }
@@ -171,8 +172,7 @@ namespace GenericDataStore.Controllers
 
                             Field f = new Field()
                             {
-                                Name = item2.PropertyName,
-                                PropertyName = item2.PropertyName,
+                                Name = item2.DbColumnName != "" ? item2.DbColumnName : item2.PropertyName,
                                 Type = typestring,
                                 ObjectTypeId = type.ObjectTypeId,
                             };
@@ -235,6 +235,98 @@ namespace GenericDataStore.Controllers
             return Ok();
         }
 
+        [HttpGet("ImportApiTables/{dbid}")]
+        [Authorize(Policy = "Full")]
+        public async Task<IActionResult> ImportApiTables(Guid dbid)
+        {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            //Guid? userid = this.DbContext.Users.FirstOrDefault(x => x.UserName == "admin")?.Id;
+
+
+            var db = DbContext.DatabaseConnectionProperty.FirstOrDefault(x => x.AppUserId == user.Id && x.DatabaseConnectionPropertyId == dbid);
+            if (db == null)
+            {
+                return BadRequest("Database not found");
+            }
+            Repository Repository = new Repository(db.ConnectionString, db.DatabaseType);
+            if (user != null)
+            {
+                List<DatabaseTableRelations> relations = new List<DatabaseTableRelations>();
+
+                    var alllistcount = DbContext.ObjectType.Where(x => x.AppUserId == user.Id).Count();
+
+                    var alldesc = Repository.GetAllProperty(relations,db.DatabaseName);
+                if (user.AllowedListCount < alllistcount + alldesc.Count)
+                {
+                    return BadRequest("You reached the maximum number of list: " + user.AllowedListCount + ". Increase your limits.");
+                }
+                if (alldesc != null)
+                {
+                    List<ObjectType> newtypes = new List<ObjectType>();
+                    foreach (var desc in alldesc)
+                    {
+                        ObjectType type = new ObjectType()
+                        {
+                            Name = desc.ClassName,
+                            AllUserFullAccess = false,
+                            AppUserId = user.Id,
+                            Category = "default",
+                            CreationDate = DateTime.Now,
+                            DenyChart = false,
+                            DenyExport = false,
+                            DenyAdd = true,
+                            NoFilterMenu = false,
+                            Private = false,
+                            Promoted = false,
+                            TableName = desc.ClassName,
+                            DatabaseConnectionPropertyId = dbid,
+                        };
+
+                        foreach (var item2 in desc.Properties)
+                        {
+                            string typestring = "text";
+                            if (item2.Key)
+                            {
+                                typestring = "id";
+
+                            }
+                            else if (item2.PropertyType == typeof(int) || item2.PropertyType == typeof(int?) || item2.PropertyType == typeof(double) || item2.PropertyType == typeof(double) || item2.PropertyType == typeof(float) || item2.PropertyType == typeof(float?))
+                            {
+                                typestring = "numeric";
+                            }
+                            else if (item2.PropertyType == typeof(DateTime) || item2.PropertyType == typeof(DateTime?))
+                            {
+                                typestring = "date";
+                            }
+                            else if (item2.PropertyType == typeof(bool) || item2.PropertyType == typeof(bool?))
+                            {
+                                typestring = "boolean";
+                            }
+
+                            Field f = new Field()
+                            {
+                                Name = item2.PropertyName,
+                                Type = typestring,
+                                ObjectTypeId = type.ObjectTypeId,
+                            };
+                            type.Field.Add(f);
+                        }
+                        newtypes.Add(type);
+                        DbContext.ObjectType.Add(type);
+                    }
+                    foreach (var item in relations)
+                    {
+                        item.ParentObjecttypeId = newtypes.FirstOrDefault(x => x.Name == item.ParentTable)?.ObjectTypeId;
+                        item.ChildObjecttypeId = newtypes.FirstOrDefault(x => x.Name == item.ChildTable)?.ObjectTypeId;
+                        DbContext.DatabaseTableRelations.Add(item);
+                    }
+                }             
+            }
+
+            DbContext.SaveChanges();
+            return Ok();
+        }
+
         [HttpPost("RefreshTables/{dbid}")]
         [Authorize(Policy = "Full")]
         public async Task<IActionResult> RefreshTables(Guid dbid, List<string> alltable)
@@ -285,7 +377,6 @@ namespace GenericDataStore.Controllers
                                 Field f = new Field()
                                 {
                                     Name = item2.PropertyName,
-                                    PropertyName = item2.PropertyName,
                                     Type = typestring,
                                     ObjectTypeId = type.ObjectTypeId,
                                 };
@@ -373,6 +464,12 @@ namespace GenericDataStore.Controllers
                     if (type != null)
                     {
                         var relations = DbContext.DatabaseTableRelations.Where(x => x.ParentObjecttypeId == type.ObjectTypeId || x.ChildObjecttypeId == type.ObjectTypeId).ToList();
+                        var dashboarddatas = DbContext.DashboardTable.Where(x => x.ObjectTypeId == type.ObjectTypeId).ToList();
+                        var charts = DbContext.Chart.Where(x => x.ObjectTypeId == type.ObjectTypeId).ToList();
+                        var pages = DbContext.TablePage.Where(x => x.ObjectTypeId == type.ObjectTypeId).ToList();
+                        DbContext.DashboardTable.RemoveRange(dashboarddatas);
+                        DbContext.Chart.RemoveRange(charts);
+                        DbContext.TablePage.RemoveRange(pages);
                         DbContext.DatabaseTableRelations.RemoveRange(relations);
                         DbContext.ObjectType.Remove(type);
                     }

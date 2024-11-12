@@ -25,13 +25,14 @@ import { DataobjectListComponent } from '../dataobject-list/dataobject-list.comp
 import { DatabaseTablesComponent } from '../database-tables/database-tables.component';
 import { ChartComponent } from '../chart/chart.component';
 import { ExecuteQueryComponent } from '../execute-query/execute-query.component';
+import { StepperModule } from 'primeng/stepper';
 
 @Component({
   selector: 'app-database-create',
   standalone: true,
   imports: [InputGroupModule, FormsModule,CommonModule,TriStateCheckboxModule,CalendarModule,ConfirmDialogModule,DropdownModule,TabViewModule,ImageModule,ChipModule,
     InputTextModule,InputNumberModule,ButtonModule,MessagesModule,CheckboxModule,forwardRef(() => DataobjectListComponent),FileUploadModule,KeyFilterModule,
-    ProgressSpinnerModule,ToastModule
+    ProgressSpinnerModule,ToastModule,StepperModule
   ],
     providers: [MessageService,ConfirmationService], 
   templateUrl: './database-create.component.html',
@@ -50,6 +51,8 @@ export class DatabaseCreateComponent implements OnInit {
     {label: 'SQL Server', value: 'SQL Server'},
     {label: 'MYSQL', value: 'MYSQL'},
     {label: 'PostgreSQL', value: 'PostgreSQL'},
+    {label: 'API', value: 'API'},
+
 
   ];
   idoptions = [
@@ -89,6 +92,12 @@ export class DatabaseCreateComponent implements OnInit {
 
   Save() {
     this.loading = true;
+    if(this.database.public == undefined || this.database.public == null){
+      this.database.public = false;
+    }
+    if(this.database.defaultIdType == undefined || this.database.defaultIdType == null){
+      this.database.defaultIdType = 'int';
+    }
     if(this.config.data.createmode == true){
       this.apiService.Connect(this.database).subscribe((data: any) => {
         this.loading = false;
@@ -107,6 +116,14 @@ export class DatabaseCreateComponent implements OnInit {
         this.messageService.add({severity:'error', summary: 'Error', detail: 'Database update failed'});
       });
     }
+  }
+
+  ImportApiTable(){
+    this.apiService.ImportApiTables(this.database.databaseConnectionPropertyId).subscribe((data: any) => {
+      this.messageService.add({severity:'success', summary: 'Success', detail: 'Data connected'});
+    }, (error: any) => {
+      this.messageService.add({severity:'error', summary: 'Error', detail: 'Error connecting data'});
+    });
   }
 
   ImportTables(){

@@ -1,328 +1,692 @@
-<meta name="keywords" content="generic, data, store,
+<meta name="keywords"
+     content="generic, data, store,
 genericdatastore, generic data store, database editor, without sql,
  edit database, edit database without sql, database, database tool, store data online,
   online data, manage database, connect database, analyse data, data analysis, database chart,
    create ai, ai data analysis, online database editor, online database editor without sql, store data online free, edit data online free, connect database online, edit database online,
    create relation between tables with different database. create relation between database tables with different database online">
-   
-   <meta name="description" content="This program is a data science/data analysis application, built with the most modern technologies.
+
+<meta name="description"
+     content="This program is a data science/data analysis application, built with the most modern technologies.
    It allows you to create new or connect existing tables, and then perform various operations on it like:
      filtering, sorting, creating calculated columns, training your AI model, creating different data visualizations, and many more.">
 
-<div style="background-color:  #A28B55;">
-    <p-accordion >
-        <p-accordionTab header="About the program">
-            <p>
-     This program is a data science/data analysis application, built with the most modern technologies.
-<br>
-     It allows you to create new or connect existing tables, and then perform various operations on it like:
-     filtering, sorting, creating calculated columns, training your AI model, creating different data visualizations, and many more.
-<br><br>
-     The differences between this program and other similar programs are (beyond that it has an affordable price :D): <br><br>
-     - You don't have to import your data to the program, you can connect to your existing data source and work with it directly.
-     But if you want to import your data, you can do that too. <br><br>
-     - You can even have multiple data sources connected at the same time, and work with them together,
-<b>and create a virtual connection between them as if they were in the same database.</b> <br><br>
-     - You can create your custom data visualizations, and the program also generates some base charts.<br><br>
-     - You can create your own custom calculated columns, use our simple "programming languages" to create them from 
-     property, child or parent table, or any mathematical/logical/textual combination of these.<br><br>
-     - You can train your own AI model, and use it to predict the future values of your data or to classify your data.<br><br>
-     - We have a unique input field for most of the column types (like date, number, text, etc), that helps you to input the data faster and more accurately.<br><br>
-     - The program offers you a quick way to navigate between the tables, columns, and rows, and also to search for a specific value in the table.<br><br>
-     - There are many more features that you can discover yourself or read about in the following sections.
-<br><br><br>
-               <b> We also provide a free version of the program for all public institutions with a public service mission.</b>
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Create new database connection">
-            <p>
-     In the MyDatabase menu, you can create a new database connection. You can connect to your existing database.
-     You must add the connection string, and the program will connect to your database.
-<b>The program has to read system tables and modify tables and columns so you have to provide the rights with the connection string.</b>
-     You have to also set the name of the database (don't have to be the same as the real database name),
-     the database type (we constantly add new database types, if you don't find your database type, please contact us),
-     and the default type for the identifier (if you create a new table the type of the id column will be the selected value).
-<b>You can not create relations between tables if the default id type is different than the type of the table id</b>,
-     and you have to select the Public checkbox if you want to allow others to create tables in this database 
-     (not recommended in the online version but useful if you use it in your server).
-   <br><br>
-     You can edit every field later.
-<br><br>
-     If you open a saved database connection, and click the <b>Connect</b> tables button, you can select every table that you want to connect to the program.
-<br>
-     If somehow a table definition is changed in the database and not with this program, you can click the <b>Refresh</b> tables button to
-     update the table definition in the program.
- <br> If you want to delete a table from the program, you can click the <b>Disconnect tables</b> tables button
-     (this command will not delete your tables in the server, only delete the connection between the program and the table).
-  <br>
-     With the <b>Disconnect database</b> button, you can delete the connection between the program and the database and all tables in that database.
-     The <b>Diagram</b> button will show you the relations diagram of the tables in the database and some statistics about the tables.
-    
-  <br><br>
-     After you connect a table you can see it on the home page and under the My Lists menu, if not refresh the page.
-  <br><br>
-  <b>!!Important!! You have to configure every table after the connection. By default, it all will be public and visible to every user.
-     The program tries to figure out the type of each column but you have to check it and correct it if necessary </b>          
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Create/Edit table and config it">
-            <p>
-     On the home page, there is a <b>Create new</b> button, and a list of the tables that you or other users have connected to the program and that are configured as public.
-<br>
-     If you click the button you can create a new table. You have to set the name of the table,
-     the database database where you want to create the table, and optionally the category and the description of the table.
-<br><br>
-     There is a <b>Create from file</b> button under these fields and
-     if you click it you can select a CSV file and the program will create the table with the columns from the file.
-<br> The first row of the file must be the column names, and the other rows are the data.
-<br> You have to edit the column types after before you save it. The program can not figure out the type of the columns from the file.
-   <br><br>
-     You can also create a field manually. You have to set the name of the field, the type of the field, and in some special types, some other properties.
-<br> The program has a unique input field for most of the column types (like date, number, text, etc), that helps you to input the data faster and more accurately.
-<br> You have to have at least one field with the type of id. If you don't have one, the program will create one for you.
-<br> You should not select the foreignkey type. The program will automatically create the foreign key for you if you create a relation between tables.
-<br><br>
-     On the <b>Configuration</b> tab, you can set some important properties of the table like:
-<br> - you can set it to <b>Private</b>. If you set it to private, only you can see the table and the data in it.
-<br> - you can select the <b>Deny add</b>. checkbox That means that the user can not add new rows to the table.
-     It is the same with the <b>Deny export</b> and with the <b>Deny chart</b>
-<br> - you can select the <b>All users full access</b> checkbox. In this case, every user will have admin rights on the table.
-<b>It is not recommended to use in an online environment.</b>
-<br> - you can set the <b>No filter menu</b> checkbox. In this case, the little filter menu for option types above the table will not be visible.
-<br><br>
-     After you have set everything, you can save the table. If you made it with the from file method the program will also import the data from the file,
-     otherwise, only the table will be created.
-<br><br>
-     The new table will be visible on the home page if it is public and under the My Lists menu. If not refresh the page.
-<br><br>
-     If you open your table, under the  <b>Settings</b>, with the <b>Edit Object Definition</b> button you can edit your table.
-<br><br>
-     If the field is calculated you can edit the calculation method.
-<br>
-     If the field has a color method you can edit the color method.
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Filtering and Sorting">
-            <p>
-     Next to every column name, there is a little filter and a sort icon.
-<br><br>
-     If you click the sort icon, the table will be sorted by that column. If you click it again, the table will be sorted in the other direction.
-<br><br>
-     If you click the filter icon, a little filter menu will appear above the table. You can filter the data by the values of the column.
-<br> You can filter by one or more values. There is a different filter menu for the different column types. <b>You can not filter or sort by a calculated field</b>
-<br>There is a dropdown button above the table, where you can select the columns that you want to see in the table.
-<br> Under the table there is a pagination menu, where you can select the number of rows that you want to see in the table, and you can navigate between the pages.
-<br> With the <b>Refresh</b> button you can delete all the filters and the sorting. 
-<b>In some cases, the program automatically creates some filters (if you click on a chart element or if the list is a child list). With the refresh button,
-     you also delete these filters.</b>
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Create, Read, Update, Delete">
-            <p>
-     With the <b>Add new</b> button you can add a new row to the table. You can fill the fields with the data and click the <b>Save</b> button.
-<br><br>
-     If you are the creator (admin) of the list and double-click on a row, the edit dialog will appear. You can edit the data and click the <b>Save</b> button.
-     There is a different input field for the different column types. <b>You can not edit a calculated field</b>
-<br><br>
-     If you click the <b>Delete</b> button, the row will be deleted.
-<br> <br>
-     With the <b>Edit all filtered</b> button you can edit every object that is fit to the filter.
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Import data">
-            <p>
-     Import data from an Excel file. The first row of the file must be the column names, and the other rows are the data.
-<br>
-     If you click the <b>Import from file</b> button, you can select a file and if you click the button again the program will import the data from the file.
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Export data">
-            <p>
-     The <b>Export</b> button easily exports the data to an Excel file.
-<br>
-     Only the filtered data and the selected columns will be exported.
-<br>
-     The exported file perfectly fits the import function.
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Navigation between child and parent tables">
-            <p>
-     If the table has a child table, you can see the child table under a new tab at the top of the edit dialog and next to the <b>Properties</b> tab.
-<br> Under each child tab there is a list filtered by the selected row foreign key (so you can see all child objects).
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Add and remove child table">
-            <p>
-     Under the <b>Settings</b> you can add a new child table to the table with the <b>Add Child</b> button.
-     In the dialog, you can click the <b>Select existing table</b> to select an existing table or fill in the fields to create a new table.
-<br><br>
-<b>If the child is in the same database, then a real relation will be created like between every normal SQL table.
-   <br> If the child is in another database, then a virtual relation will be created.
-     It will work like a real relation but only in this program. You can not create a real relation between tables in different databases.
-   <br>
-     The program will automatically create a foreign key in the child table in both cases.
-</b>
-<br><br>
-     If you click the <b>Remove Child</b> button you can select a child table and remove the relation between the tables.
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Our simple programming language for the unique chart, calculated field, and coloring (trust me, it is easy)">
-            
-<app-program-description></app-program-description>
-           
-        </p-accordionTab>
-        <p-accordionTab header="Chart">
-            <p>
-<b>Charts show only the filtered values. If you have more than 2000 rows they show the ones on the current page. </b>
-<br> <br>
-<b>If you sort the table, the chart will show the sorted data. This can be important in some cases </b>
-<br> <br>
-     If you click the <b>Chart</b> button, the program will create simple charts from the data in the table.
-<br>
-     Each column type has a different tab and different chart types.
-<br><br>
-     At the top of the dialog, there is a slider where you can set the size of the charts.
-<br> <br>
-<b>Except for the Data structure, it is a special chart that shows you all the relation on this table
-<br> You can click on the table name to navigate to the table.
-</b>
-<br><br>
-     Each chart has:
-<br> - a title
-<br> - a checkbox, where you can select the chart
-<br> - labels, if you click on a label the data based on that label will disappear from the chart
-<br> - a dropdown button, where you can select the chart type
-<br>
-<br>
-     Some other (numbers) chart has:
-<br> - a color picker, where you can select the color of the chart
-<br> - a dropdown button, where you can select the fill type
-<br> - a dropdown button, where you can select the step type
-<br> - a dropdown button, where you can select the decimation
-<br> - a dropdown button, where you can select the regression type
-<br> - a button, where you can set the scale
-<br> - a button, where you can set the chart stacked
-<br> <br>
-     If you click on an element of the chart, a new dialog will appear with the filtered list.
-<br> <br>
-     If you right-click on the chart you can save it as an image.
-<br> <br>
-     In each tab, there is a <b>Merge checked charts into new</b> button, where you can merge the selected charts into a new chart.
-<br> The selected charts can have different types and settings.
-<br> <br>
-     In each tab, there is a <b>Create custom chart</b> button, where you can create a custom chart.
-<br> You can fill in the x and y axes and select the type and the group option.
-<br>
-     x and y axis:
-<br>
-     you can set the axis with our simple programming language.
-     group option: <b> If the y-axis value is not a number, you should not select the group option. Leave it on None</b>
-   <br>
-     - if you select the <b>None</b> option, the program will create a chart for every row in the table.
-   <br> - if you select the <b>Sum</b> option, the program will create a chart for every group of the selected column and sum the values.
-   <br> - if you select the <b>Average</b> option, the program will create a chart for every group of the selected column and average the values.
-   <br> - if you select the <b>Count</b> option, the program will create a chart for every group of the selected column and count the values.
-   <br> - if you select the <b>Max</b> option, the program will create a chart for every group of the selected column and show the max value.
-   <br> - if you select the <b>Min</b> option, the program will create a chart for every group of the selected column and show the min value.
-   <br> - if you select the <b>First</b> option, the program will create a chart for every group of the selected column and show the first value.
-   <br> - if you select the <b>Last</b> option, the program will create a chart for every group of the selected column and show the last value.
-<br> <br>
-     If you filled everything, you can click the <b>Save</b> button and the program will create the chart.
-<br> <br>
-     If you want to add the chart you can click the <b>Add</b> button. Now you can edit it and combine it with other charts.
-    
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Create calculated field">
-            <p>
-     Create a new field calculated with the <b>Add calculated field</b> button.
-<br>
-     This means that the program will calculate the value of the field based on the other fields in the table and not store the value in the database.
-<br> <br>
-     You have to set the name of the field, the type of the field, and the calculation.
-<br> For the calculation you can use our simple programming language.
-<br> <br>
-     If you click the <b>Save</b> button the program will create the field. Refresh the list to see it.
-<br> <br>
-     You can edit the field the the calculation method in the <b>Edit Object Deffinition</b> dialog.
-    
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Create coloring">
-            <p>
-     Create a new coloring with the <b>Add coloring</b> button.
-<br>
-     This means that the program will color the rows based on the value that you set.
-<br> <br>
-     You have to select the field that you want to color and set the coloring method.
-<br> For the coloring you can use our simple programming language. <b>Or just write a simple color, hex, rgb, hsl value
-     (like: red or #ff0000 or rgb(255, 0, 0) or hsl(0, 100%, 50%) )</b>
-     The coloring method should return a color value (simple color, hex, rgb, hsl value). We recommend using the if statement to create a coloring which
-     can change based on the value of the field.
-<br> <br>
-     If you click the <b>Save</b> button the program will create the coloring. Refresh the list to see it.
-<br> <br>
-     You can edit the coloring the coloring method in the <b>Edit Object Deffinition</b> dialog.
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Create new page">
-            <p>
-     If you click the <b>Pages</b> button, you can see the list of the pages. <b>HTML and CSS knowledge is required to create a page. Angular knowledge is recommended.</b>
-<br>
-     If you click the <b>New Page</b> button, you can create a new page.
-<br>
-     You have to set the name of the page, the html, and the css.
-<br> <br>
-     In the template, you can use the "data" and the "params" variable.
-<br> The "data" variable is the data of the table. It is an array of objects. Each object is a row in the table. The object has the field name as a property.
-     So you can use the data like this: data[0].fieldName (like data[0].name or data[0].prize)
-<br> The "params" variable is the parameters of the page. It is an object. The object has the parameter name as a property.
-     So you can use the params like this: params.parameterName (like params.id or params.name)
-<br> <br>
-     In the template, you can use Angular syntax. You can use the *ngFor, *ngIf, and other Angular syntax.
-<br> <br>
-     In the css you can use the css syntax. You can use the class and id selector and other css syntax.
-<br> <br>
-     If you click the <b>Save</b> button the program will create the page.
-<br>
-     If you write /pageName after the url of the table, the program will show the page.
-   <br>
-     You can write /pageName?parameterName=parameterValue (like /mypage?id=1) after the url of the table,
-     the program will show the page and you can use the params variable to customize the page based on the parameters. You can have multiple parameters.
-    <br> <br>
-     You can edit or delete it later.
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="AI features">
-            <p>
-     If you click the <b>AI</b> button above the list, you can see all AI features.
-<br>
-     You can create an AI model that will be trained on the <b>filtered and sorted</b> data in the table.
-<br>
-     If you select a feature a new dialog will appear where you get an explanation of the feature and you can train the model.
-     Usually, you have to select a column that you want to predict or classify. You can only have one model for a column. 
-<br>
-<b>Except the AI Clusters. It is a special feature that tries to put every data into a group. It will create a column with the group number.</b>
-     After it is finished, the model will be deleted. You can not use it later. You have to train the model again.
-<br> <br>
-     All AI features need a lot of data to work properly. If you have only a few rows, the model will not be accurate.
-<br>
-<b> If you have a lot of rows, the training can take a long time. The program will send you a message when the training is finished.</b>
-            </p>
-        </p-accordionTab>
-        <p-accordionTab header="Messages">
-            <p>
-     If you click the button in the top right corner, you can see your space statistics, a button for the logout, and another for the messages.
-<br>
-     If you click the <b>Messages</b> button, you can see all the messages that you have received. You can also see the messages that you have sent in the Sent tab.
-<br>
-     You can reply or delete the messages.
-<br>
-     Sometimes the program will send you a message. Sometimes it is from other users.
-<br>
-     You can send a message to other users if you navigate to their list and click the <b>Send message</b> button.
-            </p>
-        </p-accordionTab>
-    </p-accordion>
-    </div>
-    <app-footer></app-footer>
+<div style="min-width: 100rem;"  class="block-content">
+     <div class="ng-star-inserted" style="height: 100vh; overflow: scroll;">
+          <div class="min-h-screen flex relative lg:static surface-ground">
+               <div id="app-sidebar-3"
+                    class="bg-gray-900 h-screen lg:block flex-shrink-0 absolute lg:static  z-1 border-right-1 border-gray-800 select-none"
+                    style="width: 280px; position: static !important;">
+                    <div class="flex flex-column h-full">
+                         <div class="overflow-y-auto">
+                              <ul class="list-none p-3 m-0">
+                                   <li>
+                                        <a (click)="Select('About the program')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">About the program</span>
+                                             <span class="p-ink"></span>
+                                        </a>
+                                   </li>
+                                   <li>
+                                        <a (click)="Select('Connect database')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Connect database</span>
+                                             <span class="p-ink"></span>
+                                        </a>
+                                   </li>
+                                   <li>
+                                        <a (click)="Select('Create/Edit table')" pripple="" pstyleclass="@next" enterclass="hidden"
+                                             enteractiveclass="slidedown" leavetoclass="hidden"
+                                             leaveactiveclass="slideup"
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Create/Edit table</span>
+                                        </a>
+                                   </li>
+                                   <li>
+                                        <a (click)="Select('Filtering and Sorting')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Filtering and Sorting</span><span
+                                                  class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Create, Read, Update, Delete')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+
+                                             <span class="font-medium">Create, Read, Update, Delete</span>
+                                        </a></li>
+                                   <li><a (click)="Select('Import data')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Import data</span><span class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Export data')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Export data</span><span class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Navigation between child and parent tables')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Navigation between child and parent
+                                                  tables</span><span class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Add and remove child table')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Add and remove child table</span><span
+                                                  class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Programming for the charts, calculated fields, and coloring')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Programming for the charts, calculated fields,
+                                                  and coloring</span><span class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Charts')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Charts</span><span class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Calculated fields')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Calculated fields</span><span
+                                                  class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Colored fields')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Colored fields</span><span
+                                                  class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('AI')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">AI</span><span class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Messages')" pripple=""
+                                             class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                             <span class="font-medium">Messages</span><span class="p-ink"></span></a>
+                                   </li>
+                                   <li><a (click)="Select('Pages')" pripple=""
+                                        class="p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800 text-gray-300 hover:text-white transition-duration-150 transition-colors">
+                                        <span class="font-medium">Pages</span><span class="p-ink"></span></a>
+                              </li>
+                              </ul>
+                         </div>
+                    </div>
+               </div>
+
+
+
+
+               <div style="overflow: scroll; " class="min-h-screen flex flex-column relative flex-auto">
+                    <div class="flex justify-content-between align-items-center px-5 surface-0 border-bottom-1 surface-border relative lg:static"
+                         style="height: 60px;">
+                    <p> <b>{{title}}</b></p>
+                    </div>
+                    <div *ngIf="title == 'About the program'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   This program is a data science/data analysis application, built with the most modern technologies.
+                                   <br>
+                                   It allows you to create new or connect existing tables, and then perform various operations on it
+                                   like:
+                                   filtering, sorting, creating calculated columns, training your AI model, creating different data
+                                   visualizations, and many more.
+                                   <br><br>
+                                   The differences between this program and other similar programs are (beyond that it has an
+                                   affordable price :D): <br><br>
+                                   - You don't have to import your data to the program, you can connect to your existing data source
+                                   and work with it directly.
+                                   But if you want to import your data, you can do that too. <br><br>
+                                   - You can even have multiple data sources connected at the same time, and work with them together,
+                                   <b>and create a virtual connection between them as if they were in the same database.</b> <br><br>
+                                   - You can create your custom data visualizations, and the program also generates some base
+                                   charts.<br><br>
+                                   - You can create your own custom calculated columns, use our simple "programming languages" to
+                                   create them from
+                                   property, child or parent table, or any mathematical/logical/textual combination of these.<br><br>
+                                   - You can train your own AI model, and use it to predict the future values of your data or to
+                                   classify your data.<br><br>
+                                   - We have a unique input field for most of the column types (like date, number, text, etc), that
+                                   helps you to input the data faster and more accurately.<br><br>
+                                   - The program offers you a quick way to navigate between the tables, columns, and rows, and also to
+                                   search for a specific value in the table.<br><br>
+                                   - There are many more features that you can discover yourself or read about in the following
+                                   sections.
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Connect database'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                   In the MyDatabase menu, you can create a new database connection. You can connect to your existing
+                                   database.
+                                   You must add the connection string, and the program will connect to your database.
+                                   <b>The program has to read system tables and modify tables and columns so you have to provide the
+                                        rights with the connection string.</b>
+                                   You have to also set the name of the database (don't have to be the same as the real database name),
+                                   the database type (we constantly add new database types, if you don't find your database type,
+                                   please contact us),
+                                   and the default type for the identifier (if you create a new table the type of the id column will be
+                                   the selected value).
+                                   <b>You can not create relations between tables if the default id type is different than the type of
+                                        the table id</b>,
+                                   and you have to select the Public checkbox if you want to allow others to create tables in this
+                                   database
+                                   (not recommended in the online version but useful if you use it in your server).
+                                     <br><br>
+                                   You can edit every field later.
+                                   <br><br>
+                                   If you open a saved database connection, and click the <b>Connect</b> tables button, you can select
+                                   every table that you want to connect to the program.
+                                   <br>
+                                   If somehow a table definition is changed in the database and not with this program, you can click
+                                   the <b>Refresh</b> tables button to
+                                   update the table definition in the program.
+                                   <br> If you want to delete a table from the program, you can click the <b>Disconnect tables</b>
+                                   tables button
+                                   (this command will not delete your tables in the server, only delete the connection between the
+                                   program and the table).
+                                    <br>
+                                   With the <b>Disconnect database</b> button, you can delete the connection between the program and
+                                   the database and all tables in that database.
+                                   The <b>Diagram</b> button will show you the relations diagram of the tables in the database and some
+                                   statistics about the tables.
+               
+                                    <br><br>
+                                   After you connect a table you can see it on the home page and under the My Lists menu, if not
+                                   refresh the page.
+                                    <br><br>
+                                    <b>!!Important!! You have to configure every table after the connection. By default, it all will be
+                                        public and visible to every user.
+                                        The program tries to figure out the type of each column but you have to check it and correct it
+                                        if necessary </b>          
+                                          
+                              </p>
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+
+                    <div *ngIf="title == 'Create/Edit table'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+
+                                   <p>
+                                        On the home page, there is a <b>Create new</b> button, and a list of the tables that you or other
+                                        users have connected to the program and that are configured as public.
+                                        <br>
+                                        If you click the button you can create a new table. You have to set the name of the table,
+                                        the database database where you want to create the table, and optionally the category and the
+                                        description of the table.
+                                        <br><br>
+                                        There is a <b>Create from file</b> button under these fields and
+                                        if you click it you can select a CSV file and the program will create the table with the columns
+                                        from the file.
+                                        <br> The first row of the file must be the column names, and the other rows are the data.
+                                        <br> You have to edit the column types after before you save it. The program can not figure out the
+                                        type of the columns from the file.
+                                          <br><br>
+                                        You can also create a field manually. You have to set the name of the field, the type of the field,
+                                        and in some special types, some other properties.
+                                        <br> The program has a unique input field for most of the column types (like date, number, text,
+                                        etc), that helps you to input the data faster and more accurately.
+                                        <br> You have to have at least one field with the type of id. If you don't have one, the program
+                                        will create one for you.
+                                        <br> You should not select the foreignkey type. The program will automatically create the foreign
+                                        key for you if you create a relation between tables.
+                                        <br><br>
+                                        On the <b>Configuration</b> tab, you can set some important properties of the table like:
+                                        <br> - you can set it to <b>Private</b>. If you set it to private, only you can see the table and
+                                        the data in it.
+                                        <br> - you can select the <b>Deny add</b>. checkbox That means that the user can not add new rows to
+                                        the table.
+                                        It is the same with the <b>Deny export</b> and with the <b>Deny chart</b>
+                                        <br> - you can select the <b>All users full access</b> checkbox. In this case, every user will have
+                                        admin rights on the table.
+                                        <b>It is not recommended to use in an online environment.</b>
+                                        <br> - you can set the <b>No filter menu</b> checkbox. In this case, the little filter menu for
+                                        option types above the table will not be visible.
+                                        <br><br>
+                                        After you have set everything, you can save the table. If you made it with the from file method the
+                                        program will also import the data from the file,
+                                        otherwise, only the table will be created.
+                                        <br><br>
+                                        The new table will be visible on the home page if it is public and under the My Lists menu. If not
+                                        refresh the page.
+                                        <br><br>
+                                        If you open your table, under the  <b>Settings</b>, with the <b>Edit Object Definition</b> button
+                                        you can edit your table.
+                                        <br><br>
+                                        If the field is calculated you can edit the calculation method.
+                                        <br>
+                                        If the field has a color method you can edit the color method.
+                                               
+                                   </p>
+                    
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Filtering and Sorting'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        Next to every column name, there is a little filter and a sort icon.
+                                        <br><br>
+                                        If you click the sort icon, the table will be sorted by that column. If you click it again, the
+                                        table will be sorted in the other direction.
+                                        <br><br>
+                                        If you click the filter icon, a little filter menu will appear above the table. You can filter the
+                                        data by the values of the column.
+                                        <br> You can filter by one or more values. There is a different filter menu for the different column
+                                        types. <b>You can not filter or sort by a calculated field</b>
+                                        <br>There is a dropdown button above the table, where you can select the columns that you want to
+                                        see in the table.
+                                        <br> Under the table there is a pagination menu, where you can select the number of rows that you
+                                        want to see in the table, and you can navigate between the pages.
+                                        <br> With the <b>Refresh</b> button you can delete all the filters and the sorting.
+                                        <b>In some cases, the program automatically creates some filters (if you click on a chart element or
+                                             if the list is a child list). With the refresh button,
+                                             you also delete these filters.</b>
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Create, Read, Update, Delete'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+
+                                   <p>
+                                        With the <b>Add new</b> button you can add a new row to the table. You can fill the fields with the
+                                        data and click the <b>Save</b> button.
+                                        <br><br>
+                                        If you are the creator (admin) of the list and double-click on a row, the edit dialog will appear.
+                                        You can edit the data and click the <b>Save</b> button.
+                                        There is a different input field for the different column types. <b>You can not edit a calculated
+                                             field</b>
+                                        <br><br>
+                                        If you click the <b>Delete</b> button, the row will be deleted.
+                                        <br> <br>
+                                        With the <b>Edit all filtered</b> button you can edit every object that is fit to the filter.
+                                               
+                                   </p>
+                    
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Import data'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        Import data from an Excel file. The first row of the file must be the column names, and the other
+                                        rows are the data.
+                                        <br>
+                                        If you click the <b>Import from file</b> button, you can select a file and if you click the button
+                                        again the program will import the data from the file.
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Export data'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        The <b>Export</b> button easily exports the data to an Excel file.
+                                        <br>
+                                        Only the filtered data and the selected columns will be exported.
+                                        <br>
+                                        The exported file perfectly fits the import function.
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Navigation between child and parent tables'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        If the table has a child table, you can see the child table under a new tab at the top of the edit
+                                        dialog and next to the <b>Properties</b> tab.
+                                        <br> Under each child tab there is a list filtered by the selected row foreign key (so you can see
+                                        all child objects).
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Add and remove child table'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        Under the <b>Settings</b> you can add a new child table to the table with the <b>Add Child</b>
+                                        button.
+                                        In the dialog, you can click the <b>Select existing table</b> to select an existing table or fill in
+                                        the fields to create a new table.
+                                        <br><br>
+                                        <b>If the child is in the same database, then a real relation will be created like between every
+                                             normal SQL table.
+                                               <br> If the child is in another database, then a virtual relation will be created.
+                                             It will work like a real relation but only in this program. You can not create a real relation
+                                             between tables in different databases.
+                                               <br>
+                                             The program will automatically create a foreign key in the child table in both cases.
+                                        </b>
+                                        <br><br>
+                                        If you click the <b>Remove Child</b> button you can select a child table and remove the relation
+                                        between the tables.
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Programming for the charts, calculated fields, and coloring'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <app-program-description></app-program-description>
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Charts'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        <b>Charts show only the filtered values. If you have more than 2000 rows they show the ones on the
+                                             current page. </b>
+                                        <br> <br>
+                                        <b>If you sort the table, the chart will show the sorted data. This can be important in some cases
+                                        </b>
+                                        <br> <br>
+                                        If you click the <b>Chart</b> button, the program will create simple charts from the data in the
+                                        table.
+                                        <br>
+                                        Each column type has a different tab and different chart types.
+                                        <br><br>
+                                        At the top of the dialog, there is a slider where you can set the size of the charts.
+                                        <br> <br>
+                                        <b>Except for the Data structure, it is a special chart that shows you all the relation on this
+                                             table
+                                             <br> You can click on the table name to navigate to the table.
+                                        </b>
+                                        <br><br>
+                                        Each chart has:
+                                        <br> - a title
+                                        <br> - a checkbox, where you can select the chart
+                                        <br> - labels, if you click on a label the data based on that label will disappear from the chart
+                                        <br> - a dropdown button, where you can select the chart type
+                                        <br>
+                                        <br>
+                                        Some other (numbers) chart has:
+                                        <br> - a color picker, where you can select the color of the chart
+                                        <br> - a dropdown button, where you can select the fill type
+                                        <br> - a dropdown button, where you can select the step type
+                                        <br> - a dropdown button, where you can select the decimation
+                                        <br> - a dropdown button, where you can select the regression type
+                                        <br> - a button, where you can set the scale
+                                        <br> - a button, where you can set the chart stacked
+                                        <br> <br>
+                                        If you click on an element of the chart, a new dialog will appear with the filtered list.
+                                        <br> <br>
+                                        If you right-click on the chart you can save it as an image.
+                                        <br> <br>
+                                        In each tab, there is a <b>Merge checked charts into new</b> button, where you can merge the
+                                        selected charts into a new chart.
+                                        <br> The selected charts can have different types and settings.
+                                        <br> <br>
+                                        In each tab, there is a <b>Create custom chart</b> button, where you can create a custom chart.
+                                        <br> You can fill in the x and y axes and select the type and the group option.
+                                        <br>
+                                        x and y axis:
+                                        <br>
+                                        you can set the axis with our simple programming language.
+                                        group option: <b> If the y-axis value is not a number, you should not select the group option. Leave
+                                             it on None</b>
+                                          <br>
+                                        - if you select the <b>None</b> option, the program will create a chart for every row in the table.
+                                          <br> - if you select the <b>Sum</b> option, the program will create a chart for every group of the
+                                        selected column and sum the values.
+                                          <br> - if you select the <b>Average</b> option, the program will create a chart for every group of
+                                        the selected column and average the values.
+                                          <br> - if you select the <b>Count</b> option, the program will create a chart for every group of
+                                        the selected column and count the values.
+                                          <br> - if you select the <b>Max</b> option, the program will create a chart for every group of the
+                                        selected column and show the max value.
+                                          <br> - if you select the <b>Min</b> option, the program will create a chart for every group of the
+                                        selected column and show the min value.
+                                          <br> - if you select the <b>First</b> option, the program will create a chart for every group of
+                                        the selected column and show the first value.
+                                          <br> - if you select the <b>Last</b> option, the program will create a chart for every group of
+                                        the selected column and show the last value.
+                                        <br> <br>
+                                        If you filled everything, you can click the <b>Save</b> button and the program will create the
+                                        chart.
+                                        <br> <br>
+                                        If you want to add the chart you can click the <b>Add</b> button. Now you can edit it and combine it
+                                        with other charts.
+                    
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Calculated fields'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        Create a new field calculated with the <b>Add calculated field</b> button.
+                                        <br>
+                                        This means that the program will calculate the value of the field based on the other fields in the
+                                        table and not store the value in the database.
+                                        <br> <br>
+                                        You have to set the name of the field, the type of the field, and the calculation.
+                                        <br> For the calculation you can use our simple programming language.
+                                        <br> <br>
+                                        If you click the <b>Save</b> button the program will create the field. Refresh the list to see it.
+                                        <br> <br>
+                                        You can edit the field the the calculation method in the <b>Edit Object Deffinition</b> dialog.
+                    
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Colored fields'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        Create a new coloring with the <b>Add coloring</b> button.
+                                        <br>
+                                        This means that the program will color the rows based on the value that you set.
+                                        <br> <br>
+                                        You have to select the field that you want to color and set the coloring method.
+                                        <br> For the coloring you can use our simple programming language. <b>Or just write a simple color,
+                                             hex, rgb, hsl value
+                                             (like: red or #ff0000 or rgb(255, 0, 0) or hsl(0, 100%, 50%) )</b>
+                                        The coloring method should return a color value (simple color, hex, rgb, hsl value). We recommend
+                                        using the if statement to create a coloring which
+                                        can change based on the value of the field.
+                                        <br> <br>
+                                        If you click the <b>Save</b> button the program will create the coloring. Refresh the list to see
+                                        it.
+                                        <br> <br>
+                                        You can edit the coloring the coloring method in the <b>Edit Object Deffinition</b> dialog.
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'AI'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        If you click the <b>AI</b> button above the list, you can see all AI features.
+                                        <br>
+                                        You can create an AI model that will be trained on the <b>filtered and sorted</b> data in the table.
+                                        <br>
+                                        If you select a feature a new dialog will appear where you get an explanation of the feature and you
+                                        can train the model.
+                                        Usually, you have to select a column that you want to predict or classify. You can only have one
+                                        model for a column.
+                                        <br>
+                                        <b>Except the AI Clusters. It is a special feature that tries to put every data into a group. It
+                                             will create a column with the group number.</b>
+                                        After it is finished, the model will be deleted. You can not use it later. You have to train the
+                                        model again.
+                                        <br> <br>
+                                        All AI features need a lot of data to work properly. If you have only a few rows, the model will not
+                                        be accurate.
+                                        <br>
+                                        <b> If you have a lot of rows, the training can take a long time. The program will send you a
+                                             message when the training is finished.</b>
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Messages'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        If you click the button in the top right corner, you can see your space statistics, a button for the
+                                        logout, and another for the messages.
+                                        <br>
+                                        If you click the <b>Messages</b> button, you can see all the messages that you have received. You
+                                        can also see the messages that you have sent in the Sent tab.
+                                        <br>
+                                        You can reply or delete the messages.
+                                        <br>
+                                        Sometimes the program will send you a message. Sometimes it is from other users.
+                                        <br>
+                                        You can send a message to other users if you navigate to their list and click the <b>Send
+                                             message</b> button.
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+
+                    <div *ngIf="title == 'Pages'" class="p-5 flex flex-column flex-auto">
+
+                         <div class=" surface-border border-round surface-section flex-auto">
+                              <div style="padding: 1rem;">
+                                   <p>
+                                        If you click the <b>Pages</b> button, you can see the list of the pages. <b>HTML and CSS knowledge
+                                             is required to create a page. Angular knowledge is recommended.</b>
+                                        <br>
+                                        If you click the <b>New Page</b> button, you can create a new page.
+                                        <br>
+                                        You have to set the name of the page, the html, and the css.
+                                        <br> <br>
+                                        In the template, you can use the "data" and the "params" variable.
+                                        <br> The "data" variable is the data of the table. It is an array of objects. Each object is a row
+                                        in the table. The object has the field name as a property.
+                                        So you can use the data like this: data[0].fieldName (like data[0].name or data[0].prize)
+                                        <br> The "params" variable is the parameters of the page. It is an object. The object has the
+                                        parameter name as a property.
+                                        So you can use the params like this: params.parameterName (like params.id or params.name)
+                                        <br> <br>
+                                        In the template, you can use Angular syntax. You can use the *ngFor, *ngIf, and other Angular
+                                        syntax.
+                                        <br> <br>
+                                        In the css you can use the css syntax. You can use the class and id selector and other css syntax.
+                                        <br> <br>
+                                        If you click the <b>Save</b> button the program will create the page.
+                                        <br>
+                                        If you write /pageName after the url of the table, the program will show the page.
+                                          <br>
+                                        You can write /pageName?parameterName=parameterValue (like /mypage?id=1) after the url of the table,
+                                        the program will show the page and you can use the params variable to customize the page based on
+                                        the parameters. You can have multiple parameters.
+                                           <br> <br>
+                                        You can edit or delete it later.
+                                               
+                                   </p>
+                    
+               
+                              </div>
+          
+                         </div>
+
+                    </div>
+               </div>
+
+
+          </div>
+
+     </div>
+     <app-footer></app-footer>
+</div>

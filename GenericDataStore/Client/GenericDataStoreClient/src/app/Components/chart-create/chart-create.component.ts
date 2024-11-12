@@ -453,7 +453,7 @@ console.log(this.connecfunccon2);
       xcalculation : this.xcalculation,
       ycalculation : this.ycalculation,
       id: this.id,
-      type: this.type,
+      type: this.selectedoption.value,
       filter: this.filter,
       groupOption: this.selectedgroupoption.value
     }
@@ -461,17 +461,41 @@ console.log(this.connecfunccon2);
       this.cahrtdata = data;
       this.loadnig = false;
     },(error: any) => {
-      this.messageService.add({severity:'error', summary: 'Error', detail: 'Error in creating chart'});
+      this.messageService.add({severity:'error', summary: 'Error', detail: 'Error in creating the chart'});
       this.loadnig = false;
     });
 
   }
+
   Add(){
+    this.cahrtdata.xcalculation = this.xcalculation;
+    this.cahrtdata.ycalculation = this.ycalculation;
+    this.cahrtdata.groupOption = this.selectedgroupoption.value;
+    
     let data = {
       chartdata: this.cahrtdata,
-      type: this.selectedoption.value
+      type: this.selectedoption.value,
     }
    this.ref.close(data);
+  }
+
+  AddToDashboard(){
+    this.loadnig = true;
+    let chartcalculation = {
+      xcalculation : this.xcalculation,
+      ycalculation : this.ycalculation,
+      objectTypeId: this.id,
+      type: this.selectedoption.value,
+      rootFilter: JSON.stringify(this.filter),
+      groupOption: this.selectedgroupoption.value
+    }
+    this.apiService.AddToDashboardChart(chartcalculation).subscribe(x =>{
+      this.loadnig = false;
+      this.messageService.add({severity:'success', summary: 'Ok', detail: 'Done'});
+    },(error: any) => {
+      this.messageService.add({severity:'error', summary: 'Error', detail: 'Error in saveing the chart'});
+      this.loadnig = false;
+    })
   }
 
   

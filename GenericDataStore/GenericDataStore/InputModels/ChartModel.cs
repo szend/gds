@@ -14,6 +14,7 @@
 
     public class ChartModelType
     {
+        public bool privateobject { get; set; }
         public string Name { get; set; }
         public List<string> Labels { get; set; } = new List<string>();
         public List<ChartModelDataset> Datasets { get; set; } = new List<ChartModelDataset>();
@@ -62,10 +63,22 @@
     {
         public List<double> Data { get; set; } = new List<double>();
 
+        public string? Regression { get; set; }
+        public string? Stepped { get; set; }
+
+        public string? Fill { get; set; }
+
+        public bool? Stacked { get; set; }
+
         public string Label { get; set; }
         public List<string> BackgroundColor { get; set; } = new List<string>();
         public List<string> BorderColor { get; set; } = new List<string>();
 
+        public string? Type { get; set; }
+
+        //public int Radius { get; set; } = 50;
+
+        //public int BorderWidth { get; set; } = 5;
 
 
     }

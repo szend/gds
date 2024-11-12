@@ -326,10 +326,7 @@ namespace GenericDataStore.Controllers
             type.AppUserId = user.Id;
             type.CreationDate = DateTime.Now;
             type.TableName = type.Name;
-            foreach (var item in type.Field)
-            {
-                item.PropertyName = item.Name;
-            }
+
 
             this.DbContext.ObjectType.Add(type);
             var db = DbContext.DatabaseConnectionProperty.FirstOrDefault(x => x.DatabaseConnectionPropertyId == type.DatabaseConnectionPropertyId);
@@ -340,7 +337,6 @@ namespace GenericDataStore.Controllers
             {
                 type.Field.Add(new Field
                 {
-                    PropertyName = type.Name + "Id",
                     Name = type.Name + "Id",
                     Type = "id",
                     ObjectTypeId = type.ObjectTypeId

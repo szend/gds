@@ -23,6 +23,8 @@ using Microsoft.Extensions.Caching.Memory;
 using GenericDataStore.DatabaseConnector;
 using System.Text.RegularExpressions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using GenericDataStore.Color;
+using static Azure.Core.HttpHeader;
 
 namespace GenericDataStore.Controllers
 {
@@ -144,11 +146,11 @@ namespace GenericDataStore.Controllers
                 dbmodel.DenyAdd = model.DenyAdd;
                 dbmodel.AllUserFullAccess = model.AllUserFullAccess;
                 dbmodel.Private = model.Private;
+                dbmodel.Color = model.Color;
                 dbmodel.DatabaseConnectionPropertyId = model.DatabaseConnectionPropertyId;
                 //dbmodel.ParentObjectTypes.Add(DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == model.p));
                 foreach (var item in model.Field)
                 {
-                    item.PropertyName = item.Name;
                     dbmodel.Field.Add(item);
                 }
 
@@ -161,7 +163,6 @@ namespace GenericDataStore.Controllers
                 {
                     dbmodel.Field.Add(new Field
                     {
-                        PropertyName = dbmodel.Name+"Id",
                         Name = dbmodel.Name + "Id",
                         Type = "id",
                         ObjectTypeId = dbmodel.ObjectTypeId
@@ -196,6 +197,7 @@ namespace GenericDataStore.Controllers
                 dbmodel.DenyAdd = model.DenyAdd;
                 dbmodel.AllUserFullAccess = model.AllUserFullAccess;
                 dbmodel.Private = model.Private;
+                dbmodel.Color = model.Color;
                 //dbmodel.ParentObjectTypeId = model.ParentObjectTypeId;
 
                 List<Field> fields = DbContext.Set<Field>().Where(x => x.ObjectTypeId == dbmodel.ObjectTypeId).ToList();
@@ -213,14 +215,14 @@ namespace GenericDataStore.Controllers
                             {
                                 if (field.Type == "image" || field.Type == "file")
                                 {
-                                    var value = item.Value.Where(x => x.Name == field.PropertyName).ToList();
+                                    var value = item.Value.Where(x => x.Name == field.Name).ToList();
                                     FileService.RemoveFile(value);
                                 }
 
                             }
                             if (!field.Type.Contains("calculated"))
                             {
-                                Repository.RemoveColumn(dbmodel.TableName, field.PropertyName);
+                                Repository.RemoveColumn(dbmodel.TableName, field.Name);
                             }
 
                         }
@@ -231,7 +233,7 @@ namespace GenericDataStore.Controllers
                         {
                             if (!field.Type.Contains("calculated"))
                             {
-                                Repository.RemoveColumn(dbmodel.TableName, field.PropertyName);
+                                Repository.RemoveColumn(dbmodel.TableName, field.Name);
                             }
 
                         }
@@ -242,10 +244,13 @@ namespace GenericDataStore.Controllers
 
                 foreach (var field in newfields)
                 {
-                    field.PropertyName = field.Name;
-                    dbmodel.Field.Add(field);
+                    if(field.Name != "CalculatedRowIndex")
+                    {
+                        dbmodel.Field.Add(field);
 
-                    Repository.AddColumn(dbmodel.TableName, field.PropertyName, field.Type);
+                        Repository.AddColumn(dbmodel.TableName, field.Name, field.Type);
+                    }
+
                 }
 
 
@@ -265,7 +270,6 @@ namespace GenericDataStore.Controllers
                                     Repository.UpdateColumn(dbmodel.TableName, item.Name, item2.Name, item2.Type);
                                 }
                                 item.Name = item2.Name;
-                                item.PropertyName = item2.Name;
                             }
                             if (item.Type != item2.Type)
                             {
@@ -274,11 +278,16 @@ namespace GenericDataStore.Controllers
                                 }
                                 else
                                 {
-                                    Repository.UpdateColumnType(dbmodel.TableName, item.PropertyName, item2.Type);
+                                    Repository.UpdateColumnType(dbmodel.TableName, item.Name, item2.Type);
                                 }
                                 item.Type = item2.Type;
                             }
                             item.Option = item2.Option;
+                            item.Position = item2.Position;
+                            item.Visible = item2.Visible;
+                            item.DefaultOrder = item2.DefaultOrder;
+                            item.LabelColorMethod = item2.LabelColorMethod;
+                            item.SizeMethod = item2.SizeMethod;
                             item.CalculationMethod = item2.CalculationMethod;
                             item.ColorMethod = item2.ColorMethod;
                             List<Option> opts = DbContext.Set<Option>().Where(x => x.FieldId == item.FieldId && !item.Option.Contains(x)).ToList();
@@ -358,7 +367,6 @@ namespace GenericDataStore.Controllers
                 //dbmodel.ParentObjectTypes.Add(DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == model.p));
                 foreach (var item in model.Field)
                 {
-                    item.PropertyName = item.Name;
                     dbmodel.Field.Add(item);
                 }
 
@@ -380,14 +388,12 @@ namespace GenericDataStore.Controllers
             {
                 Type = "foreignkey",
                 Name = parent.Name + "Id",
-                PropertyName = parent.Name + "Id",
                 ObjectTypeId = dbmodel.ObjectTypeId
             });
                 if (!dbmodel.Field.Any(x => x.Type == "id"))
                 {
                     dbmodel.Field.Add(new Field
                     {
-                        PropertyName = dbmodel.Name + "Id",
                         Name = dbmodel.Name + "Id",
                         Type = "id",
                         ObjectTypeId = dbmodel.ObjectTypeId
@@ -475,12 +481,18 @@ namespace GenericDataStore.Controllers
                         {
                                 foreach (var item2 in obj)
                                 {
-                                    var value = item2.Value.Where(x => x.Name == item.PropertyName).ToList();
+                                    var value = item2.Value.Where(x => x.Name == item.Name).ToList();
                                     FileService.RemoveFile(value);
                                 }
                         }
                     }
                     var connections = DbContext.DatabaseTableRelations.Where(x => x.ChildObjecttypeId == id || x.ParentObjecttypeId == id);
+                    var dashboarddatas = DbContext.DashboardTable.Where(x => x.ObjectTypeId == dbmodel.ObjectTypeId).ToList();
+                    var charts = DbContext.Chart.Where(x => x.ObjectTypeId == dbmodel.ObjectTypeId).ToList();
+                    var pages = DbContext.TablePage.Where(x => x.ObjectTypeId == dbmodel.ObjectTypeId).ToList();
+                    DbContext.DashboardTable.RemoveRange(dashboarddatas);
+                    DbContext.Chart.RemoveRange(charts);
+                    DbContext.TablePage.RemoveRange(pages);
                     DbContext.DatabaseTableRelations.RemoveRange(connections);
                     this.DbContext.ObjectType.Remove(dbmodel);
                     await this.DbContext.SaveChangesAsync();
@@ -693,43 +705,63 @@ namespace GenericDataStore.Controllers
             return new JsonResult(ch, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
 
-        [Authorize(Policy = "Full")]
         [HttpPost("CreateCalculatedChart")]
         public virtual async Task<IActionResult> CreateCalculatedChart([FromBody] ChartInput chartInput)
         {
+            var chtyp = await GenerateChart(chartInput,false);
+            if(chtyp != null)
+            {
+                return new JsonResult(chtyp, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            }
 
-            var query = this.DbContext.Set<ObjectType>().ToArray().AsQueryable();
-            RootFilter? filterResult;
-            query = await FilterQuery("", query, null, true, true, chartInput.Filter, true);
-            var type = query.FirstOrDefault();
 
+            return BadRequest("Type not found");
+        }
+
+        private async Task<ChartModelType?> GenerateChart(ChartInput chartInput, bool req = false, ObjectType type = null)
+        {
+            if(type == null)
+            {
+                var query = this.DbContext.Set<ObjectType>().ToArray().AsQueryable();
+                RootFilter? filterResult;
+                query = await FilterQuery("", query, null, !chartInput.LiveMode, true, chartInput.Filter, true);
+                type = query.FirstOrDefault();
+            }
+
+            Colors colors = new Colors();
             if (type != null)
             {
-                
-                    Field fieldx = new Field
-                    {
-                        CalculationMethod = chartInput.Xcalculation,
-                        Name = "CalculatedX",
-                        PropertyName = "CalculatedX",
-                        Type = "calculatednumeric",
-                        ObjectTypeId = type.ObjectTypeId
-                    };
-                    Field fieldy = new Field
-                    {
-                        CalculationMethod = chartInput.Ycalculation,
-                        Name = "CalculatedY",
-                        PropertyName = "CalculatedY",
-                        Type = "calculatednumeric",
-                        ObjectTypeId = type.ObjectTypeId
-                    };
-                    type.Field.Add(fieldx);
-                    type.Field.Add(fieldy);
-                    this.CalculateValue(fieldx, type);
-                    this.CalculateValue(fieldy, type);
 
-                    double k = 0;
-                    if(chartInput.GroupOption.ToLower() != "none")
-                    {
+                Field fieldx = new Field
+                {
+                    CalculationMethod = chartInput.Xcalculation,
+                    Name = "CalculatedX",
+                    Type = "calculatednumeric",
+                    ObjectTypeId = type.ObjectTypeId
+                };
+                Field fieldy = new Field
+                {
+                    CalculationMethod = chartInput.Ycalculation,
+                    Name = "CalculatedY",
+                    Type = "calculatednumeric",
+                    ObjectTypeId = type.ObjectTypeId,
+                    ColorMethod = chartInput.Colorcalculation
+                };
+                type.Field.Add(fieldx);
+                type.Field.Add(fieldy);
+                if(fieldx.CalculationMethod != "index")
+                {
+                    this.CalculateValue(fieldx, type);
+                }
+                this.CalculateValue(fieldy, type);
+                //if(chartInput.Colorcalculation != null && chartInput.Colorcalculation != "" )
+                //{
+                //    this.CalculateColor(fieldy, type);
+                //}
+
+                double k = 0;
+                if (chartInput?.GroupOption != null && chartInput?.GroupOption?.ToLower() != "none")
+                {
                     ChartModelType chtyp = new ChartModelType();
                     chtyp.Datasets.Add(new ChartModelDataset());
                     chtyp.Name = "Grouped: " + chartInput.Xcalculation + "-" + chartInput.Ycalculation;
@@ -742,147 +774,213 @@ namespace GenericDataStore.Controllers
                         values.Add(p);
                     }
                     if (chartInput.GroupOption.ToLower() == "count")
-                        {
-                            var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Count() }).ToList();
-                            foreach (var g in grval)
-                            {
-                                chtyp.Labels.Add(g.Name);
-                                chtyp.Datasets[0].Data.Add(g.Count);
-                                var random = new Random();
-                                var color = String.Format("#{0:X6}", random.Next(0x1000000));
-                                chtyp.Datasets[0].BackgroundColor.Add(color);
-                                chtyp.Datasets[0].BorderColor.Add(color);
+                    {
+                        var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Count() }).ToList();
+                        var colorlist = colors.GetColorList(grval.Count);
 
-                            }
-                        }
-                        else if (chartInput.GroupOption.ToLower() == "sum")
+                        chtyp.privateobject = type.Private;
+                        int idx = 0;
+                        foreach (var g in grval)
                         {
-                            var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Sum(y => double.TryParse(y.Value?.Replace(',', '.'), CultureInfo.InvariantCulture, out k) == true ? k : 0) }).ToList();
-                            foreach (var g in grval)
-                            {
-                                chtyp.Labels.Add(g.Name);
-                                chtyp.Datasets[0].Data.Add(g.Count);
-                                var random = new Random();
-                                var color = String.Format("#{0:X6}", random.Next(0x1000000));
-                                chtyp.Datasets[0].BackgroundColor.Add(color);
-                                chtyp.Datasets[0].BorderColor.Add(color);
+                            chtyp.Labels.Add(g.Name);
+                            chtyp.Datasets[0].Data.Add(g.Count);
+                            var color = colorlist[idx];
+                            chtyp.Datasets[0].BackgroundColor.Add(color);
+                            chtyp.Datasets[0].BorderColor.Add(color);
+                            idx++;
 
-                            }
                         }
-                        else if (chartInput.GroupOption.ToLower() == "average")
+                    }
+                    else if (chartInput.GroupOption.ToLower() == "sum")
+                    {
+                        var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Sum(y => double.TryParse(y.Value?.Replace(',', '.'), CultureInfo.InvariantCulture, out k) == true ? k : 0) }).ToList();
+                        var colorlist = colors.GetColorList(grval.Count);
+                        int idx = 0;
+                        foreach (var g in grval)
                         {
-                            var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Average(y => double.TryParse(y.Value?.Replace(',', '.'), CultureInfo.InvariantCulture, out k) == true ? k : 0) }).ToList();
-                            foreach (var g in grval)
-                            {
-                                chtyp.Labels.Add(g.Name);
-                                chtyp.Datasets[0].Data.Add(g.Count != double.NaN ? g.Count : 0);
-                                var random = new Random();
-                                var color = String.Format("#{0:X6}", random.Next(0x1000000));
-                                chtyp.Datasets[0].BackgroundColor.Add(color);
-                                chtyp.Datasets[0].BorderColor.Add(color);
+                            chtyp.Labels.Add(g.Name);
+                            chtyp.Datasets[0].Data.Add(g.Count);
+                            var random = new Random();
+                            var color = colorlist[idx];
+                            chtyp.Datasets[0].BackgroundColor.Add(color);
+                            chtyp.Datasets[0].BorderColor.Add(color);
 
-                            }
                         }
-                        else if (chartInput.GroupOption.ToLower() == "min")
+                    }
+                    else if (chartInput.GroupOption.ToLower() == "average")
+                    {
+                        var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Average(y => double.TryParse(y.Value?.Replace(',', '.'), CultureInfo.InvariantCulture, out k) == true ? k : 0) }).ToList();
+                        var colorlist = colors.GetColorList(grval.Count);
+                        int idx = 0;
+                        foreach (var g in grval)
                         {
-                            var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Min(y => double.TryParse(y.Value?.Replace(',', '.'), CultureInfo.InvariantCulture, out k) == true ? k : 0) }).ToList();
-                            foreach (var g in grval)
-                            {
-                                chtyp.Labels.Add(g.Name);
-                                chtyp.Datasets[0].Data.Add(g.Count);
-                                var random = new Random();
-                                var color = String.Format("#{0:X6}", random.Next(0x1000000));
-                                chtyp.Datasets[0].BackgroundColor.Add(color);
-                                chtyp.Datasets[0].BorderColor.Add(color);
+                            chtyp.Labels.Add(g.Name);
+                            chtyp.Datasets[0].Data.Add(g.Count != double.NaN ? g.Count : 0);
+                            var random = new Random();
+                            var color = colorlist[idx];
+                            chtyp.Datasets[0].BackgroundColor.Add(color);
+                            chtyp.Datasets[0].BorderColor.Add(color);
 
-                            }
                         }
-                        else if (chartInput.GroupOption.ToLower() == "max")
+                    }
+                    else if (chartInput.GroupOption.ToLower() == "min")
+                    {
+                        var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Min(y => double.TryParse(y.Value?.Replace(',', '.'), CultureInfo.InvariantCulture, out k) == true ? k : 0) }).ToList();
+                        var colorlist = colors.GetColorList(grval.Count);
+                        int idx = 0;
+                        foreach (var g in grval)
                         {
-                            var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Max(y => double.TryParse(y.Value?.Replace(',', '.'), CultureInfo.InvariantCulture, out k) == true ? k : 0) }).ToList();
-                            foreach (var g in grval)
-                            {
-                                chtyp.Labels.Add(g.Name);
-                                chtyp.Datasets[0].Data.Add(g.Count);
-                                var random = new Random();
-                                var color = String.Format("#{0:X6}", random.Next(0x1000000));
-                                chtyp.Datasets[0].BackgroundColor.Add(color);
-                                chtyp.Datasets[0].BorderColor.Add(color);
+                            chtyp.Labels.Add(g.Name);
+                            chtyp.Datasets[0].Data.Add(g.Count);
+                            var random = new Random();
+                            var color = colorlist[idx];
+                            chtyp.Datasets[0].BackgroundColor.Add(color);
+                            chtyp.Datasets[0].BorderColor.Add(color);
 
-                            }
                         }
-                        else if (chartInput.GroupOption.ToLower() == "first")
+                    }
+                    else if (chartInput.GroupOption.ToLower() == "max")
+                    {
+                        var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.Max(y => double.TryParse(y.Value?.Replace(',', '.'), CultureInfo.InvariantCulture, out k) == true ? k : 0) }).ToList();
+                        var colorlist = colors.GetColorList(grval.Count);
+                        int idx = 0;
+                        foreach (var g in grval)
                         {
-                            var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.FirstOrDefault().Value }).ToList();
-                            foreach (var g in grval)
-                            {
-                                chtyp.Labels.Add(g.Name);
+                            chtyp.Labels.Add(g.Name);
+                            chtyp.Datasets[0].Data.Add(g.Count);
+                            var random = new Random();
+                            var color = colorlist[idx];
+                            chtyp.Datasets[0].BackgroundColor.Add(color);
+                            chtyp.Datasets[0].BorderColor.Add(color);
+
+                        }
+                    }
+                    else if (chartInput.GroupOption.ToLower() == "first")
+                    {
+                        var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.FirstOrDefault().Value }).ToList();
+                        var colorlist = colors.GetColorList(grval.Count);
+                        int idx = 0;
+                        foreach (var g in grval)
+                        {
+                            chtyp.Labels.Add(g.Name);
                             chtyp.Datasets[0].Data.Add(double.TryParse(g.Count?.Replace(",", ".") ?? "0", CultureInfo.InvariantCulture, out k) == true ? k : 0);
                             var random = new Random();
-                                var color = String.Format("#{0:X6}", random.Next(0x1000000));
-                                chtyp.Datasets[0].BackgroundColor.Add(color);
-                                chtyp.Datasets[0].BorderColor.Add(color);
+                            var color = colorlist[idx];
+                            chtyp.Datasets[0].BackgroundColor.Add(color);
+                            chtyp.Datasets[0].BorderColor.Add(color);
 
-                            }
                         }
-                        else if (chartInput.GroupOption.ToLower() == "last")
+                    }
+                    else if (chartInput.GroupOption.ToLower() == "last")
+                    {
+                        var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.LastOrDefault().Value }).ToList();
+                        var colorlist = colors.GetColorList(grval.Count);
+                        int idx = 0;
+                        foreach (var g in grval)
                         {
-                            var grval = values.GroupBy(values => values.Key).Select(x => new { Name = x.Key, Count = x.LastOrDefault().Value }).ToList();
-                            foreach (var g in grval)
-                            {
-                                chtyp.Labels.Add(g.Name);
-                                chtyp.Datasets[0].Data.Add(double.TryParse(g.Count?.Replace(",", ".") ?? "0", CultureInfo.InvariantCulture, out k) == true ? k : 0);
-                                var random = new Random();
-                                var color = String.Format("#{0:X6}", random.Next(0x1000000));
-                                chtyp.Datasets[0].BackgroundColor.Add(color);
-                                chtyp.Datasets[0].BorderColor.Add(color);
+                            chtyp.Labels.Add(g.Name);
+                            chtyp.Datasets[0].Data.Add(double.TryParse(g.Count?.Replace(",", ".") ?? "0", CultureInfo.InvariantCulture, out k) == true ? k : 0);
+                            var random = new Random();
+                            var color = colorlist[idx];
+                            chtyp.Datasets[0].BackgroundColor.Add(color);
+                            chtyp.Datasets[0].BorderColor.Add(color);
 
+                        }
+                    }
+                    if (chartInput.GroupId != null && req == false)
+                    {
+                        var groupedcharts = DbContext.Chart.Where(x => x.GroupId == chartInput.GroupId && x.ChartId != chartInput.Id).ToList();
+                        foreach (var item in groupedcharts)
+                        {
+                            RootFilter? groupfilterResult = JsonConvert.DeserializeObject<RootFilter>(item.RootFilter);
+                            ChartInput chinput = new ChartInput()
+                            {
+                                Xcalculation = item.Xcalculation,
+                                Ycalculation = item.Ycalculation,
+                                GroupOption = item.GroupOption,
+                                GroupId = item.GroupId,
+                                Filter = chartInput.Filter,
+                                Type = item.Type,
+                                Id = item.ChartId,
+                                Fill = item.Fill,
+                                Step = item.Step,
+                                Regression = item.Regression,
+                                Stacked = item.Stacked,
+                                LiveMode = chartInput.LiveMode,
+                                Colorcalculation = item.Colorcalculation,
+
+
+                            };
+                            var chgroupresult = await GenerateChart(chinput, true);
+                            if (chgroupresult != null)
+                            {
+                                foreach (var item2 in chgroupresult.Datasets)
+                                {
+                                    item2.Type = item.Type;
+                                }
+                                chtyp.Datasets.AddRange(chgroupresult.Datasets);
                             }
                         }
-                    return new JsonResult(chtyp, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+                    }
+                    return chtyp;
                 }
                 else
+                {
+                    ChartModelType chtyp = new ChartModelType();
+                    chtyp.Datasets.Add(new ChartModelDataset());
+                    chtyp.Name = chartInput.Xcalculation + "-" + chartInput.Ycalculation;
+                    List<double> values = new List<double>();
+                    List<object> labels = new List<object>();
+
+                    int idx = 1;
+                    var colorlist = colors.GetColorList(1);
+                    List<string> uniquecolorlist = new List<string>();
+                    foreach (var obj in type.DataObject)
                     {
-                        ChartModelType chtyp = new ChartModelType();
-                        chtyp.Datasets.Add(new ChartModelDataset());
-                        chtyp.Name = chartInput.Xcalculation + "-" + chartInput.Ycalculation;
-                        List<double> values = new List<double>();
-                        List<object> labels = new List<object>();
-
-                        foreach (var obj in type.DataObject)
+                        var val = obj.Value.FirstOrDefault(x => x.Name == fieldy.Name);
+                        if(val.Color != null && val.Color != "")
                         {
-                            var val = obj.Value.FirstOrDefault(x => x.Name == fieldy.Name);
-                            if (val != null && val.ValueString != "∞" && val?.ValueString != null && val?.ValueString != "")
+                            uniquecolorlist.Add(val.Color);
+                        }
+                        if (val != null && val.ValueString != "∞" && val?.ValueString != null && val?.ValueString != "")
+                        {
+                            if (val.ValueString.Contains("."))
                             {
-                                if (val.ValueString.Contains("."))
+                                try
                                 {
-                                    try
-                                    {
-                                        values.Add(Math.Round(double.Parse((val?.ValueString != "" && val?.ValueString != null ? val?.ValueString : "0"), CultureInfo.InvariantCulture), 4));
-                                    }
-                                    catch (Exception)
-                                    {
-                                        values.Add(0);
-                                    }
+                                    values.Add(Math.Round(double.Parse((val?.ValueString != "" && val?.ValueString != null ? val?.ValueString : "0"), CultureInfo.InvariantCulture), 4));
                                 }
-                                else
+                                catch (Exception)
                                 {
-                                    try
-                                    {
-                                        values.Add(Math.Round(double.Parse((val?.ValueString != "" && val?.ValueString != null ? val?.ValueString : "0")), 4));
-                                    }
-                                    catch (Exception)
-                                    {
-                                        values.Add(0);
-                                    }
-
+                                    values.Add(0);
                                 }
                             }
                             else
                             {
-                                values.Add(0);
+                                try
+                                {
+                                    values.Add(Math.Round(double.Parse((val?.ValueString != "" && val?.ValueString != null ? val?.ValueString : "0")), 4));
+                                }
+                                catch (Exception)
+                                {
+                                    values.Add(0);
+                                }
 
                             }
+                        }
+                        else
+                        {
+                            values.Add(0);
+
+                        }
+                        
+                        if(fieldx.CalculationMethod == "index")
+                        {
+                            labels.Add(idx);
+                        }
+                        else
+                        {
                             var lab = obj.Value.FirstOrDefault(x => x.Name == fieldx.Name);
                             if (lab != null && lab.ValueString != "∞" && lab?.ValueString != null && lab?.ValueString != "")
                             {
@@ -896,26 +994,164 @@ namespace GenericDataStore.Controllers
                             }
                         }
 
-                        //var grval = values.OrderBy(x => x);
-                        chtyp.Datasets[0].Label = "custom";
-                        var random = new Random();
-                        var color = String.Format("#{0:X6}", random.Next(0x1000000));
+                        idx++;
+                    }
+
+                    //var grval = values.OrderBy(x => x);
+                    chtyp.Datasets[0].Label = chartInput.Ycalculation;
+
+                    //if(uniquecolorlist.Count > 0)
+                    //{
+                    //    chtyp.Datasets[0].BackgroundColor = uniquecolorlist;
+                    //    chtyp.Datasets[0].BorderColor = uniquecolorlist;
+                    //}
+                    //else
+                    //{
+                        var color = colorlist[0];
                         chtyp.Datasets[0].BorderColor.Add(color);
+
                         chtyp.Datasets[0].BackgroundColor.Add(color);
-                        foreach (var g in values)
+                    //}
+                    //var color = colorlist[0];
+                    //chtyp.Datasets[0].BorderColor.Add(color);
+                    //chtyp.Datasets[0].BackgroundColor.Add(color);
+
+                    chtyp.Datasets[0].Stacked = chartInput.Stacked;
+                    chtyp.Datasets[0].Stepped = chartInput.Step;
+                    chtyp.Datasets[0].Regression = chartInput.Regression;
+                    chtyp.Datasets[0].Fill = chartInput.Fill;
+                    foreach (var g in values)
+                    {
+                        chtyp.Datasets[0].Data.Add(g);
+                    }
+
+                    foreach (var g in labels)
+                    {
+                        chtyp.Labels.Add(g.ToString());
+                    }
+                    if(chartInput.GroupId != null && req == false)
+                    {
+                        var groupedcharts = DbContext.Chart.Where(x => x.GroupId == chartInput.GroupId && x.ChartId != chartInput.Id).ToList();
+                        foreach (var item in groupedcharts)
                         {
-                            chtyp.Datasets[0].Data.Add(g);
+                            //RootFilter? groupfilterResult = JsonConvert.DeserializeObject<RootFilter>(item.RootFilter);
+                            ChartInput chinput = new ChartInput()
+                            {
+                                Xcalculation = item.Xcalculation,
+                                Ycalculation = item.Ycalculation,
+                                GroupOption = item.GroupOption,
+                                GroupId = item.GroupId,
+                                Filter = chartInput.Filter,
+                                Type = item.Type,
+                                Id = item.ChartId,
+                                Fill = item.Fill,
+                                Step = item.Step,
+                                Regression = item.Regression,
+                                Stacked = item.Stacked,
+                                LiveMode = chartInput.LiveMode,
+                                Colorcalculation = item.Colorcalculation,
+
+                            };
+                            var chgroupresult = await GenerateChart(chinput, true);
+                            if (chgroupresult != null)
+                            {
+                                foreach (var item2 in chgroupresult.Datasets)
+                                {
+                                    item2.Type = item.Type;
+                                }
+                                chtyp.Datasets.AddRange(chgroupresult.Datasets);
+                            }
                         }
 
-                        foreach (var g in labels)
-                        {
-                            chtyp.Labels.Add(g.ToString());
-                        }
-                        return new JsonResult(chtyp, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                    }           
+                    }
+                    return chtyp;
+                }
             }
+            return null;
+        }
+        [HttpPost("GetTypeByChart/{privatelist}/{valuestring}/{label}")]
+        public virtual async Task<IActionResult> GetTypeByChart([FromBody] ChartInput chartInput, bool privatelist, string valuestring, string? label)
+        {
+            if(label != null && label != chartInput.Ycalculation)
+            {
+                var newchartinput = DbContext.Chart.FirstOrDefault(x => x.GroupId == chartInput.GroupId && x.Ycalculation == label);
+                if(newchartinput != null)
+                {
+                    RootFilter rootFilter = JsonConvert.DeserializeObject<RootFilter>(newchartinput.RootFilter);
+                    chartInput = new ChartInput()
+                    {
+                        Xcalculation = newchartinput.Xcalculation,
+                        Ycalculation = newchartinput.Ycalculation,
+                        GroupOption = newchartinput.GroupOption,
+                        GroupId = newchartinput.GroupId,
+                        Type = newchartinput.Type,
+                        Id = newchartinput.ChartId,
+                        Stacked = newchartinput.Stacked,
+                        Step = newchartinput.Step,
+                        Fill = newchartinput.Fill,
+                        Regression = newchartinput.Regression,
+                        Charts = chartInput.Charts,
+                        Filter = rootFilter
 
-            return BadRequest("Type not found");
+                    };
+                }
+            }
+            var query = this.DbContext.Set<ObjectType>().ToArray().AsQueryable();
+            RootFilter? filterResult;
+            query = await FilterQuery("", query, null, !chartInput.LiveMode, true, chartInput.Filter, true,true);
+            var type = query.FirstOrDefault();
+
+            Field fieldy = new Field
+            {
+                CalculationMethod = chartInput.Ycalculation,
+                Name = "CalculatedY",
+                Type = "calculatednumeric",
+                ObjectTypeId = type.ObjectTypeId
+            };
+
+            type.Field.Add(fieldy);
+
+            this.CalculateValue(fieldy, type);
+            List<DashboardModel> chartmodels = new List<DashboardModel>();
+            type.DataObject = type.DataObject.Where(x => x.Value.FirstOrDefault(x => x.Name == fieldy.Name).ValueString == valuestring ).ToList();
+            type.Count = type.DataObject.Count;
+            foreach (var item in chartInput.Charts)
+            {
+                var newchart = DbContext.Chart.FirstOrDefault(x => x.ChartId == item);
+                ChartInput chinput = new ChartInput()
+                {
+                    Xcalculation = newchart.Xcalculation,
+                    Ycalculation = newchart.Ycalculation,
+                    GroupOption = newchart.GroupOption,
+                    GroupId = newchart.GroupId,
+                    Type = newchart.Type,
+                    Id = newchart.ChartId,
+                    Stacked = newchart.Stacked,
+                    Step = newchart.Step,
+                    Fill = newchart.Fill,
+                    Regression = newchart.Regression,
+                    Colorcalculation = newchart.Colorcalculation
+
+
+                };
+                var chart = await GenerateChart(chinput, false,type);
+                if (chart != null)
+                {
+                    chartmodels.Add(new DashboardModel()
+                    {
+                        Position = 0,
+                        Size = 0,
+                        Type = "chart",
+                        Chart = chart,
+                        ChartInput = chinput,
+                    });
+
+                }
+            }
+            type.Field = DbContext.Field.Where(x => x.ObjectTypeId == type.ObjectTypeId).OrderBy(x => x.Position == null ? 100 : x.Position).ToList();
+
+            return new JsonResult(new {type = type, charts = chartmodels }, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
         }
 
         [Authorize(Policy = "Full")]
@@ -978,7 +1214,6 @@ namespace GenericDataStore.Controllers
             {
 
                 Name = parent.Name + "ParentId",
-                PropertyName = parent.Name + "ParentId",
                 Type = "foreignkey",
                 ObjectTypeId = child.ObjectTypeId
             });
@@ -1011,7 +1246,7 @@ namespace GenericDataStore.Controllers
                 {
                     return BadRequest("Name already exist");
                 }
-                Field field = new Field() { Name = calculatedfield.Name, PropertyName = calculatedfield.Name, Type = "calculated" + calculatedfield.OriginalType, ObjectTypeId = type.ObjectTypeId };
+                Field field = new Field() { Name = calculatedfield.Name, Type = "calculated" + calculatedfield.OriginalType, ObjectTypeId = type.ObjectTypeId };
 
                 field.CalculationMethod = calculatedfield.CalculationString;
                 type.Field.Add(field);
@@ -1050,6 +1285,55 @@ namespace GenericDataStore.Controllers
             return new JsonResult(null, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
 
+        [Authorize(Policy = "Full")]
+        [HttpPost("SaveCalculatedColorLabel")]
+        public virtual async Task<IActionResult> SaveCalculatedColorLabel([FromBody] CalculatedColor calculatedcolor)
+        {
+            var type = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == calculatedcolor.TypeId);
+
+            if (type != null)
+            {
+                var field = DbContext.Field.FirstOrDefault(x => x.ObjectTypeId == type.ObjectTypeId && x.FieldId == calculatedcolor.FieldId);
+                if (field == null)
+                {
+                    return BadRequest("Field does not exist");
+                }
+
+                field.LabelColorMethod = calculatedcolor.CalculationColor;
+            }
+            else
+            {
+                return BadRequest("Type not found");
+            }
+            DbContext.SaveChanges();
+
+            return new JsonResult(null, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        }
+
+        [Authorize(Policy = "Full")]
+        [HttpPost("SaveCalculatedSize")]
+        public virtual async Task<IActionResult> SaveCalculatedSize([FromBody] CalculatedColor calculatedcolor)
+        {
+            var type = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == calculatedcolor.TypeId);
+
+            if (type != null)
+            {
+                var field = DbContext.Field.FirstOrDefault(x => x.ObjectTypeId == type.ObjectTypeId && x.FieldId == calculatedcolor.FieldId);
+                if (field == null)
+                {
+                    return BadRequest("Field does not exist");
+                }
+
+                field.SizeMethod = calculatedcolor.CalculationColor;
+            }
+            else
+            {
+                return BadRequest("Type not found");
+            }
+            DbContext.SaveChanges();
+
+            return new JsonResult(null, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        }
         [HttpPost("ML")]
         [Authorize(Policy = "Full")]
         public virtual async Task<IActionResult> ML()
@@ -1475,8 +1759,158 @@ namespace GenericDataStore.Controllers
         }
 
 
+        [HttpGet("GetDashboardData")]
+        [Authorize(Policy = "Full")]
+        public virtual async Task<IActionResult> GetDashboardData()
+        {
+           return await this.GenerateDashboard();
+        }
 
-        private async Task<IQueryable<ObjectType>> FilterQuery(string filters, IQueryable<ObjectType> query, Guid? objid = null, bool chart = false, bool all = true, RootFilter rootfilter = null, bool onlyfirstx = false)
+        [HttpGet("GetDashboardDataOther/{id}")]
+        public virtual async Task<IActionResult> GetDashboardDataOther(Guid id)
+        {
+            return await this.GenerateDashboard(id);
+        }
+
+        [HttpGet("GetAllPublicDashboard")]
+        public virtual async Task<IActionResult> GetAllPublicDashboard()
+        {
+            var users =  DbContext.Users.Where(x => x.PublicDashboard == true).Select(x => new {id = x.Id, name = x.UserName}).ToList();
+            return new JsonResult(users, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        }
+
+        private async Task<IActionResult> GenerateDashboard(Guid? id = null)
+        {
+            if(id == null)
+            {
+                var user = await userManager.FindByNameAsync(User.Identity.Name);
+                id = user.Id;
+
+            }
+            var dashboardstables = DbContext.DashboardTable.Where(x => x.AppUserId == id).ToList();
+            List<DashboardModel> types = new List<DashboardModel>();
+            foreach (var item in dashboardstables)
+            {
+                var list = DbContext.ObjectType.Where(x => x.ObjectTypeId == item.ObjectTypeId).ToList().AsQueryable();
+                list = await this.FilterQuery(item.RootFilter, list);
+                var first = list.FirstOrDefault();
+                if(first != null)
+                {
+                    var copy = new ObjectType()
+                    {
+                        ObjectTypeId = first.ObjectTypeId,
+                        Name = first.Name,
+                        Category = first.Category,
+                        Description = first.Description,
+                        Field = first.Field,
+                        DataObject = first.DataObject,
+                        Count = first.Count,
+                        CreationDate = first.CreationDate,
+                        DatabaseConnectionPropertyId = first.DatabaseConnectionPropertyId,
+                        AppUserId = first.AppUserId,
+                        Private = first.Private,
+                        TableName = first.TableName,
+                        NoFilterMenu = first.NoFilterMenu,
+                        DenyAdd = first.DenyAdd,
+                        DenyExport = first.DenyExport,
+                        DenyChart = first.DenyChart,
+                        Promoted = first.Promoted,
+                        AllUserFullAccess = first.AllUserFullAccess,
+                        DashboardTableId = item.DashboardTableId
+                    };
+
+                    types.Add(new DashboardModel()
+                    {
+                        Position = item.Position ?? 0,
+                        Size = item.Size ?? 0,
+                        Type = "table",
+                        ObjectType = copy,
+                        Filter = item.RootFilter,
+                    });
+                }
+
+
+            }
+
+
+            var charts = DbContext.Chart.Where(x => x.AppUserId == id && x.GroupId == null).ToList();
+            foreach (var item in charts)
+            {
+                RootFilter? filterResult = JsonConvert.DeserializeObject<RootFilter>(item.RootFilter);
+                ChartInput chinput = new ChartInput()
+                {
+                    Xcalculation = item.Xcalculation,
+                    Ycalculation = item.Ycalculation,
+                    GroupOption = item.GroupOption,
+                    Filter = filterResult,
+                    Type = item.Type,
+                    Id = item.ChartId,
+                    Stacked = item.Stacked,
+                    Step = item.Step,
+                    Fill = item.Fill,
+                    Regression = item.Regression,
+                    Colorcalculation = item.Colorcalculation,
+
+
+                };
+                var chtype = await GenerateChart(chinput);
+
+                types.Add(new DashboardModel()
+                {
+                    Position = item.Position ?? 0,
+                    Size = item.Size ?? 0,
+                    Type = "chart",
+                    Chart = chtype,
+                    ChartInput = chinput,
+                });
+
+            }
+
+            var groupedcharts = DbContext.Chart.Where(x => x.AppUserId == id && x.GroupId != null).ToList();
+            foreach (var item in groupedcharts)
+            {
+
+                if (!types.Any(x => x?.ChartInput?.GroupId == item.GroupId))
+                {
+                    RootFilter? filterResult = JsonConvert.DeserializeObject<RootFilter>(item.RootFilter);
+                    ChartInput chinput = new ChartInput()
+                    {
+                        Xcalculation = item.Xcalculation,
+                        Ycalculation = item.Ycalculation,
+                        GroupOption = item.GroupOption,
+                        Filter = filterResult,
+                        Type = item.Type,
+                        Id = item.ChartId,
+                        GroupId = item.GroupId,
+                        Stacked = item.Stacked,
+                        Step = item.Step,
+                        Fill = item.Fill,
+                        Regression = item.Regression,
+                        Colorcalculation = item.Colorcalculation,
+
+                    };
+                    var chtype = await GenerateChart(chinput);
+
+                    types.Add(new DashboardModel()
+                    {
+                        Position = item.Position ?? 0,
+                        Size = item.Size ?? 0,
+                        Type = "chart",
+                        Chart = chtype,
+                        ChartInput = chinput,
+                    });
+
+                }
+
+            }
+
+            return new JsonResult(types.OrderBy(x => x.Position), new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+        }
+
+
+
+        private async Task<IQueryable<ObjectType>> FilterQuery(string filters, IQueryable<ObjectType> query, Guid? objid = null, bool chart = false, bool all = true, RootFilter rootfilter = null, bool onlyfirstx = false,bool needcolor = false)
         {
             RootFilter? filterResult = null;
             IQueryable<ObjectType> cachquery = null;
@@ -1507,7 +1941,7 @@ namespace GenericDataStore.Controllers
                             }
                             else
                             {
-                                query = query.Where(x => connections.Any(y => y.ChildTable == x.Name));
+                                query = query.Where(x => connections.Any(y => y.ChildObjecttypeId == x.ObjectTypeId));
                             }
                             filterResult.Filters.Remove(filterResult.Filters.FirstOrDefault(x => x.Field == "ParentObjectTypeId"));
                         }
@@ -1529,18 +1963,33 @@ namespace GenericDataStore.Controllers
                         if (true)
                         {
                             var Repository = GetRepo(item.DatabaseConnectionPropertyId);
-                            item.Field = this.DbContext.Set<Field>().Where(x => x.ObjectTypeId == item.ObjectTypeId).ToList();
+                            item.Field = this.DbContext.Set<Field>().Where(x => x.ObjectTypeId == item.ObjectTypeId).OrderBy(x => x.Position == null ? 100 : x.Position).ToList();
+                            
                             if (filterResult != null && filterResult.ValueFilters != null && filterResult.ValueFilters.Any(x => x.Field == "ParentDataObjectId"))
                             {
                                 var pfilter = filterResult.ValueFilters.FirstOrDefault(x => x.Field == "ParentDataObjectId").Operator.ToString();
                                 var parenttable = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId.ToString() == pfilter);
                                 var connection = DbContext.DatabaseTableRelations.FirstOrDefault(x => x.ChildObjecttypeId == item.ObjectTypeId && x.ParentObjecttypeId == parenttable.ObjectTypeId);
-                                filterResult.ValueFilters.Add(new Filter()
+
+                                if (Repository.sqltype != "api")
                                 {
-                                    Field = connection.ChildPropertyName,
-                                    Operator = "equals",
-                                    Value = filterResult.ValueFilters.FirstOrDefault(x => x.Field == "ParentDataObjectId").Value,
-                                });
+                                    filterResult.ValueFilters.Add(new Filter()
+                                    {
+                                        Field = connection.ChildPropertyName,
+                                        Operator = "equals",
+                                        Value = filterResult.ValueFilters.FirstOrDefault(x => x.Field == "ParentDataObjectId").Value,
+                                    });
+                                }
+                                else
+                                {
+                                    filterResult.ValueFilters.Add(new Filter()
+                                    {
+                                        Field = connection.ChildPropertyName,
+                                        Operator = connection.ParentTable,
+                                        Value = filterResult.ValueFilters.FirstOrDefault(x => x.Field == "ParentDataObjectId").Value,
+                                    });
+                                }
+
                                 filterResult.ValueFilters.RemoveAll(x => x.Field == "ParentDataObjectId");
                             }
 
@@ -1548,16 +1997,37 @@ namespace GenericDataStore.Controllers
                             {
                                 filterResult.ValueFilters.FirstOrDefault(Field => Field.Field == "AppUserId").Value = item.AppUserId.ToString();
                             }
-                            item.Count = Repository.GetCount(item, filterResult);
-                            if(item.Count > 2000 && onlyfirstx)
+                            if(Repository.sqltype != "api")
                             {
-                                onlyfirstx = true;
+                                item.Count = Repository.GetCount(item, filterResult);
+                                if (item.Count > 2000 && onlyfirstx)
+                                {
+                                    onlyfirstx = true;
+                                }
+                                else
+                                {
+                                    onlyfirstx = false;
+                                }
+                            }
+ 
+                            var deforder = item.Field.FirstOrDefault(x => x.DefaultOrder == true);
+                            if(deforder != null && filterResult.ValueSortingParams.Count == 0)
+                            {
+                                filterResult.ValueSortingParams.Add(new SortingParams()
+                                {
+                                    Field = deforder?.Name,
+                                    Order = 1
+                                });
+                            }
+                            if(Repository.sqltype != "api")
+                            {
+                                item.DataObject = Repository.GetAllDataFromTable(item, filterResult, chart, onlyfirstx);
+
                             }
                             else
                             {
-                                onlyfirstx = false;
+                                item.DataObject = Repository.GetAllDataFromTableApi(item, _memoryCache, filterResult, chart, onlyfirstx);
                             }
-                            item.DataObject = Repository.GetAllDataFromTable(item, filterResult,chart,onlyfirstx);
 
 
                             //item.DataObject = CreateQuery<DataObject>.ObjectFilter(item.DataObject.AsQueryable(), filterResult).ToList();
@@ -1587,10 +2057,22 @@ namespace GenericDataStore.Controllers
                                 }
                             }
 
-
-                            foreach (var item2 in item.Field.Where(x =>  x.ColorMethod != null && x.ColorMethod != ""))
+                            if(chart == false || needcolor == true)
                             {
-                                CalculateColor(item2, item);
+                                foreach (var item2 in item.Field.Where(x => x.ColorMethod != null && x.ColorMethod != ""))
+                                {
+                                    CalculateColor(item2, item);
+                                }
+                                
+                                foreach (var item2 in item.Field.Where(x => x.LabelColorMethod != null && x.LabelColorMethod != ""))
+                                {
+                                    CalculateColorLabel(item2, item);
+                                }
+                                foreach (var item2 in item.Field.Where(x => x.SizeMethod != null && x.SizeMethod != ""))
+                                {
+                                    CalculateSize(item2, item);
+                                }
+
                             }
 
 
@@ -1608,6 +2090,354 @@ namespace GenericDataStore.Controllers
             return query;
         }
 
+        private object? CalculationResult(string resultstring, MatchCollection names, MatchCollection functions, Repository repository, ObjectType type, Field field, DataObject obj, IQueryable<DatabaseTableRelations> connections, StringToValue stf)
+        {
+            var childscache = new List<ObjectType>();
+            var parentscache = new List<ObjectType>();
+            foreach (var item in names)
+            {
+                var matchfield = type.Field.FirstOrDefault(x => x.Name.ToLower() == item.ToString().ToLower().Replace("{", "").Replace("}", ""));
+                if (matchfield != null)
+                {
+                    var value = obj.Value.FirstOrDefault(x => x.Name == matchfield.Name);
+                    if (value != null)
+                    {
+                        if (value.ValueString != null)
+                        {
+                            object dvalue = null;
+                            if (matchfield.Type == "numeric" || matchfield.Type == "calculatednumeric")
+                            {
+                                if (value.ValueString.Contains("."))
+                                {
+                                    dvalue = double.Parse(value.ValueString, CultureInfo.InvariantCulture);
+                                }
+                                else
+                                {
+                                    dvalue = double.Parse(value.ValueString);
+                                }
+                            }
+                            else
+                            {
+                                dvalue = value.ValueString;
+                            }
+
+                            resultstring = resultstring.Replace(item.ToString(), dvalue.ToString());
+                        }
+                    }
+                }
+            }
+
+            foreach (var item in functions)
+            {
+                string[] word = item.ToString().Replace("[", "").Replace("]", "").Split(".");
+                if (word[0].ToLower() == "child")
+                {
+
+                    if (connections != null)
+                    {
+                        var connection = connections.FirstOrDefault(x => x.ParentTable == type.Name && x.ChildTable.ToLower() == word[1].ToLower() && x.ParentObjecttypeId == type.ObjectTypeId);
+                        if (connection != null)
+                        {
+                            RootFilter childfilter = new RootFilter()
+                            {
+                                ValueFilters = new List<Filter>()
+                                            {
+                                                new Filter()
+                                                {
+                                                    Field = connection.ChildPropertyName,
+                                                    Operator = "equals",
+                                                    Value = obj.Value.FirstOrDefault(x => x.Name == connection.ParentPropertyName).ValueString
+                                                }
+                                            }
+                            };
+                            ObjectType child = null;
+                            if (childscache.Any(x => x.Name == connection.ChildTable))
+                            {
+                                child = childscache.FirstOrDefault(x => x.Name == connection.ChildTable);
+                            }
+                            else
+                            {
+                                child = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == connection.ChildObjecttypeId);
+                                if (child != null)
+                                {
+                                    child.Field = DbContext.Field.Where(x => x.ObjectTypeId == child.ObjectTypeId).ToList();
+                                    if (type.DatabaseConnectionPropertyId != child.DatabaseConnectionPropertyId)
+                                    {
+                                        var childrepo = this.GetRepo(child.DatabaseConnectionPropertyId);
+                                        child.DataObject = childrepo.GetAllDataFromTable(child, childfilter, true);
+
+                                    }
+                                    else
+                                    {
+                                        child.DataObject = repository.GetAllDataFromTable(child, childfilter, true);
+                                    }
+                                    childscache.Add(child);
+                                }
+                            }
+                            if (child != null)
+                            {
+                                var childfield = child.Field.FirstOrDefault(x => x.Name == word[2]);
+                                if (childfield != null)
+                                {
+                                    if (childfield.Type.Contains("calculated"))
+                                    {
+                                        CalculateValue(childfield, child);
+                                    }
+                                    var allvalue = child.DataObject.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+                                    var objvalues = child.DataObject.ToList();
+                                    for (int i = 4; i < word.Length; i++)
+                                    {
+                                        if (word[i].Split('(')[0].ToLower() == "where")
+                                        {
+                                            var where = word[i].Split('(')[1].Split(')')[0].Trim().Replace(" ", "");
+                                            if (where.Contains("->"))
+                                            {
+                                                var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("->")[0]);
+                                                var wherevalue = where.Split("->")[1].Split('(')[1].Split(')')[0].Split(',');
+                                                if (wherefield != null)
+                                                {
+                                                    objvalues = objvalues.Where(x => wherevalue.Contains(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString)).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+                                                }
+                                            }
+                                            else if (where.Contains("<-"))
+                                            {
+                                                var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("<-")[0]);
+                                                var wherevalue = where.Split("<-")[1];
+                                                if (wherefield != null)
+                                                {
+                                                    objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString.Contains(wherevalue)).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+                                                }
+                                            }
+                                            else if (where.Contains("=in"))
+                                            {
+                                                var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("=in")[0]);
+                                                var wherevalue = where.Split("=in")[1].Split('(')[1].Split(')')[0].Split(',');
+                                                if (wherefield != null)
+                                                {
+                                                    objvalues = objvalues.Where(x => wherevalue.Contains(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString)).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+                                                }
+                                            }
+                                            else if (where.Contains(">="))
+                                            {
+                                                var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split(">=")[0]);
+                                                var wherevalue = where.Split(">=")[1];
+                                                if (wherefield != null)
+                                                {
+                                                    objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) >= double.Parse(wherevalue) : false).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+
+                                                }
+                                            }
+                                            else if (where.Contains("<="))
+                                            {
+                                                var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("<=")[0]);
+                                                var wherevalue = where.Split("<=")[1];
+                                                if (wherefield != null)
+                                                {
+                                                    objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) <= double.Parse(wherevalue) : false).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+
+                                                }
+                                            }
+                                            else if (where.Contains("!="))
+                                            {
+                                                var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("!=")[0]);
+                                                var wherevalue = where.Split("!=")[1];
+                                                if (wherefield != null)
+                                                {
+                                                    objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) != double.Parse(wherevalue) : false).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+
+                                                }
+                                            }
+                                            else if (where.Contains("="))
+                                            {
+                                                var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split('=')[0]);
+                                                var wherevalue = where.Split('=')[1];
+                                                if (wherefield != null)
+                                                {
+                                                    objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) == double.Parse(wherevalue) : false).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+
+                                                }
+                                            }
+                                            else if (where.Contains("<"))
+                                            {
+                                                var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split('<')[0]);
+                                                var wherevalue = where.Split('<')[1];
+                                                if (wherefield != null)
+                                                {
+                                                    objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) < double.Parse(wherevalue) : false).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+
+                                                }
+                                            }
+                                            else if (where.Contains(">"))
+                                            {
+                                                var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split('>')[0]);
+                                                var wherevalue = where.Split('>')[1];
+                                                if (wherefield != null)
+                                                {
+                                                    objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) > double.Parse(wherevalue) : false).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+                                                }
+                                            }
+
+
+                                        }
+                                        else if (word[i].Split('(')[0].ToLower() == "orderby")
+                                        {
+
+                                            var where = word[i].Split('(')[1].Split(')')[0];
+                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where);
+                                            if (wherefield != null)
+                                            {
+                                                if (wherefield.Type == "numeric" || wherefield.Type == "calculatednumeric")
+                                                {
+                                                    objvalues = objvalues.OrderBy(x => double.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name)?.ValueString ?? double.MaxValue.ToString())).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+                                                }
+                                                else if (wherefield.Type == "boolean" || wherefield.Type == "calculatedboolean")
+                                                {
+                                                    objvalues = objvalues.OrderBy(x => bool.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name)?.ValueString ?? false.ToString())).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+
+                                                }
+                                                else
+                                                {
+                                                    objvalues = objvalues.OrderBy(x => x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+                                                }
+
+                                            }
+                                        }
+                                        else if (word[i].Split('(')[0].ToLower() == "orderbydesc")
+                                        {
+
+                                            var where = word[i].Split('(')[1].Split(')')[0];
+                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where);
+                                            if (wherefield != null)
+                                            {
+                                                if (wherefield.Type == "numeric" || wherefield.Type == "calculatednumeric")
+                                                {
+                                                    objvalues = objvalues.OrderByDescending(x => double.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name)?.ValueString ?? double.MinValue.ToString())).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+                                                }
+                                                else if (wherefield.Type == "boolean" || wherefield.Type == "calculatedboolean")
+                                                {
+                                                    objvalues = objvalues.OrderByDescending(x => bool.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name)?.ValueString ?? true.ToString())).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+
+                                                }
+                                                else
+                                                {
+                                                    objvalues = objvalues.OrderByDescending(x => x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString).ToList();
+                                                    allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                    resultstring = FieldValueCalculator.Calculate(word[3], allvalue, resultstring, item);
+                                }
+
+                            }
+                        }
+                    }
+                }
+                else if (word[0].ToLower() == "parent")
+                {
+                    if (connections != null)
+                    {
+                        var connection = connections.FirstOrDefault(x => x.ChildTable == type.Name && x.ParentTable.ToLower() == word[1].ToLower() && x.ChildObjecttypeId == type.ObjectTypeId);
+                        if (connection != null)
+                        {
+                            RootFilter parentfilter = new RootFilter()
+                            {
+                                ValueFilters = new List<Filter>()
+                                            {
+                                                new Filter()
+                                                {
+                                                    Field = connection.ParentPropertyName,
+                                                    Operator = "equals",
+                                                    Value = obj.Value.FirstOrDefault(x => x.Name == connection.ChildPropertyName).ValueString
+                                                }
+                                            }
+                            };
+                            ObjectType parent = null;
+                            if (parentscache.Any(x => x.Name == connection.ChildTable))
+                            {
+                                parent = parentscache.FirstOrDefault(x => x.Name == connection.ChildTable);
+                            }
+                            else
+                            {
+                                parent = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == connection.ParentObjecttypeId);
+                                if (parent != null)
+                                {
+                                    parent.Field = DbContext.Field.Where(x => x.ObjectTypeId == parent.ObjectTypeId).ToList();
+                                    if (type.DatabaseConnectionPropertyId != parent.DatabaseConnectionPropertyId)
+                                    {
+                                        var parentrepo = this.GetRepo(parent.DatabaseConnectionPropertyId);
+                                        parent.DataObject = parentrepo.GetAllDataFromTable(parent, parentfilter, true);
+
+                                    }
+                                    else
+                                    {
+                                        parent.DataObject = repository.GetAllDataFromTable(parent, parentfilter, true);
+                                    }
+                                    parentscache.Add(parent);
+                                }
+                            }
+                            if (parent != null)
+                            {
+                                var parentfield = parent.Field.FirstOrDefault(x => x.Name == word[2]);
+                                if (parentfield != null)
+                                {
+                                    if (parentfield.Type.Contains("calculated"))
+                                    {
+                                        this.CalculateValue(parentfield, parent);
+                                    }
+
+                                    var allvalue = parent.DataObject.Select(x => x.Value.FirstOrDefault(x => x.Name == parentfield.Name).ValueString).FirstOrDefault();
+                                    var objvalues = parent.DataObject.ToList();
+                                    if (item != null && allvalue != null)
+                                    {
+                                        resultstring = resultstring.Replace(item.ToString(), allvalue.ToString());
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            var controls = Regex.Matches(resultstring, @"(\$.+?\$)");
+            foreach (var item in controls)
+            {
+                string control = item.ToString().Replace("$", "");
+                if (control.ToString().ToLower().Replace(" ", "").StartsWith("if'"))
+                {
+                    string ifword = Regex.Matches(control.ToString(), @"(\'.+?\')")[0].ToString().Replace("'", "");
+                    object ifresult = stf.Eval(ifword.Replace("(", " ( ").Replace(")", " ) "));
+                    if (ifresult.ToString().ToLower() == "true")
+                    {
+                        resultstring = control.ToString().Split("??")[1];
+                    }
+                }
+
+
+            }
+
+
+            object result = stf.Eval(resultstring);
+            return result;
+        }
+
         private void CalculateColor(Field field, ObjectType type)
         {
             var names = Regex.Matches(field.ColorMethod, @"(\{.+?\})");
@@ -1621,355 +2451,79 @@ namespace GenericDataStore.Controllers
                 {
                     try
                     {
-                        var childscache = new List<ObjectType>();
-                        var parentscache = new List<ObjectType>();
-                        string resultstring = field.ColorMethod;
-                        foreach (var item in names)
-                        {
-                            var matchfield = type.Field.FirstOrDefault(x => x.Name.ToLower() == item.ToString().ToLower().Replace("{", "").Replace("}", ""));
-                            if(matchfield != null)
-                            {
-                                var value = obj.Value.FirstOrDefault(x => x.Name == matchfield.Name);
-                                if (value != null)
-                                {
-                                    if (value.ValueString != null)
-                                    {
-                                        object dvalue = null;
-                                        if (matchfield.Type == "numeric" || matchfield.Type == "calculatednumeric")
-                                        {
-                                            if (value.ValueString.Contains("."))
-                                            {
-                                                dvalue = double.Parse(value.ValueString, CultureInfo.InvariantCulture);
-                                            }
-                                            else
-                                            {
-                                                dvalue = double.Parse(value.ValueString);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            dvalue = value.ValueString;
-                                        }
-
-                                        resultstring = resultstring.Replace(item.ToString(), dvalue.ToString());
-                                    }
-                                }
-                            }
-                        }
-
-                        foreach (var item in functions)
-                        {
-                            string[] word = item.ToString().Replace("[", "").Replace("]", "").Split(".");
-                            if (word[0].ToLower() == "child")
-                            {
-
-                                if (connections != null)
-                                {
-                                    var connection = connections.FirstOrDefault(x => x.ParentTable == type.Name && x.ChildTable.ToLower() == word[1].ToLower() && x.ParentObjecttypeId == type.ObjectTypeId);
-                                    if (connection != null)
-                                    {
-                                        RootFilter childfilter = new RootFilter()
-                                        {
-                                            ValueFilters = new List<Filter>()
-                                            {
-                                                new Filter()
-                                                {
-                                                    Field = connection.ChildPropertyName,
-                                                    Operator = "equals",
-                                                    Value = obj.Value.FirstOrDefault(x => x.Name == connection.ParentPropertyName).ValueString
-                                                }
-                                            }
-                                        };
-                                        ObjectType child = null;
-                                        if (childscache.Any(x => x.Name == connection.ChildTable))
-                                        {
-                                            child = childscache.FirstOrDefault(x => x.Name == connection.ChildTable);
-                                        }
-                                        else
-                                        {
-                                            child = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == connection.ChildObjecttypeId);
-                                            if (child != null)
-                                            {
-                                                child.Field = DbContext.Field.Where(x => x.ObjectTypeId == child.ObjectTypeId).ToList();
-                                                if (type.DatabaseConnectionPropertyId != child.DatabaseConnectionPropertyId)
-                                                {
-                                                    var childrepo = this.GetRepo(child.DatabaseConnectionPropertyId);
-                                                    child.DataObject = childrepo.GetAllDataFromTable(child, childfilter, true);
-
-                                                }
-                                                else
-                                                {
-                                                    child.DataObject = repository.GetAllDataFromTable(child, childfilter, true);
-                                                }
-                                                childscache.Add(child);
-                                            }
-                                        }
-                                        if (child != null)
-                                        {
-                                            var childfield = child.Field.FirstOrDefault(x => x.Name == word[2]);
-                                            if (childfield != null)
-                                            {
-                                                if (childfield.Type.Contains("calculated"))
-                                                {
-                                                    CalculateValue(childfield, child);
-                                                }
-                                                var allvalue = child.DataObject.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                var objvalues = child.DataObject.ToList();
-                                                for (int i = 4; i < word.Length; i++)
-                                                {
-                                                    if (word[i].Split('(')[0].ToLower() == "where")
-                                                    {
-                                                        var where = word[i].Split('(')[1].Split(')')[0].Trim().Replace(" ", "");
-                                                        if (where.Contains("->"))
-                                                        {
-                                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("->")[0]);
-                                                            var wherevalue = where.Split("->")[1].Split('(')[1].Split(')')[0].Split(',');
-                                                            if (wherefield != null)
-                                                            {
-                                                                objvalues = objvalues.Where(x => wherevalue.Contains(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString)).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                            }
-                                                        }
-                                                        else if (where.Contains("<-"))
-                                                        {
-                                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("<-")[0]);
-                                                            var wherevalue = where.Split("<-")[1];
-                                                            if (wherefield != null)
-                                                            {
-                                                                objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString.Contains(wherevalue)).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                            }
-                                                        }
-                                                        else if (where.Contains("=in"))
-                                                        {
-                                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("=in")[0]);
-                                                            var wherevalue = where.Split("=in")[1].Split('(')[1].Split(')')[0].Split(',');
-                                                            if (wherefield != null)
-                                                            {
-                                                                objvalues = objvalues.Where(x => wherevalue.Contains(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString)).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                            }
-                                                        }
-                                                        else if (where.Contains(">="))
-                                                        {
-                                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split(">=")[0]);
-                                                            var wherevalue = where.Split(">=")[1];
-                                                            if (wherefield != null)
-                                                            {
-                                                                objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) >= double.Parse(wherevalue) : false).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                            }
-                                                        }
-                                                        else if (where.Contains("<="))
-                                                        {
-                                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("<=")[0]);
-                                                            var wherevalue = where.Split("<=")[1];
-                                                            if (wherefield != null)
-                                                            {
-                                                                objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) <= double.Parse(wherevalue) : false).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                            }
-                                                        }
-                                                        else if (where.Contains("!="))
-                                                        {
-                                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("!=")[0]);
-                                                            var wherevalue = where.Split("!=")[1];
-                                                            if (wherefield != null)
-                                                            {
-                                                                objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) != double.Parse(wherevalue) : false).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                            }
-                                                        }
-                                                        else if (where.Contains("="))
-                                                        {
-                                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split('=')[0]);
-                                                            var wherevalue = where.Split('=')[1];
-                                                            if (wherefield != null)
-                                                            {
-                                                                objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) == double.Parse(wherevalue) : false).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                            }
-                                                        }
-                                                        else if (where.Contains("<"))
-                                                        {
-                                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split('<')[0]);
-                                                            var wherevalue = where.Split('<')[1];
-                                                            if (wherefield != null)
-                                                            {
-                                                                objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) < double.Parse(wherevalue) : false).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                            }
-                                                        }
-                                                        else if (where.Contains(">"))
-                                                        {
-                                                            var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split('>')[0]);
-                                                            var wherevalue = where.Split('>')[1];
-                                                            if (wherefield != null)
-                                                            {
-                                                                objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) > double.Parse(wherevalue) : false).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                            }
-                                                        }
-
-
-                                                    }
-                                                    else if (word[i].Split('(')[0].ToLower() == "orderby")
-                                                    {
-
-                                                        var where = word[i].Split('(')[1].Split(')')[0];
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where);
-                                                        if (wherefield != null)
-                                                        {
-                                                            if (wherefield.Type == "numeric" || wherefield.Type == "calculatednumeric")
-                                                            {
-                                                                objvalues = objvalues.OrderBy(x => double.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name)?.ValueString ?? double.MaxValue.ToString())).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                            }
-                                                            else if (wherefield.Type == "boolean" || wherefield.Type == "calculatedboolean")
-                                                            {
-                                                                objvalues = objvalues.OrderBy(x => bool.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name)?.ValueString ?? false.ToString())).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                            }
-                                                            else
-                                                            {
-                                                                objvalues = objvalues.OrderBy(x => x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                            }
-
-                                                        }
-                                                    }
-                                                    else if (word[i].Split('(')[0].ToLower() == "orderbydesc")
-                                                    {
-
-                                                        var where = word[i].Split('(')[1].Split(')')[0];
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where);
-                                                        if (wherefield != null)
-                                                        {
-                                                            if (wherefield.Type == "numeric" || wherefield.Type == "calculatednumeric")
-                                                            {
-                                                                objvalues = objvalues.OrderByDescending(x => double.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name)?.ValueString ?? double.MinValue.ToString())).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                            }
-                                                            else if (wherefield.Type == "boolean" || wherefield.Type == "calculatedboolean")
-                                                            {
-                                                                objvalues = objvalues.OrderByDescending(x => bool.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name)?.ValueString ?? true.ToString())).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                            }
-                                                            else
-                                                            {
-                                                                objvalues = objvalues.OrderByDescending(x => x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString).ToList();
-                                                                allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                            }
-                                                        }
-                                                    }
-
-                                                }
-                                                resultstring = FieldValueCalculator.Calculate(word[3], allvalue, resultstring, item);
-                                            }
-
-                                        }
-                                    }
-                                }
-                            }
-                            else if (word[0].ToLower() == "parent")
-                            {
-                                if (connections != null)
-                                {
-                                    var connection = connections.FirstOrDefault(x => x.ChildTable == type.Name && x.ParentTable.ToLower() == word[1].ToLower() && x.ChildObjecttypeId == type.ObjectTypeId);
-                                    if (connection != null)
-                                    {
-                                        RootFilter parentfilter = new RootFilter()
-                                        {
-                                            ValueFilters = new List<Filter>()
-                                            {
-                                                new Filter()
-                                                {
-                                                    Field = connection.ParentPropertyName,
-                                                    Operator = "equals",
-                                                    Value = obj.Value.FirstOrDefault(x => x.Name == connection.ChildPropertyName).ValueString
-                                                }
-                                            }
-                                        };
-                                        ObjectType parent = null;
-                                        if (parentscache.Any(x => x.Name == connection.ChildTable))
-                                        {
-                                            parent = parentscache.FirstOrDefault(x => x.Name == connection.ChildTable);
-                                        }
-                                        else
-                                        {
-                                            parent = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == connection.ParentObjecttypeId);
-                                            if (parent != null)
-                                            {
-                                                parent.Field = DbContext.Field.Where(x => x.ObjectTypeId == parent.ObjectTypeId).ToList();
-                                                if (type.DatabaseConnectionPropertyId != parent.DatabaseConnectionPropertyId)
-                                                {
-                                                    var parentrepo = this.GetRepo(parent.DatabaseConnectionPropertyId);
-                                                    parent.DataObject = parentrepo.GetAllDataFromTable(parent, parentfilter, true);
-
-                                                }
-                                                else
-                                                {
-                                                    parent.DataObject = repository.GetAllDataFromTable(parent, parentfilter, true);
-                                                }
-                                                parentscache.Add(parent);
-                                            }
-                                        }
-                                        if (parent != null)
-                                        {
-                                            var parentfield = parent.Field.FirstOrDefault(x => x.Name == word[2]);
-                                            if(parentfield != null)
-                                            {
-                                                if (parentfield.Type.Contains("calculated"))
-                                                {
-                                                    this.CalculateValue(parentfield, parent);
-                                                }
-
-                                                var allvalue = parent.DataObject.Select(x => x.Value.FirstOrDefault(x => x.Name == parentfield.Name).ValueString).FirstOrDefault();
-                                                var objvalues = parent.DataObject.ToList();
-                                                if (item != null && allvalue != null)
-                                                {
-                                                    resultstring = resultstring.Replace(item.ToString(), allvalue.ToString());
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-
-                        var controls = Regex.Matches(resultstring, @"(\$.+?\$)");
-                        foreach (var item in controls)
-                        {
-                            string control = item.ToString().Replace("$", "");
-                            if (control.ToString().ToLower().Replace(" ", "").StartsWith("if'"))
-                            {
-                                string ifword = Regex.Matches(control.ToString(), @"(\'.+?\')")[0].ToString().Replace("'", "");
-                                object ifresult = stf.Eval(ifword.Replace("(", " ( ").Replace(")", " ) "));
-                                if (ifresult.ToString().ToLower() == "true")
-                                {
-                                    resultstring = control.ToString().Split("??")[1];
-                                }
-                            }
-
-
-                        }
-
-
-                        object result = stf.Eval(resultstring);
+     
+                        var result = this.CalculationResult(field.ColorMethod,names, functions, repository, type, field, obj, connections, stf);
                         var resultvalue = obj.Value.FirstOrDefault(x => x.Name == field.Name);
                         if (resultvalue != null)
                         {
-                                resultvalue.Color = result.ToString();
+                                resultvalue.Color = result?.ToString();
                             
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+
+                    }
+                }
+            }
+
+
+        }
+
+        private void CalculateColorLabel(Field field, ObjectType type)
+        {
+            var names = Regex.Matches(field.LabelColorMethod, @"(\{.+?\})");
+            var functions = Regex.Matches(field.LabelColorMethod, @"(\[.+?\])");
+            StringToValue stf = new StringToValue();
+            var repository = GetRepo(type.DatabaseConnectionPropertyId);
+            var connections = DbContext.DatabaseTableRelations.Where(x => x.ParentObjecttypeId == type.ObjectTypeId || x.ChildObjecttypeId == type.ObjectTypeId);
+            if (field.LabelColorMethod != null && field.LabelColorMethod != "")
+            {
+                foreach (var obj in type.DataObject)
+                {
+                    try
+                    {
+
+                        var result = this.CalculationResult(field.LabelColorMethod,names, functions, repository, type, field, obj, connections, stf);
+                        var resultvalue = obj.Value.FirstOrDefault(x => x.Name == field.Name);
+                        if (resultvalue != null)
+                        {
+                            resultvalue.LabelColor = result?.ToString();
+
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+
+                    }
+                }
+            }
+
+
+        }
+
+        private void CalculateSize(Field field, ObjectType type)
+        {
+            var names = Regex.Matches(field.SizeMethod, @"(\{.+?\})");
+            var functions = Regex.Matches(field.SizeMethod, @"(\[.+?\])");
+            StringToValue stf = new StringToValue();
+            var repository = GetRepo(type.DatabaseConnectionPropertyId);
+            var connections = DbContext.DatabaseTableRelations.Where(x => x.ParentObjecttypeId == type.ObjectTypeId || x.ChildObjecttypeId == type.ObjectTypeId);
+            if (field.SizeMethod != null && field.SizeMethod != "")
+            {
+                foreach (var obj in type.DataObject)
+                {
+                    try
+                    {
+
+                        var result = this.CalculationResult(field.SizeMethod, names, functions, repository, type, field, obj, connections, stf);
+                        var resultvalue = obj.Value.FirstOrDefault(x => x.Name == field.Name);
+                        if (resultvalue != null && result != null)
+                        {
+                            resultvalue.TextSize = Math.Round(double.Parse(result.ToString())).ToString();
+
                         }
                     }
                     catch (Exception)
@@ -1997,346 +2551,17 @@ namespace GenericDataStore.Controllers
                 {
                     try
                     {
-                        var childscache = new List<ObjectType>();
-                        var parentscache = new List<ObjectType>();
-                        string resultstring = field.CalculationMethod;
-                        foreach (var item in names)
-                        {
-                            var matchfield = type.Field.FirstOrDefault(x => x.Name.ToLower() == item.ToString().ToLower().Replace("{", "").Replace("}", ""));
-                            var value = obj.Value.FirstOrDefault(x => x.Name == matchfield.Name);
-                            if (value != null)
-                            {
-                                if (value.ValueString != null)
-                                {
-                                    object dvalue = null;
-                                    if(matchfield.Type == "numeric" || matchfield.Type == "calculatednumeric")
-                                    {
-                                        if (value.ValueString.Contains("."))
-                                        {
-                                            dvalue = double.Parse(value.ValueString, CultureInfo.InvariantCulture);
-                                        }
-                                        else
-                                        {
-                                            dvalue = double.Parse(value.ValueString);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        dvalue = value.ValueString;
-                                    }
-
-                                    resultstring = resultstring.Replace(item.ToString(), dvalue.ToString());
-                                }
-                            }
-                        }
-
-                        foreach (var item in functions)
-                        {
-                            string[] word = item.ToString().Replace("[", "").Replace("]", "").Split(".");
-                            if (word[0].ToLower() == "child")
-                            {
-
-                                if (connections != null)
-                                {
-                                    var connection = connections.FirstOrDefault(x => x.ParentTable == type.Name && x.ChildTable.ToLower() == word[1].ToLower() && x.ParentObjecttypeId == type.ObjectTypeId);
-                                    if (connection != null)
-                                    {
-                                        RootFilter childfilter = new RootFilter()
-                                        {
-                                            ValueFilters = new List<Filter>()
-                                            {
-                                                new Filter()
-                                                {
-                                                    Field = connection.ChildPropertyName,
-                                                    Operator = "equals",
-                                                    Value = obj.Value.FirstOrDefault(x => x.Name == connection.ParentPropertyName).ValueString
-                                                }
-                                            }
-                                        };
-                                        ObjectType child = null;
-                                        if (childscache.Any(x => x.Name == connection.ChildTable))
-                                        {
-                                            child = childscache.FirstOrDefault(x => x.Name == connection.ChildTable);
-                                        }
-                                        else
-                                        {
-                                            child = DbContext.ObjectType.FirstOrDefault(x =>x.ObjectTypeId == connection.ChildObjecttypeId);
-                                            if (child != null)
-                                            {
-                                                child.Field = DbContext.Field.Where(x => x.ObjectTypeId == child.ObjectTypeId).ToList();
-                                                if(type.DatabaseConnectionPropertyId != child.DatabaseConnectionPropertyId)
-                                                {
-                                                    var childrepo = this.GetRepo(child.DatabaseConnectionPropertyId);
-                                                    child.DataObject = childrepo.GetAllDataFromTable(child, childfilter, true);
-
-                                                }
-                                                else
-                                                {
-                                                    child.DataObject = repository.GetAllDataFromTable(child, childfilter, true);
-                                                }
-                                                childscache.Add(child);
-                                            }
-                                        }
-                                        if (child != null)
-                                        {
-                                            var childfield = child.Field.FirstOrDefault(x => x.Name == word[2]);
-                                            if (childfield.Type.Contains("calculated"))
-                                            {
-                                                CalculateValue(childfield, child);
-                                            }
-                                            var allvalue = child.DataObject.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                            var objvalues = child.DataObject.ToList();
-                                            for (int i = 4; i < word.Length; i++)
-                                            {
-                                                if (word[i].Split('(')[0].ToLower() == "where")
-                                                {
-                                                    var where = word[i].Split('(')[1].Split(')')[0].Trim().Replace(" ", "");
-                                                    if (where.Contains("->"))
-                                                    {
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("->")[0]);
-                                                        var wherevalue = where.Split("->")[1].Split('(')[1].Split(')')[0].Split(',');
-                                                        if (wherefield != null)
-                                                        {
-                                                            objvalues = objvalues.Where(x => wherevalue.Contains(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString)).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                        }
-                                                    }
-                                                    else if (where.Contains("<-"))
-                                                    {
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("<-")[0]);
-                                                        var wherevalue = where.Split("<-")[1];
-                                                        if (wherefield != null)
-                                                        {
-                                                            objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString.Contains(wherevalue)).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                        }
-                                                    }
-                                                    else if (where.Contains("=in"))
-                                                    {
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("=in")[0]);
-                                                        var wherevalue = where.Split("=in")[1].Split('(')[1].Split(')')[0].Split(',');
-                                                        if (wherefield != null)
-                                                        {
-                                                            objvalues = objvalues.Where(x => wherevalue.Contains(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString)).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                        }
-                                                    }
-                                                    else if (where.Contains(">="))
-                                                    {
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split(">=")[0]);
-                                                        var wherevalue = where.Split(">=")[1];
-                                                        if (wherefield != null)
-                                                        {
-                                                            objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) >= double.Parse(wherevalue) : false).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                        }
-                                                    }
-                                                    else if (where.Contains("<="))
-                                                    {
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("<=")[0]);
-                                                        var wherevalue = where.Split("<=")[1];
-                                                        if (wherefield != null)
-                                                        {
-                                                            objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) <= double.Parse(wherevalue) : false).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                        }
-                                                    }
-                                                    else if (where.Contains("!="))
-                                                    {
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split("!=")[0]);
-                                                        var wherevalue = where.Split("!=")[1];
-                                                        if (wherefield != null)
-                                                        {
-                                                            objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) != double.Parse(wherevalue) : false).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                        }
-                                                    }
-                                                    else if (where.Contains("="))
-                                                    {
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split('=')[0]);
-                                                        var wherevalue = where.Split('=')[1];
-                                                        if (wherefield != null)
-                                                        {
-                                                            objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) == double.Parse(wherevalue) : false).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                        }
-                                                    }
-                                                    else if (where.Contains("<"))
-                                                    {
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split('<')[0]);
-                                                        var wherevalue = where.Split('<')[1];
-                                                        if (wherefield != null)
-                                                        {
-                                                            objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) < double.Parse(wherevalue) : false).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                        }
-                                                    }
-                                                    else if (where.Contains(">"))
-                                                    {
-                                                        var wherefield = child.Field.FirstOrDefault(x => x.Name == where.Split('>')[0]);
-                                                        var wherevalue = where.Split('>')[1];
-                                                        if (wherefield != null)
-                                                        {
-                                                            objvalues = objvalues.Where(x => x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != null && x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString != "" ? double.Parse(x.Value.FirstOrDefault(x => x.Name == wherefield.Name).ValueString) > double.Parse(wherevalue) : false).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                        }
-                                                    }
-
-
-                                                }
-                                                else if (word[i].Split('(')[0].ToLower() == "orderby")
-                                                {
-
-                                                    var where = word[i].Split('(')[1].Split(')')[0];
-                                                    var wherefield = child.Field.FirstOrDefault(x => x.Name == where);
-                                                    if (wherefield != null)
-                                                    {
-                                                        if(wherefield.Type == "numeric" || wherefield.Type == "calculatednumeric")
-                                                        {
-                                                            objvalues = objvalues.OrderBy(x => double.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString)).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                        }
-                                                        else if(wherefield.Type == "boolean" || wherefield.Type == "calculatedboolean")
-                                                        {
-                                                            objvalues = objvalues.OrderBy(x => bool.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString)).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                        }
-                                                        else
-                                                        {
-                                                            objvalues = objvalues.OrderBy(x => x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                        }
-
-                                                    }
-                                                }
-                                                else if (word[i].Split('(')[0].ToLower() == "orderbydesc")
-                                                {
-
-                                                    var where = word[i].Split('(')[1].Split(')')[0];
-                                                    var wherefield = child.Field.FirstOrDefault(x => x.Name == where);
-                                                    if (wherefield != null)
-                                                    {
-                                                        if (wherefield.Type == "numeric" || wherefield.Type == "calculatednumeric")
-                                                        {
-                                                            objvalues = objvalues.OrderByDescending(x => double.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString)).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                        }
-                                                        else if (wherefield.Type == "boolean" || wherefield.Type == "calculatedboolean")
-                                                        {
-                                                            objvalues = objvalues.OrderByDescending(x => bool.Parse(x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString)).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-
-                                                        }
-                                                        else
-                                                        {
-                                                            objvalues = objvalues.OrderByDescending(x => x.Value.FirstOrDefault(y => y.Name == wherefield.Name).ValueString).ToList();
-                                                            allvalue = objvalues.Select(x => x.Value.FirstOrDefault(x => x.Name == childfield.Name).ValueString).ToList();
-                                                        }
-                                                    }
-                                                }
-
-                                            }
-                                            resultstring = FieldValueCalculator.Calculate(word[3], allvalue, resultstring, item);
-
-                                        }
-                                    }
-                                }
-                            }
-                            else if (word[0].ToLower() == "parent")
-                            {
-                                if (connections != null)
-                                {
-                                    var connection = connections.FirstOrDefault(x => x.ChildTable == type.Name && x.ParentTable.ToLower() == word[1].ToLower() && x.ChildObjecttypeId == type.ObjectTypeId);
-                                    if (connection != null)
-                                    {
-                                        RootFilter parentfilter = new RootFilter()
-                                        {
-                                            ValueFilters = new List<Filter>()
-                                            {
-                                                new Filter()
-                                                {
-                                                    Field = connection.ParentPropertyName,
-                                                    Operator = "equals",
-                                                    Value = obj.Value.FirstOrDefault(x => x.Name == connection.ChildPropertyName).ValueString
-                                                }
-                                            }
-                                        };
-                                        ObjectType parent = null;
-                                        if (parentscache.Any(x => x.Name == connection.ChildTable))
-                                        {
-                                            parent = parentscache.FirstOrDefault(x => x.Name == connection.ChildTable);
-                                        }
-                                        else
-                                        {
-                                            parent = DbContext.ObjectType.FirstOrDefault(x => x.ObjectTypeId == connection.ParentObjecttypeId);
-                                            if (parent != null)
-                                            {
-                                                parent.Field = DbContext.Field.Where(x => x.ObjectTypeId == parent.ObjectTypeId).ToList();
-                                                if (type.DatabaseConnectionPropertyId != parent.DatabaseConnectionPropertyId)
-                                                {
-                                                    var parentrepo = this.GetRepo(parent.DatabaseConnectionPropertyId);
-                                                    parent.DataObject = parentrepo.GetAllDataFromTable(parent, parentfilter, true);
-
-                                                }
-                                                else
-                                                {
-                                                    parent.DataObject = repository.GetAllDataFromTable(parent, parentfilter, true);
-                                                }
-                                                parentscache.Add(parent);
-                                            }
-                                        }
-                                        if (parent != null)
-                                        {
-                                            var parentfield = parent.Field.FirstOrDefault(x => x.Name == word[2]);
-                                            if (parentfield.Type.Contains("calculated"))
-                                            {
-                                                CalculateValue(parentfield, parent);
-                                            }
-                                            var allvalue = parent.DataObject.Select(x => x.Value.FirstOrDefault(x => x.Name == parentfield.Name).ValueString).FirstOrDefault();
-                                            var objvalues = parent.DataObject.ToList();
-                                            resultstring = resultstring.Replace(item.ToString(), allvalue.ToString());
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-
-                        var controls = Regex.Matches(resultstring, @"(\$.+?\$)");
-                        foreach (var item in controls)
-                        {
-                            string control = item.ToString().Replace("$", "");
-                            if(control.ToString().ToLower().Replace(" ", "").StartsWith("if'"))
-                            {
-                                string ifword = Regex.Matches(control.ToString(), @"(\'.+?\')")[0].ToString().Replace("'","");
-                                object ifresult = stf.Eval(ifword.Replace("("," ( ").Replace(")"," ) "));
-                                if(ifresult.ToString().ToLower() == "true")
-                                {
-                                    resultstring = control.ToString().Split("??")[1];
-                                }
-                            }
-
-
-                        }
-
-
-                        object result = stf.Eval(resultstring);
+                        var result = this.CalculationResult(field.CalculationMethod,names, functions, repository, type, field, obj, connections, stf);
                         var resultvalue = obj.Value.FirstOrDefault(x => x.Name == field.Name);
                         if (resultvalue != null)
                         {
                             if(field.Type == "numeric" || field.Type == "calculatednumeric")
                             {
-                                resultvalue.ValueString = result.ToString().Replace(",", ".");
+                                resultvalue.ValueString = result?.ToString().Replace(",", ".");
                             }
                             else
                             {
-                                resultvalue.ValueString = result.ToString();
+                                resultvalue.ValueString = result?.ToString();
                             }
                         }
                         else
@@ -2346,7 +2571,7 @@ namespace GenericDataStore.Controllers
                                 obj.Value.Add(new Value()
                                 {
                                     Name = field.Name,
-                                    ValueString = result.ToString().Replace(",", ".")
+                                    ValueString = result?.ToString().Replace(",", ".")
                                 });
 
                             }
@@ -2355,7 +2580,7 @@ namespace GenericDataStore.Controllers
                                 obj.Value.Add(new Value()
                                 {
                                     Name = field.Name,
-                                    ValueString = result.ToString()
+                                    ValueString = result?.ToString()
                                 });
                             }
 

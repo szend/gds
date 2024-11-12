@@ -8,13 +8,13 @@
 
                     <div  style="display: grid; margin: 1rem; padding: 1rem;">
 
-                        <p-tag severity="success" [style]="{ background: dataRec[i].color }" [value]="prop.field" />
+                        <p-tag severity="success" [style]="{ background: dataRec[i].color, color: dataRec[i].labelColor }" [value]="prop.field" />
                         <input [disabled]="!editable" *ngIf="prop.type == 'text' && dataRec[i]"   [(ngModel)]="dataRec[i].valueString" pInputText/>
                         <input [disabled]="true" *ngIf="prop.type == 'id'"   [(ngModel)]="dataRec[i].valueString" pInputText/>
                         <input [disabled]="!editable" *ngIf="prop.type == 'numeric' && dataRec[i]"  [(ngModel)]="dataRec[i].valueString"  [pKeyFilter]="'num'"  pInputText/>
                         
                         <input [disabled]="!editable" *ngIf="prop.type == 'foreignkey' && dataRec[i]" [(ngModel)]="dataRec[i].valueString" pInputText/>
-                        <button *ngIf="prop.type == 'foreignkey' && dataRec[i]"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="SelectParent(prop.header)">Select</button> 
+                        <button *ngIf="prop.type == 'foreignkey' && dataRec[i]"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="SelectParent(prop.header)">Select</button> 
 
                         <input [disabled]="true"  *ngIf="prop.type == 'calculatednumeric' && dataRec[i]"  [(ngModel)]="dataRec[i].valueString"  [pKeyFilter]="'num'"  pInputText/>
                         <input [disabled]="true" *ngIf="prop.type == 'calculatedtext' && dataRec[i]"  [(ngModel)]="dataRec[i].valueString"  pInputText/>
@@ -49,14 +49,15 @@
     </p-tabPanel>
     <p-tabPanel *ngFor="let child of childlist" [header]="child.name">
         
-        <app-dataobject-list [editable]="editable" [parenttypeid]="parentid" [parentdataid]="id" [child]="true" [name]="child.name" [private]="child.private"></app-dataobject-list>
+        <app-dataobject-list [id]="child.objectTypeId" [parentfilter]="parentfilter" [parentrow]="rowindex" [editable]="editable" [parenttypeid]="parentid" [parentdataid]="id" [child]="true" [name]="child.name" [private]="child.private"></app-dataobject-list>
     </p-tabPanel>
 
 </p-tabView>
 
 
-    <button *ngIf="editable"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
-    <button *ngIf="editable" style="float: right;" pButton pRipple class="p-button-danger p-mr-2" (click)="DeleteDialog($event)">Delete</button> 
+<button *ngIf="editable"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+<button *ngIf="editable"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="SaveClose()">Save & Close</button> 
+<button *ngIf="editable" style="float: right;" pButton pRipple class="p-button-danger p-mr-2" (click)="DeleteDialog($event)">Delete</button> 
 
     <p-confirmDialog></p-confirmDialog>
 

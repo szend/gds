@@ -15,6 +15,10 @@ namespace GenericDataStore.Models
         public string? Name { get; set; }
         public string? ValueString { get; set; }
         public string? Color { get; set; }
+        
+        public string? LabelColor { get; set; }
+
+        public string? TextSize { get; set; }
     }
 }
 

@@ -59,11 +59,13 @@ export class DataobjectEditComponent implements OnInit {
   public boolvalues: (boolean| null)[] = [];
   public datevalues: (Date| null)[] = [];
   public aimodels : string[] = [];
+  public parentfilter: RootFilter | undefined;
+  public rowindex: number | undefined;
   ref: DynamicDialogRef | undefined;
   @ViewChild('fileUploader', {static: false}) fileUploader: FileUpload[] | undefined;
   @Output() save = new EventEmitter();
 
-  constructor( private confirmationService: ConfirmationService,public apiService: ApiService, protected changeDetector: ChangeDetectorRef,  protected config: DynamicDialogConfig,private messageService: MessageService
+  constructor(private thisref: DynamicDialogRef, private confirmationService: ConfirmationService,public apiService: ApiService, protected changeDetector: ChangeDetectorRef,  protected config: DynamicDialogConfig,private messageService: MessageService
     , protected dialogService: DialogService
   ) 
   {
@@ -79,8 +81,13 @@ export class DataobjectEditComponent implements OnInit {
       this.images = this.config.data.images;
     }
     if(this.config.data.dataRec){
-      this.dataRec = this.config.data.dataRec;
-
+      this.dataRec = JSON.parse(JSON.stringify(this.config.data.dataRec));
+    }
+    if(this.config.data.parentfilter){
+      this.parentfilter = this.config.data.parentfilter;
+    }
+    if(this.config.data.rowindex){
+      this.rowindex = this.config.data.rowindex;
     }
     if(this.config.data.fields){
       this.fields = this.config.data.fields;
@@ -91,17 +98,20 @@ export class DataobjectEditComponent implements OnInit {
     if(this.config.data.parentid){
       this.parentid = this.config.data.parentid;
       this.loading = true;
-      let filter : RootFilter = {valueFilters: [], valueSkip:0,valueTake:0,valueSortingParams:[],skip:0,take:0,logic:'and',sortingParams:[], filters:[{ field: 'ParentObjectTypeId', operator: 'equals', value: this.parentid }]}
+      let filter : RootFilter = {parentValueSortingParams: [],parentValueFilters: [],valueFilters: [], valueSkip:0,valueTake:0,valueSortingParams:[],skip:0,take:0,logic:'and',sortingParams:[], filters:[{ field: 'ParentObjectTypeId', operator: 'equals', value: this.parentid }]}
       this.apiService.GetChildTypeByFilter(filter).subscribe(x =>{
         this.childlist = x;
+        console.log(this.childlist);
         this.loading = false;
       })
     }
     if(this.config.data.id){
       this.id = this.config.data.id;
     }
-    var idfield = this.fields.filter(x => x.type == 'id')[0].header;
-    this.id = this.dataRec.filter((x : any) => x.name == idfield)[0].valueString;
+    var idfield = this.fields.filter(x => x.type == 'id')[0]?.header;
+    if(idfield){
+      this.id = this.dataRec.filter((x : any) => x.name == idfield)[0].valueString;
+    }
     let i : number = 0;
     this.fields.forEach(x=> {
       if(x.type == "boolean"){
@@ -154,7 +164,7 @@ export class DataobjectEditComponent implements OnInit {
 
       }
       j++;
-    })
+    });
    
 
     this.apiService.AIModels(this.parentid ?? "").subscribe(x => {
@@ -227,7 +237,7 @@ export class DataobjectEditComponent implements OnInit {
   }
 
   
-  Save(){
+  Save(close : boolean = false){
     let obj : {
       objectTypeId : string | undefined,
       dataObjectId : string | undefined,
@@ -237,8 +247,15 @@ export class DataobjectEditComponent implements OnInit {
 
     let index = 0;
     this.fields.forEach(element => {
-      obj.value.push({name: element.field, valueString: String(this.dataRec[index].valueString != null ? this.dataRec[index].valueString : ""),
-         dataObjectId: this.dataRec[index].dataObjectId,valueId: this.dataRec[index].valueId}); 
+      if(element.type == 'boolean'){
+        obj.value.push({name: element.field, valueString: String(this.dataRec[index].valueString != null ? this.dataRec[index].valueString : "false"),
+          dataObjectId: this.dataRec[index].dataObjectId,valueId: this.dataRec[index].valueId}); 
+      }
+      else{
+        obj.value.push({name: element.field, valueString: String(this.dataRec[index].valueString != null ? this.dataRec[index].valueString : ""),
+          dataObjectId: this.dataRec[index].dataObjectId,valueId: this.dataRec[index].valueId}); 
+      }
+
       index++;    
     });
     this.apiService.SaveDataObject(obj).subscribe({
@@ -249,6 +266,9 @@ export class DataobjectEditComponent implements OnInit {
           detail: "Object Saved", 
           life: 3000
         });
+        if(close){
+          this.thisref.close();
+        }
       },
       error: (e) => {
         this.messageService.add({ 
@@ -260,6 +280,10 @@ export class DataobjectEditComponent implements OnInit {
       },
       complete: () => {} 
   });
+  }
+
+  SaveClose(){
+    this.Save(true);
   }
 
   DeleteDialog(event: Event) {

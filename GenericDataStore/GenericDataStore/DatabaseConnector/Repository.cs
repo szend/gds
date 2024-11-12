@@ -1,6 +1,7 @@
 ﻿using GenericDataStore.Filtering;
 using GenericDataStore.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GenericDataStore.DatabaseConnector
 {
@@ -26,6 +27,11 @@ namespace GenericDataStore.DatabaseConnector
             {
                 sQLConnector = new PostgreSqlConnector(connectstring);
                 sqltype = "postgresql";
+            }
+            else if (type.ToLower() == "api")
+            {
+                sQLConnector = new APIConnector(connectstring);
+                sqltype = "api";
             }
         }
 
@@ -60,6 +66,26 @@ namespace GenericDataStore.DatabaseConnector
 
         }
 
+        public List<ClassDescription> GetAllProperty(List<DatabaseTableRelations> relations,string name)
+        {
+            var types = sQLConnector.GetAllTableApi(relations,name);
+            List<ClassDescription> classDescriptions = new List<ClassDescription>();
+            if (types.Count == 0)
+            {
+                return null;
+            }
+            foreach (var t in types)
+            {
+                classDescriptions.Add(new ClassDescription(t));
+            }
+
+
+
+            return classDescriptions;
+
+
+        }
+
         public List<string> GetAllTableName()
         {
             var all = sQLConnector.GetAllTableName();
@@ -74,6 +100,11 @@ namespace GenericDataStore.DatabaseConnector
         public List<DataObject> GetAllDataFromTable(ObjectType objtype, RootFilter? filter = null, bool chart = false, bool onlyfirstx = false)
         {
             return sQLConnector.GetAllDataFromTable(objtype, filter, chart,onlyfirstx);
+        }
+
+        public List<DataObject> GetAllDataFromTableApi(ObjectType objtype, IMemoryCache memoryCache, RootFilter? filter = null, bool chart = false, bool onlyfirstx = false)
+        {
+            return sQLConnector.GetAllDataFromTableApi(objtype,memoryCache, filter, chart, onlyfirstx);
         }
 
         public int GetCount(ObjectType objtype, RootFilter? filter = null)
@@ -128,7 +159,10 @@ namespace GenericDataStore.DatabaseConnector
         private string GetValueString(Field field, DataObject obj)
         {
             var res = obj.Value.FirstOrDefault(x => x.Name == field.Name).ValueString;
-
+            if(res == null)
+            {
+                return "''";
+            }
             if(field.Type == "date")
             {
                 if(res == "NA")
@@ -137,7 +171,7 @@ namespace GenericDataStore.DatabaseConnector
                 }
                 try
                 {
-                    return $"'{res.Split('.')[2] + "." + res.Split('.')[1] + "." + res.Split('.')[0]}'";
+                    return $"'{res?.Split('.')[2] + "." + res.Split('.')[1] + "." + res.Split('.')[0]}'";
                 }
                 catch (Exception)
                 {
@@ -148,20 +182,20 @@ namespace GenericDataStore.DatabaseConnector
             {
                 try
                 {
-                    var num = double.Parse(res);
+                    var num = double.Parse(res ?? "0");
                 }
                 catch (Exception)
                 {
 
                     return "''";
                 }
-                return res.Replace(",",".");
+                return res?.Replace(",",".");
             }
             else if (field.Type == "boolean")
             {
                 try
                 {
-                    var num = bool.Parse(res);
+                    var num = bool.Parse(res ?? "0");
                 }
                 catch (Exception)
                 {
@@ -179,7 +213,7 @@ namespace GenericDataStore.DatabaseConnector
              }
             else
             {
-                return $"'{res.Replace("'","''")}'";
+                return $"'{res?.Replace("'","''")}'";
             }
         }
 

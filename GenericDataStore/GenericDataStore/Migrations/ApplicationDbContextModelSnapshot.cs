@@ -110,6 +110,9 @@ namespace GenericDataStore.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool?>("PublicDashboard")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");
 
@@ -139,6 +142,88 @@ namespace GenericDataStore.Migrations
                         .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("GenericDataStore.Models.Chart", b =>
+                {
+                    b.Property<Guid>("ChartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Colorcalculation")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Fill")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("GroupOption")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("ObjectTypeId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int?>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Regression")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RootFilter")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("Size")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Stacked")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Step")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Xcalculation")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Ycalculation")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("ChartId");
+
+                    b.ToTable("Chart");
+                });
+
+            modelBuilder.Entity("GenericDataStore.Models.DashboardTable", b =>
+                {
+                    b.Property<Guid>("DashboardTableId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("ObjectTypeId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int?>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RootFilter")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("Size")
+                        .HasColumnType("int");
+
+                    b.HasKey("DashboardTableId");
+
+                    b.ToTable("DashboardTable");
                 });
 
             modelBuilder.Entity("GenericDataStore.Models.DatabaseConnectionProperty", b =>
@@ -237,6 +322,12 @@ namespace GenericDataStore.Migrations
                     b.Property<string>("ColorMethod")
                         .HasColumnType("longtext");
 
+                    b.Property<bool?>("DefaultOrder")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("LabelColorMethod")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -244,12 +335,18 @@ namespace GenericDataStore.Migrations
                     b.Property<Guid>("ObjectTypeId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("PropertyName")
+                    b.Property<int?>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SizeMethod")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<bool?>("Visible")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("FieldId");
 
@@ -271,6 +368,9 @@ namespace GenericDataStore.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Category")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Color")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("CreationDate")

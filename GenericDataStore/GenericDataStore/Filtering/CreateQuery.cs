@@ -186,7 +186,7 @@ namespace GenericDataStore.Filtering
             return sortedData ?? data;
         }
 
-        public static IQueryable<DataObject> ValueFilter(IQueryable<DataObject> query, RootFilter filters)
+        public static List<DataObject> ValueFilter(List<DataObject> query, RootFilter filters)
         {
             if (filters != null)
             {
@@ -204,86 +204,86 @@ namespace GenericDataStore.Filtering
                         //    query = query.Where(x => x.DataObjectId.ToString() == item.Value.ToString());
                         //    break;
                         case "equals":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString == item.Value.ToString());
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString == item.Value.ToString()).ToList();
                             break;
                         case "notequals":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != item.Value.ToString());
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != item.Value.ToString()).ToList();
 
                             break;
 
                         case "lt":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? double.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) < double.Parse(item.Value.ToString()) : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? double.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) < double.Parse(item.Value.ToString()) : false).ToList();
 
                             break;
 
                         case "lte":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? double.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) <= double.Parse(item.Value.ToString()) : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? double.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) <= double.Parse(item.Value.ToString()) : false).ToList();
 
                             break;
 
                         case "gt":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? double.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) > double.Parse(item.Value.ToString()) : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? double.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) > double.Parse(item.Value.ToString()) : false).ToList();
 
                             break;
 
                         case "gte":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? double.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) >= double.Parse(item.Value.ToString()) : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? double.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) >= double.Parse(item.Value.ToString()) : false).ToList();
 
 
                             break;
 
                         case "contains":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
                             if (item.Value.ToString().ToLower() == "false" || item.Value.ToString().ToLower() == "true")
                             {
-                                query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.ToLower() == item.Value.ToString().ToLower() : false);
+                                query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.ToLower() == item.Value.ToString().ToLower() : false).ToList();
 
                             }
                             else
                             {
-                                query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.Contains(item.Value.ToString()) : false);
+                                query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.Contains(item.Value.ToString()) : false).ToList();
 
                             }
                             break;
                         case "notcontains":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? !x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.Contains(item.Value.ToString()) : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? !x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.Contains(item.Value.ToString()) : false).ToList();
                             break;
 
                         case "startswith":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.StartsWith(item.Value.ToString()) : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.StartsWith(item.Value.ToString()) : false).ToList();
                             break;
                         case "endswith":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.EndsWith(item.Value.ToString()) : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString.EndsWith(item.Value.ToString()) : false).ToList();
                             break;
 
                         case "dateis":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
                             DateTime val1 = DateTime.Parse(item.Value.ToString().Split(new char[] { ' ' })[0]).AddDays(1);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? DateTime.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) == val1 : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? DateTime.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) == val1 : false).ToList();
                             break;
                         case "dateisnot":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
                             DateTime val2 = DateTime.Parse(item.Value.ToString().Split(new char[] { ' ' })[0]).AddDays(1);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? DateTime.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) != val2 : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? DateTime.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) != val2 : false).ToList();
                             break;
                         case "datebefore":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
                             DateTime val3 = DateTime.Parse(item.Value.ToString().Split(new char[] { ' ' })[0]).AddDays(1);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? DateTime.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) < val3 : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? DateTime.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) < val3 : false).ToList();
                             break;
                         case "dateafter":
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field) != null).ToList();
                             DateTime val4 = DateTime.Parse(item.Value.ToString().Split(new char[] { ' ' })[0]).AddDays(1);
-                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? DateTime.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) > val4 : false);
+                            query = query.Where(x => x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString != null ? DateTime.Parse(x.Value.FirstOrDefault(x => x.Name == item.Field).ValueString) > val4 : false).ToList();
                             break;
 
                         //default:
@@ -296,7 +296,7 @@ namespace GenericDataStore.Filtering
 
         }
 
-        public static IQueryable<DataObject> ValueSort(IQueryable<DataObject> query, RootFilter filters)
+        public static List<DataObject> ValueSort(List<DataObject> query, RootFilter filters)
         {
             if (filters != null)
             {
@@ -306,16 +306,16 @@ namespace GenericDataStore.Filtering
                     {
                         if(item.Type == "numeric" || item.Type == "calculatednumeric")
                         {
-                            query = query.OrderBy(x => Convert.ToDouble(x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "∞" ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString : int.MaxValue, CultureInfo.InvariantCulture));
+                            query = query.OrderBy(x => Convert.ToDouble(x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "∞" ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString : int.MaxValue, CultureInfo.InvariantCulture)).ToList();
 
                         }
                         else if (item.Type == "date")
                         {
-                            query = query.OrderBy(x => x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != null ? DateTime.ParseExact(x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString, new string[] { "dd.MM.yyyy", "dd.MM.yyyy HH:mm:ss", }, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None) : DateTime.MaxValue);
+                            query = query.OrderBy(x => x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != null ? DateTime.ParseExact(x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString, new string[] { "dd.MM.yyyy", "dd.MM.yyyy HH:mm:ss", }, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None) : DateTime.MaxValue).ToList();
                         }
                         else
                         {
-                            query = query.OrderBy(x => String.IsNullOrEmpty(x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString)).ThenBy(x => x.Value.FirstOrDefault(y => y.Name == item.Field) != null ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString: "");
+                            query = query.OrderBy(x => String.IsNullOrEmpty(x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString)).ThenBy(x => x.Value.FirstOrDefault(y => y.Name == item.Field) != null ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString: "").ToList();
 
                         }
                     }
@@ -323,16 +323,16 @@ namespace GenericDataStore.Filtering
                     {
                         if (item.Type == "numeric" || item.Type == "calculatednumeric")
                         {
-                            query = query.OrderByDescending(x => Convert.ToDouble((x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "∞" ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString : int.MinValue: int.MaxValue), CultureInfo.InvariantCulture));
+                            query = query.OrderByDescending(x => Convert.ToDouble((x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "∞" ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != null ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString : int.MinValue: int.MaxValue), CultureInfo.InvariantCulture)).ToList();
 
                         }
                         else if (item.Type == "date")
                         {
-                            query = query.OrderByDescending(x => x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != null ? DateTime.ParseExact(x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString,new string[] { "dd.MM.yyyy", "dd.MM.yyyy HH:mm:ss", }, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None) : DateTime.MinValue);
+                            query = query.OrderByDescending(x => x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != "" && x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString != null ? DateTime.ParseExact(x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString,new string[] { "dd.MM.yyyy", "dd.MM.yyyy HH:mm:ss", }, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None) : DateTime.MinValue).ToList();
                         }
                         else
                         {
-                            query = query.OrderByDescending(x => x.Value.FirstOrDefault(y => y.Name == item.Field) != null ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString : "");
+                            query = query.OrderByDescending(x => x.Value.FirstOrDefault(y => y.Name == item.Field) != null ? x.Value.FirstOrDefault(y => y.Name == item.Field).ValueString : "").ToList();
 
                         }
                     }

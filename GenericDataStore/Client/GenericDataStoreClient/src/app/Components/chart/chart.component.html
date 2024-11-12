@@ -7,8 +7,8 @@
 <br>
 <p-tabView *ngIf="size == 1">
     <p-tabPanel header="Options">
-        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartChategory()">Merge checked chart into new</button> 
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('text')">Create custom chart</button> 
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="CreateChartChategory()">Merge checked charts</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="AddNewChart('text')">Create custom chart</button> 
 
         <div class="grid">
             <div *ngFor="let item of dataRec.options; index as i" class="card flex justify-content-center" class="col-4">
@@ -50,8 +50,8 @@
         </div>
     </p-tabPanel>
     <p-tabPanel header="Numbers">
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChart()">Merge checked charts into new</button> 
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('numeric')">Create custom chart</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="CreateChart()">Merge checked charts</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="AddNewChart('numeric')">Create custom chart</button> 
         <div class="grid">
             <div *ngFor="let item of dataRec.numbers; index as i" class="card flex justify-content-center" class="col-4">
                 <div>
@@ -103,8 +103,8 @@
         </div>
     </p-tabPanel>
     <p-tabPanel header="Booleans">
-        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartBool()">Merge checked chart into new</button> 
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('logical')">Create custom chart</button> 
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="CreateChartBool()">Merge checked charts</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="AddNewChart('logical')">Create custom chart</button> 
         <div class="grid">
             <div *ngFor="let item of dataRec.booleans; index as i" class="card flex justify-content-center" class="col-4">
                 <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
@@ -151,12 +151,13 @@
 
 <p-tabView *ngIf="size == 2">
     <p-tabPanel *ngIf="dataRec.options" header="Options">
-        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartChategory()">Merge checked chart into new</button> 
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('text')">Create custom chart</button> 
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="CreateChartChategory()">Merge checked charts</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="AddNewChart('text')">Create custom chart</button> 
 
         <div class="grid">
             <div *ngFor="let item of dataRec.options; index as i" class="card flex justify-content-center" class="col-6">
                 <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+                <button   style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="AddToDashboard(item)">Add to dashboard</button> 
 
                 <p-card  *ngIf="!item.type || item.type == 'pie'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
                     <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
@@ -194,8 +195,8 @@
         </div>
     </p-tabPanel>
     <p-tabPanel *ngIf="dataRec.numbers" header="Numbers">
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChart()">Merge checked charts into new</button> 
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('numeric')">Create custom chart</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="CreateChart()">Merge checked charts</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="AddNewChart('numeric')">Create custom chart</button> 
         <div class="grid">
             <div *ngFor="let item of dataRec.numbers; index as i" class="card flex justify-content-center" class="col-6">
                 <div>
@@ -207,6 +208,7 @@
                     <p-dropdown  [style]="{'width':'8rem','margin-right' : '1rem'}"  optionLabel="label" [options]="regoptions" [dataKey]="'value'" (onChange)="Regression($event,item,i)"  placeholder="Regression" />
                     <button style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Scale(item, i)">Scale</button> 
                     <button  *ngIf="item.name == 'New Chart'"   style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="Stacked(item, i)">Stacked</button> 
+                    <button   style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="AddToDashboard(item)">Add to dashboard</button> 
 
                     
                     <p-card  *ngIf="!item.type || item.type == 'line'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
@@ -247,12 +249,13 @@
         </div>
     </p-tabPanel>
     <p-tabPanel *ngIf="dataRec.booleans" header="Booleans">
-        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartBool()">Merge checked chart into new</button> 
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('logical')">Create custom chart</button> 
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="CreateChartBool()">Merge checked charts</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="AddNewChart('logical')">Create custom chart</button> 
 
         <div class="grid">
             <div *ngFor="let item of dataRec.booleans; index as i" class="card flex justify-content-center" class="col-6">
                 <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />
+                <button   style="margin-right: 1rem;margin-top: 1rem;" pButton pRipple class="bluebutton" (click)="AddToDashboard(item)">Add to dashboard</button> 
 
                 <p-card  *ngIf="!item.type || item.type == 'pie'" [header]="item.name" [subheader]="" [style]="{ margin: '2rem'}">
                     <p-checkbox [style]="{'margin-right' : '1rem'}" [(ngModel)]="item.checked" [binary]="true"></p-checkbox>
@@ -296,8 +299,8 @@
 
 <p-tabView *ngIf="size == 3">
     <p-tabPanel header="Options">
-        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartChategory()">Merge checked chart into new</button> 
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('text')">Create custom chart</button> 
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="CreateChartChategory()">Merge checked charts</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="AddNewChart('text')">Create custom chart</button> 
 
         <div class="grid">
             <div *ngFor="let item of dataRec.options; index as i" class="card flex justify-content-center" class="col-12">
@@ -339,8 +342,8 @@
         </div>
     </p-tabPanel>
     <p-tabPanel header="Numbers">
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChart()">Merge checked charts into new</button> 
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('numeric')">Create custom chart</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="CreateChart()">Merge checked charts</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="AddNewChart('numeric')">Create custom chart</button> 
        <div class="grid">
             <div *ngFor="let item of dataRec.numbers; index as i" class="card flex justify-content-center" class="col-12">
                 <div>
@@ -392,8 +395,8 @@
         </div>
     </p-tabPanel>
     <p-tabPanel header="Booleans">
-        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateChartBool()">Merge checked chart into new</button> 
-        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddNewChart('logical')">Create custom chart</button> 
+        <button  style="margin-bottom: 2rem;margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="CreateChartBool()">Merge checked charts</button> 
+        <button  style="margin-bottom: 2rem; margin-right: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="AddNewChart('logical')">Create custom chart</button> 
         <div class="grid">
             <div *ngFor="let item of dataRec.booleans; index as i" class="card flex justify-content-center" class="col-12">
                 <p-dropdown [style]="{'width':'7rem','margin-right' : '1rem'}"   optionLabel="label" [options]="typeoptionslogical" [dataKey]="'value'" (onChange)="ChangeChartType($event,item,i)"  placeholder="Type" />

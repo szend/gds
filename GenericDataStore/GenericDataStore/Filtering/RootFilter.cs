@@ -6,11 +6,16 @@
 
         public List<Filter>? ValueFilters { get; set; }
 
+        public List<Filter>? ParentValueFilters { get; set; }
+
+
         public string? Logic { get; set; }
 
         public List<SortingParams>? SortingParams { get; set; }
 
         public List<SortingParams>? ValueSortingParams { get; set; }
+        public List<SortingParams>? ParentValueSortingParams { get; set; }
+
 
 
         public int Take { get; set; } = 0;

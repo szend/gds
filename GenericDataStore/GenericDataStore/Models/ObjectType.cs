@@ -40,6 +40,7 @@ namespace GenericDataStore.Models
         [NotMapped]
         public virtual ICollection<DataObject> DataObject { get; set; }
 
+        public string? Color { get; set; }
         public bool Private { get; set; }
         public bool NoFilterMenu { get; set; }
         public bool DenyAdd { get; set; }
@@ -71,6 +72,9 @@ namespace GenericDataStore.Models
         [NotMapped]
 
         public int Count { get; set; }
+
+        [NotMapped]
+        public Guid? DashboardTableId { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
         [NotMapped]

@@ -19,6 +19,11 @@ import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import * as XLSX from 'xlsx';
 import {ToastModule} from 'primeng/toast';
 import { ObjecttypeSelectComponent } from '../objecttype-select/objecttype-select.component';
+import { StepperModule } from 'primeng/stepper';
+import { KeyFilterModule } from 'primeng/keyfilter';
+import { ColorPickerModule } from 'primeng/colorpicker';
+
+
 
 
 
@@ -26,8 +31,9 @@ import { ObjecttypeSelectComponent } from '../objecttype-select/objecttype-selec
 @Component({
   selector: 'app-objecttype-create',
   standalone: true,
-  imports: [InputGroupModule, FormsModule,CommonModule,TabViewModule,CheckboxModule,CardModule,InputTextareaModule,
-    InputTextModule,InputNumberModule,ButtonModule,MessagesModule,DropdownModule, TooltipModule,FileUploadModule,ToastModule],
+  imports: [InputGroupModule, FormsModule,CommonModule,TabViewModule,CheckboxModule,CardModule,InputTextareaModule,StepperModule,
+    InputTextModule,InputNumberModule,ButtonModule,MessagesModule,DropdownModule, TooltipModule,FileUploadModule,ToastModule,KeyFilterModule,ColorPickerModule
+  ],
     providers: [MessageService,DialogService], 
   templateUrl: './objecttype-create.component.html',
   styleUrl: './objecttype-create.component.css'
@@ -114,11 +120,15 @@ export class ObjecttypeCreateComponent implements OnInit {
   }
 
   AddOption(prop : any){
-    if(this.props.find(x => x.name == prop.name).option == undefined){
-      this.props.find(x => x.name == prop.name).option = [];
+    if(prop.option == undefined){
+      prop.option = [];
     }
-    let length = this.props.find(x => x.name == prop.name).option.length;
-    this.props.find(x => x.name == prop.name).option.push({optionName: 'option1', optionValue: length });
+    // if(this.props.find(x => x.name == prop.name && x.name != '' && x.name != undefined)){
+    //   let length = this.props.find(x => x.name == prop.name).option.length;
+    //   this.props.find(x => x.name == prop.name).option.push({optionName: 'option1', optionValue: length });
+    // }
+    let length = prop.option.length;
+    prop.option.push({optionName: 'option1', optionValue: length });
 
 
   }
@@ -178,6 +188,7 @@ export class ObjecttypeCreateComponent implements OnInit {
       databaseConnectionPropertyId: this.datid && this.datid != "" ? this.datid :  "00000000-0000-0000-0000-000000000000",
       description: this.desc,
       category : this.cat,
+      color: this.dataRec.color,
       field: this.props,
       private: this.dataRec.private,
       noFilterMenu:  this.dataRec.noFilterMenu,

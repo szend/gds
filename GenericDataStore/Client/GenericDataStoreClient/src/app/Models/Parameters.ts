@@ -3,10 +3,13 @@ export class RootFilter {
     // order : Order | undefined;
     filters: Filter[] = [];
     valueFilters: Filter[] = [];
+    parentValueFilters: Filter[] = [];
+
 
     logic : string | undefined;
     sortingParams : SortingParams[] = [];
     valueSortingParams : SortingParams[] = [];
+    parentValueSortingParams : SortingParams[] | undefined = [];
 
     take : number = 0;
     skip : number  = 0;

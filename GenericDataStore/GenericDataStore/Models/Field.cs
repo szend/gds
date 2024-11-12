@@ -10,15 +10,21 @@
 
         public Guid ObjectTypeId { get; set; }
         public string Name { get; set; }
-
-        public string? PropertyName { get; set; }
-
         public string Type { get; set; }
 
         public string? CalculationMethod { get; set; }
 
         public string? ColorMethod { get; set; }
+
+
+        public string? LabelColorMethod { get; set; }
+
+        public string? SizeMethod { get; set; }
+
+
         public int? Position { get; set; }
+        public bool? Visible { get; set; }
+        public bool? DefaultOrder { get; set; }
 
 
         public virtual ICollection<Option> Option { get; set; }

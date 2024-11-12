@@ -1,5 +1,6 @@
 ﻿using GenericDataStore.Filtering;
 using GenericDataStore.Models;
+using Microsoft.Extensions.Caching.Memory;
 using MySqlConnector;
 
 namespace GenericDataStore.DatabaseConnector
@@ -10,7 +11,7 @@ namespace GenericDataStore.DatabaseConnector
 
         public bool DeleteValue(string tablename, Dictionary<string, string> ids);
 
-
+        public List<Type> GetAllTableApi(List<DatabaseTableRelations> relations, string name);
 
         public bool UpdateValues(string tablename, Dictionary<string, string> fieldvalues, Dictionary<string, string> ids);
         public bool InsertVlaues(string tablename, Dictionary<string, string> fieldvalues);
@@ -23,7 +24,8 @@ namespace GenericDataStore.DatabaseConnector
 
         public List<Type> GetAllTable(List<string> tablesname);
         public List<DataObject> GetAllDataFromTable(ObjectType objtype, RootFilter? filter, bool chart = false, bool onlyfirstx = false);
-        public string CreateClass(string name);
+
+        public List<DataObject> GetAllDataFromTableApi(ObjectType objtype, IMemoryCache memoryCache, RootFilter? filter, bool chart = false, bool onlyfirstx = false);
 
         public int GetCount(ObjectType objtype, RootFilter? filter = null);
 

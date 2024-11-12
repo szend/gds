@@ -1,6 +1,7 @@
 <div>
     
-    <button  style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateNew()">Add new</button>   
+    <button  style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateNew()">Add datasource</button>   
+    <button style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button" (click)="CreateNewTable()">Create table</button>
     <button style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="bluebutton" (click)="Refresh()">Refresh</button> 
 
 
@@ -22,7 +23,7 @@
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th pReorderableColumn   *ngFor="let col of columns">
-                    {{ col.header }}                
+                    {{ col.header == 'DatabaseName' ? 'Name' : col.header == 'ConnectionString' ? 'ConnectionData' : col.header}}                
                 </th>
             </tr>
         </ng-template>

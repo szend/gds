@@ -1,0 +1,179 @@
+
+
+<div *ngIf="loading">
+    <p-progressBar mode="indeterminate" [style]="{ height: '6px' }" />
+</div>
+<div style="background-color: hsl(37deg 3.67% 54.39%);" >
+<div style="display: flex; margin-bottom: 1rem;" >
+
+    <div style="margin-right: 2rem;" >
+        <button icon="pi pi-refresh mr-2" pButton pRipple class="p-button" (click)="Refresh()" style="background-color: #295F98;">Refresh</button> 
+    </div>
+    <div  style="display: grid;margin-right: 2rem;">
+        <label>Labels</label>
+        <p-inputSwitch (onChange)="HideLabels()" />
+    </div>
+    <div style="display: grid;margin-right: 2rem;">
+        <label>Stacked</label>
+        <p-inputSwitch (onChange)="Stacked()" />
+    </div>
+</div>
+
+
+<div class="grid">
+    <div  [class]="'chartcontext col-' + chartsize">
+        <div>
+            <i class="pi pi-arrow-left navigatearrow" style="font-size: 3rem; position: absolute; margin-top: 150px; z-index: 100; display: none;" (mouseover)="scrollLeft()" (click)="scrollLeft()"></i>
+        </div>   
+        <div>
+        <i class="pi pi-arrow-right navigatearrow"
+          [style]="'font-size: 3rem; position: absolute;  margin-top: 150px;z-index: 100;display: none;' + (chartsize == 9 ? 'right: 25vw;' : 'right: 75vw;')"  (mouseover)="scrollRight()"  (click)="scrollRight()"></i>
+        </div>
+        
+        
+        <div  (click)="MouseLeave()" #widgetsContent class="custom-slider-main" style="display: flex; ">
+            <div *ngFor="let element of data;index as i">
+        
+                <div pDraggable="element" pDroppable="element" (onDrop)="droptoChart(element)"
+                (onDragStart)="dragStart(element)" style="width: 20rem; height: 22rem;margin-left: 1rem;"
+                (onDragEnd)="dragEnd()"  *ngIf="element.type == 'chart' && (element.chartInput.type == 'pie'  || element.chartInput.type == 'radar' || element.chartInput.type == 'text' || element.chartInput.type == 'logical' || element.chartInput.type == 'doughnut' || element.chartInput.type == 'polarArea')">
+                <p-speedDial [model]="chartmenuitems[i]"     direction="down" [radius]="80" type="semi-circle"/>
+                <div *ngIf="element.chart" >
+                        <div *ngIf="element.chartInput.type == 'pie' || element.chartInput.type == 'text' || element.chartInput.type == 'logical' ">
+                            <p-card>
+                                <p-chart (onDataSelect)="ChartClickOption($event,element,i)" type="pie" [data]="element.chart" [options]="optionsopt"></p-chart>
+                            </p-card>
+
+                        </div>
+                        <div *ngIf="element.chartInput.type == 'doughnut'">
+                            <p-card>
+                                <p-chart (onDataSelect)="ChartClickOption($event,element,i)" type="doughnut" [data]="element.chart" [options]="optionsopt"></p-chart>
+                            </p-card>
+                        </div>
+            
+                        <div *ngIf="element.chartInput.type == 'polarArea'">
+                            <p-card>
+                                <p-chart (onDataSelect)="ChartClickOption($event,element,i)" type="polarArea" [data]="element.chart" [options]="optionsopt"></p-chart>
+                            </p-card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div >
+            <i class="pi pi-arrow-left navigatearrow" style="font-size: 3rem; position: absolute; ; z-index: 100; display: none;margin-top: 150px" (mouseover)="scrollLeft2()" (click)="scrollLeft2()"></i>
+        </div>   
+        <div class="pull-right mt-sm">
+        <i class="pi pi-arrow-right navigatearrow"  
+        [style]="'font-size: 3rem; position: absolute;  margin-top: 150px;z-index: 100;display: none;' + (chartsize == 9 ? 'right: 25vw;' : 'right: 75vw;')"  (mouseover)="scrollRight2()" (click)="scrollRight2()"></i>
+        </div>
+        
+        <div (click)="MouseLeave()"  #widgetsContent2 class="custom-slider-main" style="display: flex;">
+            <div *ngFor="let element of data;index as i">
+        
+        
+                <div pDraggable="element"  pDroppable="element" (onDrop)="droptoChart(element)"
+                (onDragStart)="dragStart(element)"  style="width: 70rem; height: 32rem; margin-left: 1rem; margin-bottom: 1rem; margin-right: 1rem;"
+                (onDragEnd)="dragEnd()"  *ngIf="element.type == 'chart' && (element.chartInput.type == 'line' || element.chartInput.type == 'numeric' || element.chartInput.type == 'bar' || element.chartInput.type == 'scatter')">
+                <p-speedDial [model]="chartmenuitems[i]"   direction="down" [radius]="80" type="semi-circle"/>
+                <div  *ngIf="element.chart" >
+                    <div *ngIf="element.chartInput.type == 'line' || element.chartInput.type == 'numeric' ">
+                        <p-card>
+                            <p-chart (onDataSelect)="ChartClickNum($event,element,i)" type="line" [data]="element.chart" [options]="optionsnum"></p-chart>
+                        </p-card>
+                    </div>
+                    <div *ngIf="element.chartInput.type == 'bar'">
+                        <p-card>
+                            <p-chart  type="bar" [data]="element.chart" [options]="optionsnum"></p-chart>
+                        </p-card>
+                    </div>
+                    <div *ngIf="element.chartInput.type == 'scatter'">
+                        <p-card>
+                            <p-chart  type="scatter" [data]="element.chart" [options]="optionsnum"></p-chart>
+                        </p-card>
+                    </div>  
+                </div>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+
+
+
+
+
+    <div [class]="'dataconext col-' + datasize" style="margin-top: 0px;" >
+        <div>
+            <i class="pi pi-arrow-left navigatearrowdata" style="font-size: 3rem; position: absolute; ; z-index: 100; margin-left: 6rem;display: none;" (click)="scrollLeft3()"></i>
+        </div>   
+        <div>
+        <i class="pi pi-arrow-right navigatearrowdata"
+        style="font-size: 3rem; position: absolute; ; z-index: 100; right: 10px;display: none;" (click)="scrollRight3()"></i>
+        </div>
+        <div style="margin: 0px;"  class="grid" *ngFor="let element of data;index as index">
+            <div *ngIf="element.type == 'table'  && IsSelectedData(element)" [class]="'col-' + (element.size < 1 ? '1' : (element.size > 12 ? '12' : element.size))" 
+                style="margin-top: 0px;margin-bottom: 2rem; background-color: white; padding-left: 0px !important;" >
+        
+                <div>
+                    <!-- <div pTooltip="Drag and Drop your chart into a list based on the same data to connect it. If a table and a chart is connected they will show the same data"
+                      *ngIf="element.type == 'chart'" class="grid" style="margin-top: 0px; margin-right: 0px;">
+        
+                            <p-menubar  [id]="element.chartInput.id"
+                              [model]="chartmenuitems[i]" />
+                    
+        
+                    </div> -->
+                    <div pDroppable="element" (onDrop)="drop(element)">
+                        <app-dataobject-list #table (chartrefreshdata)="RefreshChartByChart($event,element)"  (dataclick)="MouseOver()"  (rootFilterData)="RefreshChart($event,element)" [dashboardfilter]="element.filter" [charts]="element.connectedcharts" [dashboardmode]="true" [dashboardata]="element.objectType" [dashboarid]="element.objectType.dashboardTableId"></app-dataobject-list>
+                    </div>
+                </div>
+        </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+    
+</div> 
+
+
+    <div>
+
+
+        <p-dialog header="Error" [modal]="true" [(visible)]="connecterrorvisible" [style]="{ width: '25rem' }">
+            <label>Can not connect the chart.</label><br>
+           <label>The table and chart are based on different data.</label><br>
+           <label>Connect the chart to the table from which it was made, or create a new chart from this table and connect it.</label><br>
+        </p-dialog>
+
+
+        <p-dialog header="Edit chart" [modal]="true" [(visible)]="editchartvisible" [style]="{ width: '25rem' }">
+            <span class="p-text-secondary block mb-5">Update your information.</span>
+            <div class="flex align-items-center gap-3 mb-3">
+                <label for="username" class="font-semibold w-6rem">Username</label>
+                <input pInputText id="username" class="flex-auto" autocomplete="off" />
+            </div>
+            <div class="flex align-items-center gap-3 mb-5">
+                <label for="email" class="font-semibold w-6rem">Email</label>
+                <input pInputText id="email" class="flex-auto" autocomplete="off" />
+            </div>
+            <div class="flex justify-content-end gap-2">
+                <p-button label="Cancel" severity="secondary" (onClick)="editchartvisible = false" />
+                <p-button label="Save" (onClick)="editchartvisible = false" />
+            </div>
+        </p-dialog>
+
+    </div>
+</div>
+</div>

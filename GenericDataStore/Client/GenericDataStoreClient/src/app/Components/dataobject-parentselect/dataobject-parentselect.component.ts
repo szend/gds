@@ -72,7 +72,7 @@ export class DataobjectParentselectComponent {
   public aiVisible: boolean = false;
   selectedProduct!: any;
   public filterMetu : {items: any[], label: string, icon: string}[] = [];
-  public rootFilter : RootFilter = { valueFilters: [], valueSortingParams: [], filters: [], logic: 'and', sortingParams: [], skip: 0, take:0, valueSkip: 0, valueTake:0};
+  public rootFilter : RootFilter = { parentValueSortingParams: [],parentValueFilters: [], valueFilters: [], valueSortingParams: [], filters: [], logic: 'and', sortingParams: [], skip: 0, take:0, valueSkip: 0, valueTake:0};
 
   constructor( private ref: DynamicDialogRef,protected config: DynamicDialogConfig,public apiService: ApiService,protected route: ActivatedRoute, protected router: Router, protected changeDetector: ChangeDetectorRef,public messageService: MessageService) 
   {

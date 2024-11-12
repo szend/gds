@@ -20,8 +20,13 @@
 }
 
 .p-tag-success{
-    background-color: #A79277;
+    background-color:  hsl(0, 0%, 18%);
     margin-bottom: 0.5rem;
+}
+
+.p-sidebar-right{
+    background-color:  hsl(0, 0%, 18%);
+    color: white;
 }
 
 .bluebutton{
@@ -33,27 +38,29 @@
     background-color: white ;
     color:  black;
 }
-body {
-    background-color: #FFF2E1;
-    background-repeat: no-repeat;
-    background-size: 120rem;
+
+.blackbackground{
+    background-image:  repeating-linear-gradient( 124.02deg, #f3bd75, hsl(0, 0%, 39%));
+    background-repeat: repeat;
 }
+
+
 .p-menubar{
-    background-color: #FFF2E1;
-    border-color: black;
+    background-color:  hsl(0, 0%, 18%);;
+    border-color:  hsl(0, 0%, 18%);;
     color: white;
 }
 .p-menuitem-text{
-    color: black;
+    color: white;
 }
 .p-menuitem-icon{
-    color: black;
+    color: white;
 }
 .p-submenu-icon{
-    color: black;
+    color: white;
 }
 .p-menuitem-link{
-    background-color: #FFF2E1;
+    background-color:  hsl(0, 0%, 18%);
 }
 .pi-filter-icon{
     color: white;
@@ -62,8 +69,11 @@ body {
     color: white;
 }
 th{
-    background-color: #A79277;
-    border-color: #A79277;
+    background-color:  hsl(0, 0%, 18%);
+    border-color:  hsl(0, 0%, 18%);
+    border-left-color: white;
+    border-right-color: white;
+
     color: white;
 
 
@@ -92,15 +102,16 @@ th{
     border: #C96868!important;
 }
 .p-button{
-    background-color: #A79277;
+    background-color: hsl(20, 100%, 58%);
     color: white;
-    border: #A79277;
+    border: hsl(20, 100%, 58%);
 }
-.p-fileupload{
-    display: inline-block;
-    margin-right: 1rem;
-    margin-bottom: 2rem;
 
+.p-fileupload-choose{
+    background-color: #86AB89;
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
 }
 .cardbrown{
     background-color: #A79277;
@@ -111,24 +122,24 @@ th{
     background-color: #196D78;
 }
 .p-dialog-content{
-    background-color: #eeeeee;
+    background-color: hsl(37deg 3.67% 54.39%);
     color: black;
 }
 .p-dialog-header{
-    background-color: #eeeeee;
+    background-color: hsl(37deg 3.67% 54.39%);
     color: black;
 }
 .p-tabview-nav{
-    background-color: #eeeeee;
+    background-color: hsl(37deg 3.67% 54.39%);
     color: black;
     border-color: #A79277;
 }
 .p-tabview-panel{
-    background-color: #eeeeee;
+    background-color: hsl(37deg 3.67% 54.39%);
     color: black;
 }
 .p-tabview-panels{
-    background-color: #eeeeee;
+    background-color: hsl(37deg 3.67% 54.39%);
     color: black;
 }
 .promoted{
@@ -136,7 +147,7 @@ th{
 }
 
 .p-datatable-wrapper{
-    max-height: 40rem;
+    max-height: 69vh;
 }
 .p-fieldset{
     margin: 3rem;
@@ -172,10 +183,15 @@ th{
     padding: 0rem;
 }
 
-.bluelinear{
+body {
+    background-color: hsl(0, 0%, 28%);
+    /* background-image:  repeating-linear-gradient( 124.02deg, hsl(0, 0%, 29%),hsl(0, 0%, 52%),hsl(0, 0%, 67%),hsl(0, 0%, 73%),hsl(0, 0%, 67%),hsl(0, 0%, 52%), hsl(0, 0%, 29%)); */
+
+
+}
+
+.mainscroll{
     color: white;
-    background-color: #2c7ad2;
-    background-image:  linear-gradient( 144.02deg, #A79277    4.56%, #FFF2E1 72.98% );
     min-height: 70vh;
     padding-left: 0.6rem;
     padding-right: 0.6rem;
@@ -184,20 +200,118 @@ th{
 
 }
 
+@media (max-width: 1100px) {
+    .panel.description {
+        padding-bottom: 60px;
+        background-color: hsl(0, 0%, 28%);
+        background-image: url("/assets/img/bgchart2.gif");
+        background-size: contain;
+        background-position: center;
+        background-repeat:  no-repeat;
+      }
+ 
+   }
+   @media (min-width: 1100px) {
+    .panel.description {
+        padding-bottom: 60px;
+        background-color: hsl(0, 0%, 28%);
+        background-image:url("/assets/img/logo_transparent.png"), url("/assets/img/bgchart2.gif");
+        background-size: 10rem,contain;
+        background-position: left top,center;
+        background-repeat: no-repeat, no-repeat;
+      }
+ 
+   }
+   @media (max-width: 1100px) {
+    .panel.description {
+        padding-bottom: 60px;
+        background-color: hsl(0, 0%, 28%);
+        background-image: url("/assets/img/bgchart2.gif");
+        background-size: contain;
+        background-position: center;
+        background-repeat:  no-repeat;
+      }
+ 
+   }
+   @media (max-width: 768px) {
+    .panel.description {
+        padding-bottom: 60px;
+        background-color: hsl(0, 0%, 28%);
+        background-image:url("/assets/img/bgchart2small.gif");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+ 
+   }
+
+  
+
+
 
 .logo{
     background-image: url("/assets/img/logo_transparent.png");
+}
+
+.sidemenubutton{
+    color: white;
+     margin-bottom: 1rem
+}
+.childbutton{
+    margin-left: 2.5rem;
+}
+.p-paginator-rpp-options{
+    width: 8rem;
 }
 
 
 
 
 
-
-
-
-
 /* homeanimation */
+
+.zoomdiv{
+    background-image:  repeating-linear-gradient( #ff7029, hsl(0, 0%, 29%));
+
+}
+
+.featuresdiv{
+    background-image:  repeating-linear-gradient( hsl(0, 0%, 29%), #ff7029);
+}
+
+
+
+section {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.panel.description{
+    z-index: 1000;
+}
+
+h2 {
+
+    text-align: center;
+    font-weight: 900;
+}
+
+.zoomin{
+    font-size: 20.0px;
+     color: hsl(0, 0%, 29%); 
+
+
+}
+.zoomout{
+    
+    font-size: 0.1px;
+    background-color: hsl(0, 0%, 29%);
+    color: #ff7029;
+    z-index: 1;
+}
 
 .line {
     width: 100%;
@@ -235,7 +349,9 @@ th{
   }
 
   .surface-card{
-    background-color: #FFF2E1 !important;
+    background-image:  linear-gradient(144.02deg, #f3bd75, #2e2e2e );
+
+
   }
   
   nav a.active {
@@ -253,14 +369,22 @@ th{
   }
   
   .panel h1 {
+    z-index: 0;
+    transform: rotate(-30deg);
+
+    color: white;
+    font-weight: 300;
+    margin-top: 0px;
+    position: absolute;
+  }
+  .panel h2 {
+    position: relative;
     font-size: 3.8em;
     color: white;
     font-weight: 300;
     margin: 0 auto;
   }
-  .panel.description {
-    padding-bottom: 60px;
-  }
+
   .panel p, .panel li {
     color: black;
     font-weight: 400;
@@ -278,3 +402,159 @@ th{
     max-width: 800px;
   }
 
+  /* homeanimation */
+
+  @media (max-width: 1024px) {
+   .hidden1024{
+    display: none !important;
+   }
+   .hidden1024x{
+    display: none !important;
+   }
+   #fileuploader{
+    display: none;
+    }
+    td {
+        padding: 0px;
+    }
+
+  }
+
+
+
+
+  /*dragdrop*/
+
+  :host ::ng-deep {
+    .drag-column {
+        padding-right: .5em;
+    }
+    
+    .drop-column {
+        border: 1px solid transparent;
+        transition: border-color .2s;
+    
+        &.p-draggable-enter {
+            border-color: var(--primary-color); 
+        }
+    }
+    
+    .product-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        width: 100%;
+        border-bottom: 1px solid var(--surface-d);
+    
+        img {
+            width: 75px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+            margin-right: 1rem;
+        }
+    
+        .product-list-detail {
+            flex: 1 1 0;
+        }
+    
+        .product-list-action {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+    
+        .product-category-icon {
+            vertical-align: middle;
+            margin-right: .5rem;
+        }
+    
+        .product-category {
+            vertical-align: middle;
+            line-height: 1;
+        }
+    }
+    
+    [pDraggable] {
+        cursor: move;
+    }
+    
+    @media screen and (max-width: 576px) {
+        .product-item {
+            flex-wrap: wrap;
+    
+            .image-container {
+                width: 100%;
+                text-align: center;
+            }
+    
+            img {
+                margin: 0 0 1rem 0;
+                width: 100px;
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+.custom-slider-main{
+    display: flex;
+    overflow: hidden;    
+    scroll-behavior: smooth;
+}
+
+ .info-box{
+    width: 50px;
+    height:50px
+ }
+ 
+
+ .chartcontext:hover{
+.navigatearrow{
+    display: block !important;
+}
+ }
+
+ .dataconext:hover{
+    .navigatearrowdata{
+        display: block !important;
+    }
+     }
+
+
+     .p-speeddial {
+        position: relative; 
+        display: block;
+        z-index: 1000;
+    }
+
+    .p-speeddial-rotate{
+        width: 1.5rem;
+    height: 1rem;
+    background-color: #444445;
+    }
+
+    .redicon{
+        color: red;
+    }
+    .p-speeddial{
+        margin-left: 5rem;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    

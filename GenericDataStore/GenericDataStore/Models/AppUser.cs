@@ -45,6 +45,8 @@ namespace GenericDataStore.Models
 
         public string? SubType { get; set; }
 
+        public bool? PublicDashboard { get; set; }
+
         //public long AllowedFileSize { get; set; }
         //public string? SubscriptionType { get; set; }
         //public DateTime? SubscriptionEnd { get; set; }

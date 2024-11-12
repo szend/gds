@@ -16,6 +16,10 @@ import { FeaturesComponent } from './home/features/features.component';
 import { ConfirmpaymentComponent } from './home/confirmpayment/confirmpayment.component';
 import { MylistsComponent } from './home/mylists/mylists.component';
 import { DashboardComponent } from './home/dashboard/dashboard.component';
+import { TermsUseComponent } from './home/terms-use/terms-use.component';
+import { DataProtectionComponent } from './home/data-protection/data-protection.component';
+import { DashboardpublicComponent } from './home/dashboardpublic/dashboardpublic.component';
+import { ApilistComponent } from './Components/apilist/apilist.component';
 
 
 export const routes: Routes = [
@@ -26,11 +30,15 @@ export const routes: Routes = [
     
     children: [
       { path: 'login', component: LoginComponent },
+      { path: 'termsofuse', component: TermsUseComponent },
+      { path: 'dataprotection', component: DataProtectionComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'mylists', component: MylistsComponent },
       { path: 'confirm/:intcount/:extcount/:listcount', component: ConfirmpaymentComponent},
       { path: 'contact', component: ContactComponent },
+      { path: 'publicdata', component: ListViewComponent },
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'publicdashboard/:id', component: DashboardpublicComponent },
       { path: 'home', component: HomeComponent },
       { path: 'messages', component: MessageComponent },
       { path: 'features', component: FeaturesComponent },

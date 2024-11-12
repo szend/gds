@@ -1,6 +1,7 @@
 ﻿using GenericDataStore.Filtering;
 using GenericDataStore.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Caching.Memory;
 using MySqlConnector;
 using Npgsql;
 
@@ -249,7 +250,7 @@ namespace GenericDataStore.DatabaseConnector
                             else
                             {
                                 var fieldvalue = oReader[item.Name];
-                                if (fieldvalue != DBNull.Value && item.PropertyName != "AppUserId" && item.PropertyName != "DataObjectId")
+                                if (fieldvalue != DBNull.Value && item.Name != "AppUserId" && item.Name != "DataObjectId")
                                 {
                                     Value value = new Value()
                                     {
@@ -425,7 +426,9 @@ JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema
 WHERE constraint_type = 'PRIMARY KEY' and tc.table_name = '"+ name + @"') THEN '[PrimaryDbKey] '
     else ''
     end 
- || 
+ ||
+' [FieldName(" + "\"" + "' + column_name +" + "'\"" + @")] '
+||
 'public ' ||
   case
     when data_type = 'uuid' THEN 'Guid'
@@ -780,6 +783,14 @@ WHERE constraint_type = 'FOREIGN KEY'
             }
         }
 
+        public List<Type> GetAllTableApi(List<DatabaseTableRelations> relations, string name)
+        {
+            throw new NotImplementedException();
+        }
 
+        public List<DataObject> GetAllDataFromTableApi(ObjectType objtype, IMemoryCache memoryCache, RootFilter? filter, bool chart = false, bool onlyfirstx = false)
+        {
+            throw new NotImplementedException();
+        }
     } 
 }

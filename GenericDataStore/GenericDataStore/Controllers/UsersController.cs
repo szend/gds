@@ -392,6 +392,41 @@ namespace GenericDataStore.Controllers
         }
 
         [Authorize(Policy = "Full")]
+        [HttpGet("IsDashboardPublic")]
+        public async Task<ActionResult> IsDashboardPublic()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+
+            return new JsonResult(user.PublicDashboard, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+        }
+
+        [Authorize(Policy = "Full")]
+        [HttpGet("SetDashoardPublic")]
+        public async Task<ActionResult> SetDashoardPublic()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var dbuser = DbContext.Users.FirstOrDefault(x => x.Id == user.Id);
+            dbuser.PublicDashboard = true;
+            DbContext.SaveChanges();
+            return Ok();
+
+        }
+
+        [Authorize(Policy = "Full")]
+        [HttpGet("SetDashoardNonPublic")]
+        public async Task<ActionResult> SetDashoardNonPublic()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var dbuser = DbContext.Users.FirstOrDefault(x => x.Id == user.Id);
+            dbuser.PublicDashboard = false;
+            DbContext.SaveChanges();
+            return Ok();
+
+        }
+
+        [Authorize(Policy = "Full")]
         [HttpGet("SetLimit/{datacount}/{extdatacount}/{listcount}/{src}")]
         public async Task<ActionResult> SetLimit(int datacount, int extdatacount, int listcount, string src)
         {

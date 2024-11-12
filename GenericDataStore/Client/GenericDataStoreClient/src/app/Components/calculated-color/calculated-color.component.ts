@@ -119,6 +119,7 @@ color : any | undefined;
   fields : any[] = [];
 id : string | undefined;
 calculationColor : string = "";
+calculationtype : string | undefined;
 
   choosenfield : any | undefined = { name: 'numeric', code: 'numeric' };
 
@@ -127,6 +128,8 @@ calculationColor : string = "";
     { name: 'text', code: 'text' },
     { name: 'boolean', code: 'boolean' },
 ];
+
+
 
 
   ngOnInit(): void {
@@ -142,6 +145,9 @@ calculationColor : string = "";
       if(this.fieldsoption){
         this.choosenfield = this.fieldsoption[0];
       }
+    }
+    if(this.config.data.type){
+      this.calculationtype = this.config.data.type;
     }
   }
 
@@ -365,11 +371,29 @@ console.log(this.connecfunccon2);
       calculationColor : this.calculationColor,
       typeId : this.id,
     }
-    this.apiService.SaveCalculatedColor(calculatedcolor).subscribe(x =>{
-      this.messageService.add({severity:'success', summary: 'Success', detail: 'Calculated field saved'});
-    }, err => {
-      this.messageService.add({severity:'error', summary: 'Error', detail: err.error});
-    })
+    console.log(this.calculationtype);
+    if(this.calculationtype == 'label'){
+      this.apiService.SaveCalculatedColorLabel(calculatedcolor).subscribe(x =>{
+        this.messageService.add({severity:'success', summary: 'Success', detail: 'Calculated color saved'});
+      }, err => {
+        this.messageService.add({severity:'error', summary: 'Error', detail: err.error});
+      });
+    }
+    else if(this.calculationtype == 'size'){
+      this.apiService.SaveCalculatedSize(calculatedcolor).subscribe(x =>{
+        this.messageService.add({severity:'success', summary: 'Success', detail: 'Size saved'});
+      }, err => {
+        this.messageService.add({severity:'error', summary: 'Error', detail: err.error});
+      });
+    }
+    else{
+      this.apiService.SaveCalculatedColor(calculatedcolor).subscribe(x =>{
+        this.messageService.add({severity:'success', summary: 'Success', detail: 'Calculated color saved'});
+      }, err => {
+        this.messageService.add({severity:'error', summary: 'Error', detail: err.error});
+      });
+    }
+
   }
 
   ShowDesc(){

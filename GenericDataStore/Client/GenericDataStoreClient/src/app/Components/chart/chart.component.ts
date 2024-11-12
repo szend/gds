@@ -294,6 +294,9 @@ public optionsnum = {
       if(this.config.data.fields){
         this.fields = this.config.data.fields;
       }
+      if(this.config.data.private){
+        this.private = this.config.data.private;
+      }
     }
     
 
@@ -301,9 +304,6 @@ public optionsnum = {
 
   orgchart : EChartsOption | undefined;
   onChartEvent(event: any) {
-    if(event.data.name){
-        localStorage.setItem('name', event.data.name);
-    }
     if(event.data.objId){
         localStorage.setItem('id', event.data.objId);
     }
@@ -313,7 +313,6 @@ public optionsnum = {
     this.ref = this.dialogService.open(DataobjectListComponent,  { data: {filter: null}});
     this.ref.onClose.subscribe(x => {
       localStorage.removeItem('filter');
-        localStorage.removeItem('name');
         localStorage.removeItem('id');
         localStorage.removeItem('private');
 
@@ -364,7 +363,8 @@ CreateChart(){
     let count = this.dataRec.numbers.filter((x : any) => x.checked == true).length;
     if(count >= 1){
         let first = this.dataRec.numbers.filter((x : any) => x.checked == true)[0];
-        let newchart :{name: string, labels: string[], datasets: any[]} = {name: "New Chart", labels: first.labels, datasets: []};
+        let newchart :{name: string, labels: string[], datasets: any[], chartdatas:  any[]} = {name: "New Chart", labels: first.labels, datasets: [],chartdatas: []};
+
         this.dataRec.numbers.filter((x : any) => x.checked == true).filter((x : any) => 
             (x.datasets[0].type == 'scatter')
     ).forEach((element: { datasets: any[], labels : string[], type: string }) => {
@@ -436,6 +436,17 @@ CreateChart(){
                 newchart.datasets.push(element2);           
             });
            });
+
+
+           this.dataRec.numbers.filter((x : any) => x.checked == true).forEach((element: any) => {
+            this.CreateChartSetup(element).forEach((element2: any) => {
+                newchart.chartdatas.push(element2);
+
+            });
+           });
+
+
+
            this.color = [''].concat(this.color);
            this.dataRec.numbers = [newchart].concat(this.dataRec.numbers);
     }
@@ -445,7 +456,7 @@ CreateChartChategory(){
     let count = this.dataRec.options.filter((x : any) => x.checked == true).length;
     if(count >= 1){
  
-        let newchart :{type: string | undefined, name: string, labels: string[], datasets: any[]} = {name: "New Chart", labels: [], datasets: [], type: undefined};
+        let newchart : any = {name: "New Chart", labels: [], datasets: [], type: undefined,chartdatas: []};
 
         this.dataRec.options.filter((x : any) => x.checked == true).filter((x : any) => 
             (x.datasets[0].type == 'pie' ||  x.datasets[0].type == undefined || x.datasets[0].type == 'polarArea')
@@ -489,6 +500,14 @@ CreateChartChategory(){
             });
            });
 
+           
+           this.dataRec.options.filter((x : any) => x.checked == true).forEach((element: any) => {
+            this.CreateChartSetup(element).forEach((element2: any) => {
+                newchart.chartdatas.push(element2);
+
+            });
+           });
+
          newchart.type = 'pie';
         this.dataRec.options = [newchart].concat(this.dataRec.options);
     }
@@ -498,7 +517,7 @@ CreateChartBool(){
     let count = this.dataRec.booleans.filter((x : any) => x.checked == true).length;
     if(count >= 1){
  
-        let newchart :{type: string | undefined, name: string, labels: string[], datasets: any[]} = {name: "New Chart", labels: [], datasets: [], type: undefined};
+        let newchart :any = {name: "New Chart", labels: [], datasets: [], type: undefined,chartdatas: []};
 
 
 
@@ -528,12 +547,83 @@ CreateChartBool(){
             });
            });
 
+           this.dataRec.booleans.filter((x : any) => x.checked == true).forEach((element: any) => {
+            this.CreateChartSetup(element).forEach((element2: any) => {
+                newchart.chartdatas.push(element2);
+
+            });
+           });
+
          newchart.type = 'pie';
         this.dataRec.booleans = [newchart].concat(this.dataRec.booleans);
     }
 }
 
+CreateChartSetup(element : any) : any[]{
+    console.log(element);
+    if(element.chartdatas != undefined){
+       return element.chartdatas;
+    }
+    else{
+         let res = [
+            {
+                objectTypeId: this.id,
+                rootFilter: JSON.stringify(this.config.data.filter),
+                type: element.datasets[0].type != undefined ? element.datasets[0].type : (element.type != undefined ? element.type : (this.dataRec.numbers.includes(element) ? 'line' : 'pie')),
+                xcalculation: element.xcalculation != undefined ? element.xcalculation : ( this.dataRec.numbers.includes(element) ? 'index' :  '{' + element.name + '}'),
+                ycalculation: element.ycalculation != undefined ? element.ycalculation : '{' + element.name + '}',
+                groupOption: element.groupOption != undefined ? element.groupOption : ( this.dataRec.numbers.includes(element) ? 'none' : 'count'),
+                regression: element.datasets[0].regression != undefined ? element.datasets[0].regression : null,
+                fill: element.datasets[0].fill != undefined ? element.datasets[0].fill.toString() : null,
+                step: element.datasets[0].stepped != undefined ? element.datasets[0].stepped.toString() : null,
+                stacked : element.datasets[0].stacked != undefined ? element.datasets[0].stacked : false,
+            }];
+            console.log(res);
+            return res;
+        
+    }
+}
 
+AddToDashboard(chart : any){
+    let calculations : any[] = [];
+    let setups = this.CreateChartSetup(chart);
+
+    if(setups.length > 1){
+        var idx = 0;
+        setups.forEach((element: any) => {
+            let chartcalculation = {
+                xcalculation : element.xcalculation,
+                ycalculation : element.ycalculation,
+                objectTypeId:   element.objectTypeId,
+                type:   element.type,
+                rootFilter:     element.rootFilter,
+                groupOption:    element.groupOption,
+                regression:     element.regression,
+                fill:   element.fill,
+                step:   element.step,
+                stacked: element.stacked,
+              }
+                calculations.push(chartcalculation);
+                idx++;
+        });
+        this.apiService.AddToDashboardCharts(calculations).subscribe(x =>{
+          
+            this.messageService.add({severity:'success', summary: 'Ok', detail: 'Done'});
+          },(error: any) => {
+            this.messageService.add({severity:'error', summary: 'Error', detail: 'Error in saveing the chart'});
+          });
+    }
+    else{
+        this.apiService.AddToDashboardChart(setups[0]).subscribe(x =>{
+          
+            this.messageService.add({severity:'success', summary: 'Ok', detail: 'Done'});
+          },(error: any) => {
+            this.messageService.add({severity:'error', summary: 'Error', detail: 'Error in saveing the chart'});
+          });
+    }
+
+   
+  }
 
 
 ChangeChartType(event: any,chart: any, i: number,child : boolean = false){
@@ -554,9 +644,18 @@ ChangeChartType(event: any,chart: any, i: number,child : boolean = false){
                 element.type = this.ChangeChartType(event,element,i);
             });
         }
-        chart.type = event.value.value;   
+        chart.type = event.value.value;
+        if(chart.chartdatas){
+            chart.chartdatas.forEach((element: any) => {
+                element.type = event.value.value;
+            });
+        }
         }      
 }
+
+
+
+
 
 FillChart(event: any,chart: {datasets : any[]}, i: number){
     let datasets : any[] = [];
@@ -609,20 +708,6 @@ Stacked(chart: {datasets : any[]}, i: number){
     
 }
 
-// DownloadChart(id: string){
-//     var pchart = document.getElementById(id);
-//       var canvas =pchart?.getElementsByTagName('canvas')[0] as any as HTMLCanvasElement;
-
-//     var link = document.createElement('a');
-//     link.href =  canvas.toDataURL();
-//     link.download = id+'.png';
-//     window.location.href =  canvas.toDataURL();
-
-
-
-//     link.click();
-   
-// }
 
 SteppedChart(event: any,chart: {datasets : any[]}, i: number){
     chart.datasets.forEach(element => {
@@ -778,9 +863,6 @@ ChartClick(event: {element:{ datasetIndex: number, index : number}},chart: {name
     var filter = { field: chart.name, operator: 'equals', value: chart.datasets[event.element.datasetIndex].data[event.element.index].toString() };
 
     localStorage.setItem('filter', JSON.stringify(filter));
-    if(this.name){
-        localStorage.setItem('name', this.name);
-    }
     if(this.id){
         localStorage.setItem('id', this.id);
     }
@@ -791,7 +873,6 @@ ChartClick(event: {element:{ datasetIndex: number, index : number}},chart: {name
     this.ref = this.dialogService.open(DataobjectListComponent,  { data: {filter: filter}});
     this.ref.onClose.subscribe(x => {
       localStorage.removeItem('filter');
-        localStorage.removeItem('name');
         localStorage.removeItem('id');
         localStorage.removeItem('private');
 
@@ -803,12 +884,11 @@ ChartClickOption(event: {element:{ datasetIndex: number, index : number}},chart:
 
     var filter = { field: chart.name, operator: 'equals', value: chart.labels[event.element.index].toString() };
     localStorage.setItem('filter', JSON.stringify(filter));
-    if(this.name){
-        localStorage.setItem('name', this.name);
-    }
+
     if(this.id){
         localStorage.setItem('id', this.id);
     }
+    console.log(this.private);
     if(this.private){
         localStorage.setItem('private', this.private.toString());
     }
@@ -816,7 +896,6 @@ ChartClickOption(event: {element:{ datasetIndex: number, index : number}},chart:
     this.ref = this.dialogService.open(DataobjectListComponent,  { data: {filter: filter}});
     this.ref.onClose.subscribe(x => {
       localStorage.removeItem('filter');
-        localStorage.removeItem('name');
         localStorage.removeItem('id');
         localStorage.removeItem('private');
 

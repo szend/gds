@@ -13,4 +13,15 @@
         public int? Position { get; set; }
 
     }
+
+    public interface DashboardData
+    {
+        public Guid? AppUserId { get; set; }
+        public Guid? ObjectTypeId { get; set; }
+
+        public string? RootFilter { get; set; }
+        public int? Size { get; set; }
+
+        public int? Position { get; set; }
+    }
 }

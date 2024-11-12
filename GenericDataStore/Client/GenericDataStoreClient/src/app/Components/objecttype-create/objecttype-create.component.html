@@ -44,7 +44,7 @@
 
 <div  class="grid">
         <div *ngFor="let prop of props; index as i" >
-            <p-card [subheader]="" [style]="{ margin: '2rem', 'background-color': '#A79277'}" class="col-4">
+            <p-card [subheader]="" [style]="{ margin: '2rem', 'background-color': 'hsl(0, 0%, 29%)', 'color' : 'white'}" class="col-4">
                 <ng-template pTemplate="header">
                     <div class="grid">
                         <div class="col" style="display: flex; margin-left: 1rem;">
@@ -66,20 +66,41 @@
                         </div>
                         <p-dropdown  [style]="{ 'margin-bottom': '2rem'}"[options]="options" [(ngModel)]="prop.type" dataKey="code" optionLabel="name" (onChange)="SetType($event,i)" [showClear]="true"
                          [placeholder]="prop.type ?? 'Select type'"></p-dropdown>
+                         <label>Position</label>
+                         <input  style="margin-bottom: 1rem; width: 20rem;"  [(ngModel)]="prop.position" pInputText  [pKeyFilter]="'num'"/>
+                         <div style="margin-bottom: 1rem; display: flex;">  
+                            <div style="margin-right: 1rem;">
+                                <label>Hide</label> 
+                                <p-checkbox  [(ngModel)]="prop.visible" [binary]="true" ></p-checkbox>
+                            </div>   
+                            <div>
+                                <label>Default order</label> 
+                                <p-checkbox  [(ngModel)]="prop.defaultOrder" [binary]="true" ></p-checkbox>
+                            </div>   
+
+                         </div>
                          <div *ngIf="prop.type == 'option'" >
                             <div style="display: flex; margin-bottom: 0.5rem;" *ngFor="let opt of prop.option, index as j">
                                 <input style="width: 20rem;"  [(ngModel)]="opt.optionName"  pInputText/>
                                 <button icon="pi pi-times" style="width: 2rem; margin-left: 0.5rem;" pButton pRipple class="p-button-danger" (click)="RemoveOption(prop,j)"></button> 
                             </div>
-                            <button pButton style="margin-right: 1rem; margin-bottom: 2rem;" pRipple class="p-button-success p-mr-2" (click)="AddOption(prop)">AddOption</button>       
+                            <button pButton style="margin-right: 1rem; margin-bottom: 2rem;" pRipple class="p-button p-mr-2" (click)="AddOption(prop)">Add Option</button>       
                         </div>
                         <div *ngIf="prop.type == 'calculatednumeric' || prop.type == 'calculatedtext' || prop.type == 'calculatedboolean'" >
                             <label>Calculation method:</label>
                             <textarea pInputTextarea [(ngModel)]="prop.calculationMethod"></textarea>
                         </div>
                         <div *ngIf="prop.colorMethod && prop.colorMethod != ''" >
-                            <label>Color:</label>
+                            <label>Background color:</label>
                             <textarea  pInputTextarea [(ngModel)]="prop.colorMethod"></textarea>
+                        </div>
+                        <div *ngIf="prop.labelColorMethod && prop.labelColorMethod != ''" >
+                            <label>Label color:</label>
+                            <textarea  pInputTextarea [(ngModel)]="prop.labelColorMethod"></textarea>
+                        </div>
+                        <div *ngIf="prop.sizeMethod && prop.sizeMethod != ''" >
+                            <label>Label size:</label>
+                            <textarea  pInputTextarea [(ngModel)]="prop.sizeMethod"></textarea>
                         </div>
                     </div>
                 </p-inputGroup>
@@ -87,9 +108,9 @@
 
         </div>
         <div>
-            <p-card  [style]="{ margin: '2rem', 'background-color': '#A79277'}" class="col-4">
+            <p-card  [style]="{ margin: '2rem','background-color': 'hsl(0, 0%, 29%)', 'color' : 'white'}" class="col-4">
                 <div  style="display: grid; margin: 1rem; padding: 1rem;" class="col-4">
-                    <button style="margin-bottom: 1rem; width: 10rem;" pButton pRipple class="p-button-success p-mr-2" (click)="AddProperty()">New Field</button> 
+                    <button style="margin-bottom: 1rem; width: 10rem;" pButton pRipple class="p-button p-mr-2" (click)="AddProperty()">New Field</button> 
                 </div>
             </p-card>
         </div>
@@ -100,6 +121,13 @@
 </p-tabPanel>
 <p-tabPanel header="Configuration">
     <div  class="grid">
+        <div class="col-4">
+            <label>Color</label>
+            <i  pTooltip="Set the main color of the list" class="pi pi-question-circle" style="font-size: 1rem"></i>
+            <p-colorPicker 
+            [(ngModel)]="dataRec.color" />
+
+        </div>
         <div class="col-4">
             <label>Private</label>
             <i  pTooltip="If you select this, you will be the only one who can find this list." class="pi pi-question-circle" style="font-size: 1rem"></i>
@@ -116,11 +144,11 @@
         <i  pTooltip="If you select this, every user will have admin right on your list. They can even edit the object definition." class="pi pi-question-circle" style="font-size: 1rem"></i>
         <p-checkbox  (onChange)="AccessAllUser($event)" [(ngModel)]="dataRec.allUserFullAccess"  [binary]="true" ></p-checkbox>
         </div>
-        <div class="col-4">
+        <!-- <div class="col-4">
             <label>No filter menu</label>
             <i  pTooltip="If you select this, the options menu will be invisible." class="pi pi-question-circle" style="font-size: 1rem"></i>
             <p-checkbox   [(ngModel)]="dataRec.noFilterMenu" [binary]="true" ></p-checkbox>
-        </div>
+        </div> -->
         <div class="col-4">
             <label>Deny export button</label>
             <i  pTooltip="If you select this, you will be the only one who can use the export button." class="pi pi-question-circle" style="font-size: 1rem"></i>
@@ -138,6 +166,8 @@
 
 </p-tabView>
 <button pButton style="margin-right: 1rem;margin-bottom: 2rem;" pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+
+
 
 <p-toast position="top-right"  (onClose)="onReject()" [baseZIndex]="5000">
     <ng-template let-message pTemplate="message">

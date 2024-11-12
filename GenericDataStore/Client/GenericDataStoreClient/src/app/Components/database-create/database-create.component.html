@@ -1,5 +1,65 @@
 <p-progressSpinner [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
-<div  >
+<p-stepper *ngIf="createmode == true">
+    <p-stepperPanel header="Property">
+        <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+            <div class="flex flex-column">
+                <div style="display: grid;" class="border-2 border-dashed surface-border border-round surface-ground flex-auto justify-content-center align-items-center font-medium">
+                    <div style="display: inline-grid;">
+                        <label>Name</label>
+                        <input  style="width: 20rem;"  [(ngModel)]="database.databaseName" pInputText/>     
+                        <label>Choose datasource type</label>
+                        <p-dropdown optionLabel="label" [options]="options" [dataKey]="'value'" (onChange)="OptionSelect($event)"  [showClear]="true"
+                        [placeholder]="database.databaseType ?? 'Select connection type'"></p-dropdown>  
+                    </div>
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-end">
+                <p-button *ngIf="database.databaseType && database.databaseName"
+                    label="Connection" 
+                    icon="pi pi-arrow-right" 
+                    iconPos="right" 
+                    (onClick)="nextCallback.emit()" />
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel header="Connection">
+        <ng-template pTemplate="content" let-nextCallback="nextCallback" let-prevCallback="prevCallback" let-index="index">
+            <div class="flex flex-column">
+                <div style="display: grid;" class="border-2 border-dashed surface-border border-round surface-ground flex-auto justify-content-center align-items-center font-medium">
+                   
+                    <div  style="display: grid; margin: 1rem; padding: 1rem;">
+                        <label *ngIf="database.databaseType != 'API'">Connection String</label>
+                        <label *ngIf="database.databaseType == 'API'">API endpoint</label>
+                        <textarea  style="width: 20rem;"  [(ngModel)]="database.connectionString" pInputText></textarea>                   
+                    </div>
+                    <div *ngIf="database.databaseType != 'API'" style="display: grid; margin: 1rem; padding: 1rem;">
+                        <label>Default ID type</label>  
+                        <p-dropdown optionLabel="label" [options]="idoptions" [dataKey]="'value'" (onChange)="IdTypeSelect($event)"  [showClear]="true"
+                         [placeholder]=" database.defaultIdType ?? 'Select default id type'"></p-dropdown>       
+                    </div>
+                    <div *ngIf="database.databaseType != 'API'" style="display: grid; margin: 1rem; padding: 1rem;">
+                        <label>Public</label>
+                
+                            <p-triStateCheckbox [(ngModel)]="database.public" />
+                            <br>
+                       
+                    </div>
+                
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-between">
+                <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+                <button *ngIf="database.connectionString"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+                <!-- <p-button
+                    label="Select value" 
+                    icon="pi pi-arrow-right" 
+                    iconPos="right" 
+                    (onClick)="nextCallback.emit()" /> -->
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+</p-stepper>
+<div   *ngIf="createmode != true">
 
 
     <div style="display: grid; margin: 1rem; padding: 1rem;">
@@ -9,7 +69,8 @@
     <br>
     <br>
     <div  style="display: grid; margin: 1rem; padding: 1rem;">
-        <label>Connection String</label>
+        <label  *ngIf="database.databaseType != 'API'">Connection String</label>
+        <label  *ngIf="database.databaseType == 'API'">API endpoint</label>
         <textarea  style="width: 20rem;"  [(ngModel)]="database.connectionString" pInputText></textarea>
     </div>
     <br>
@@ -21,14 +82,14 @@
     </div>
     <br>
     <br>
-    <div style="display: grid; margin: 1rem; padding: 1rem;">
+    <div  *ngIf="database.databaseType != 'API'" style="display: grid; margin: 1rem; padding: 1rem;">
         <label>Default ID type</label>  
         <p-dropdown optionLabel="label" [options]="idoptions" [dataKey]="'value'" (onChange)="IdTypeSelect($event)"  [showClear]="true"
          [placeholder]=" database.defaultIdType ?? 'Select default id type'"></p-dropdown>       
     </div>
     <br>
     <br>
-    <div style="display: grid; margin: 1rem; padding: 1rem;">
+    <div  *ngIf="database.databaseType != 'API'" style="display: grid; margin: 1rem; padding: 1rem;">
         <label>Public</label>
 
             <p-triStateCheckbox [(ngModel)]="database.public" />
@@ -39,13 +100,17 @@
 
 </div>
 
-    <button   style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
-    <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="ImportTables()">Connect tables</button> 
-    <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="RefreshTables()">Refresh tables</button> 
-    <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Chart()">Diagram</button>
-    <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ExectQuery()">Run query</button> 
-    <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button-danger p-mr-2" (click)="DisconnectTables()">Disconnect tables</button> 
-    <button *ngIf="createmode != true"  style="margin-right: 1rem;" pButton pRipple class="p-button-danger p-mr-2" (click)="DisconnectDatabase()">Disconnect database</button> 
+<div  *ngIf="createmode != true">
+    <button  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="Save()">Save</button> 
+    <button  *ngIf="database.databaseType == 'API'" style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="ImportApiTable()">Connect api data</button> 
+    <button  *ngIf="database.databaseType != 'API'" style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="ImportTables()">Connect tables</button> 
+    <button  style="margin-right: 1rem;" pButton pRipple class="bluebutton p-mr-2" (click)="RefreshTables()">Refresh tables</button> 
+    <button  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Chart()">Diagram</button>
+    <button  *ngIf="database.databaseType != 'API'" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ExectQuery()">Run query</button> 
+    <button *ngIf="database.databaseType != 'API'" style="margin-right: 1rem;" pButton pRipple class="p-button-danger p-mr-2" (click)="DisconnectTables()">Disconnect tables</button> 
+    <button  style="margin-right: 1rem;" pButton pRipple class="p-button-danger p-mr-2" (click)="DisconnectDatabase()">Disconnect datasource</button> 
+</div>
+
 
 
 

@@ -1,10 +1,10 @@
-<div class="card flex justify-content-center">
-    <p-card  [style]="{ width: '360px' }">
+<div style="padding: 2rem; height: 100rem;" class="card flex justify-content-center">
+    <p-card  [style]="{ width: '360px', padding: '2rem' }">
         <ng-template pTemplate="header">
             <h1>Register</h1>
         </ng-template>
         <div style="display: grid;">
-            <label>Name</label>
+            <label>User Name</label>
             <input (keyup.enter)="Register()"  required type="text" pInputText [(ngModel)]="username" />
         </div>
         <div style="display: grid;">
@@ -12,16 +12,24 @@
             <input (keyup.enter)="Register()"  required type="text" pInputText [(ngModel)]="email" />
         </div>
         <div style="display: grid;">
-            <label>Password</label>
+            <label>Password (8 long, uppercase, lowercase, digit, non-alphanumeric)</label>
             <p-password (keyup.enter)="Register()"  required [(ngModel)]="password" [feedback]="false"></p-password>
         </div>
         <div style="display: grid;">
             <label>Password again</label>
             <p-password (keyup.enter)="Register()"  required [(ngModel)]="password2" [feedback]="false"></p-password>
         </div>
+        <div style="display: grid;">
+            <label>Password again</label>
+            <p-password (keyup.enter)="Register()"  required [(ngModel)]="password2" [feedback]="false"></p-password>
+        </div>
+
     
         <ng-template pTemplate="footer">
-            <p-button label="Login" (onClick)="Register()"></p-button>
+            <p-button label="Register" (onClick)="Register()"></p-button>
+            <br>
+            <br>
+            <label> By clicking "Register", you agree to the GenericDataStore <a href="/#/termsofuse">Terms of use</a> and <a href="/#/dataprotection">Privacy Policy</a>.</label>
         </ng-template>
     </p-card>
 </div>

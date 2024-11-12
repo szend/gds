@@ -2,6 +2,7 @@
 using GenericDataStore.InputModels;
 using GenericDataStore.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Caching.Memory;
 using MySqlConnector;
 using Npgsql;
 
@@ -34,7 +35,7 @@ namespace GenericDataStore.DatabaseConnector
         {
                 using (SqlConnection myConnection = new SqlConnection(ConnectionString))
                 {
-                    string oString = @"UPDATE  [" + tablename + "] SET " + string.Join(",", fieldvalues.Keys.Zip(fieldvalues.Values, (x, y) => "[" + x + "]" + " = " + y + "")) + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "[" + x + "]" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
+                    string oString = @"UPDATE  [" + tablename + "] SET " + string.Join(", ", fieldvalues.Keys.Zip(fieldvalues.Values, (x, y) => "[" + x + "]" + " = " + y + "")) + " WHERE " + string.Join(" AND ", ids.Keys.Zip(ids.Values, (x, y) => "[" + x + "]" + " = " + (int.TryParse(y, out int n) == true ? y : "'" + y + "'") + ""));
                     SqlCommand oCmd = new SqlCommand(oString, myConnection);
                     myConnection.Open();
                     oCmd.ExecuteNonQuery();
@@ -241,34 +242,9 @@ WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='" + dbname + "'";
                         int idx = 0;
                         foreach (var item in objtype.Field)
                         {
-                            if (item.Type.Contains("calculated"))
+                            try
                             {
-                                Value value = new Value()
-                                {
-                                    Name = item.Name,
-                                    ValueString = null,
-
-                                    ObjectTypeId = obj.ObjectTypeId,
-                                    ValueId = Guid.NewGuid()
-                                };
-                                obj.Value.Add(value);
-                            }
-                            else
-                            {
-                                var fieldvalue = oReader[item.Name];
-                                if (fieldvalue != DBNull.Value && item.PropertyName != "AppUserId" && item.PropertyName != "DataObjectId")
-                                {
-                                    Value value = new Value()
-                                    {
-                                        Name = item.Name,
-                                        ValueString = fieldvalue.ToString(),
-
-                                        ObjectTypeId = obj.ObjectTypeId,
-                                        ValueId = Guid.NewGuid()
-                                    };
-                                    obj.Value.Add(value);
-                                }
-                                else
+                                if (item.Type.Contains("calculated"))
                                 {
                                     Value value = new Value()
                                     {
@@ -280,7 +256,40 @@ WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='" + dbname + "'";
                                     };
                                     obj.Value.Add(value);
                                 }
+                                else
+                                {
+                                    var fieldvalue = oReader[item.Name];
+                                    if (fieldvalue != DBNull.Value && item.Name != "AppUserId" && item.Name != "DataObjectId")
+                                    {
+                                        Value value = new Value()
+                                        {
+                                            Name = item.Name,
+                                            ValueString = fieldvalue.ToString(),
+
+                                            ObjectTypeId = obj.ObjectTypeId,
+                                            ValueId = Guid.NewGuid()
+                                        };
+                                        obj.Value.Add(value);
+                                    }
+                                    else
+                                    {
+                                        Value value = new Value()
+                                        {
+                                            Name = item.Name,
+                                            ValueString = null,
+
+                                            ObjectTypeId = obj.ObjectTypeId,
+                                            ValueId = Guid.NewGuid()
+                                        };
+                                        obj.Value.Add(value);
+                                    }
+                                }
                             }
+                            catch (Exception)
+                            {
+
+                            }
+
 
                             idx++;
                         }
@@ -428,13 +437,13 @@ if (field?.Type == "date")
 declare @Result varchar(max) = 'public class ' + @TableName + '
 {'
 
-select @Result = @Result + KeySign + '
+select @Result = @Result + KeySign + NameSing + '
     public ' + ColumnType + NullableSign + ' ' + ColumnName + ' { get; set; }
 '
 from
 (
     select 
-        replace(col.name, ' ', '_') ColumnName,
+       replace(replace(col.name, '-', '_'),' ','_') ColumnName,
         column_id ColumnId,
         case typ.name 
             when 'bigint' then 'long'
@@ -474,9 +483,12 @@ from
             else '' 
         end NullableSign,
         case 
-			when col.column_id = 1 then ' [PrimaryDbKey]'
+			when col.column_id = 1 then ' [PrimaryDbKey] '
 			else ''
-		end KeySign
+		end KeySign,
+        case 
+			when 1 = 1 then ' [FieldName(" + "\"" + "' + col.name +"  + "'\"" +@")] '
+		end NameSing
     from sys.columns col
         join sys.types typ on
             col.system_type_id = typ.system_type_id AND col.user_type_id = typ.user_type_id
@@ -779,7 +791,15 @@ ORDER BY
             }
         }
 
+        public List<Type> GetAllTableApi(List<DatabaseTableRelations> relations, string name)
+        {
+            throw new NotImplementedException();
+        }
 
+        public List<DataObject> GetAllDataFromTableApi(ObjectType objtype, IMemoryCache memoryCache, RootFilter? filter, bool chart = false, bool onlyfirstx = false)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

@@ -1,7 +1,7 @@
 
 
-
 <p-menubar *ngIf="items.length > 2" class="menu" [model]="items">
+
     <ng-template pTemplate="end">
         <!-- <input #search (keyup.enter)="Search($event,search)" style="margin-right: 1rem;" type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" /> -->
         <p-button (onClick)="Settings()" *ngIf="loggedIn == true" [label]="username != undefined ? username[0] : ''">
@@ -10,11 +10,18 @@
         </p-button> 
         <p-button style="margin-right: 1rem;" (onClick)="Route('register')" *ngIf="!loggedIn" [label]="'Register'">
         </p-button>  -->
+    </ng-template>
 
-    </ng-template></p-menubar>
-
+</p-menubar>
+<div *ngIf="loading">
+    <p-progressBar mode="indeterminate" [style]="{ height: '6px' }" />
+</div>
     <p-sidebar [(visible)]="sidebarVisible" position="right">
         <p-button  *ngIf="loggedIn == true"  class="buttonmargin" label="Logout" (onClick)="Logout()"></p-button>
+        <br><br>       
+        <p-button  *ngIf="loggedIn == true"  class="buttonmargin" label="Messages" (onClick)="Messages()"></p-button>
+        <br><br>
+        <p-button  *ngIf="loggedIn == true"  class="buttonmargin" label="Conntact" (onClick)="Conntact()"></p-button>
         <br><br>
         <p-button *ngIf="loggedIn == true"  class="buttonmargin" label="Subscriptions" (onClick)="Subscriptions()"></p-button>
         <br><br>

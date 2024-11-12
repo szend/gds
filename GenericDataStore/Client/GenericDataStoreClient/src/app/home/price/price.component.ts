@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FooterComponent } from '../footer/footer.component';
+import { ApiService } from '../../Services/api.service';
 
 @Component({
   selector: 'app-price',
@@ -17,7 +18,7 @@ import { FooterComponent } from '../footer/footer.component';
 })
 export class PriceComponent {
 
-  constructor(protected router: Router) 
+  constructor(protected router: Router,public apiService: ApiService) 
   {
 
   }
@@ -26,6 +27,12 @@ export class PriceComponent {
 
   SelectOption(opt : string){
     this.options = opt;
+  }
+
+  Free(){
+    this.apiService.SetLimit(0,10000,10,"xxy93").subscribe( x => {
+      this.router.navigateByUrl("/connection/databases")
+    });
   }
 
   Select(link : string){

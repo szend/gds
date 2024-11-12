@@ -41,7 +41,7 @@ export class DataobjectCreateComponent  implements OnInit {
   @Input() parentdataid: string | undefined;
   @Input() fields : {field : string, header: string, type: string, option: any[]}[] = [];
   @ViewChild('fileUploader', {static: false}) fileUploader: FileUpload | undefined;
-  constructor(public apiService: ApiService, protected changeDetector: ChangeDetectorRef,  protected config: DynamicDialogConfig,private messageService: MessageService
+  constructor(private thisref: DynamicDialogRef,public apiService: ApiService, protected changeDetector: ChangeDetectorRef,  protected config: DynamicDialogConfig,private messageService: MessageService
     , protected dialogService: DialogService
   ) 
   {
@@ -109,7 +109,7 @@ export class DataobjectCreateComponent  implements OnInit {
 
   // }
 
-  Save(){
+  Save(close : boolean = false){
     let obj : {
       objectTypeId : string | undefined,
       parentDataObjectId:  string | undefined,
@@ -124,12 +124,19 @@ export class DataobjectCreateComponent  implements OnInit {
       this.rootFilter.filters = this.rootFilter.filters.filter(x => x.value != undefined);
       this.apiService.EditAllFiltered(obj,this.rootFilter).subscribe({
         next: (v) => {
+
+          this.fields.forEach(element => {
+            this.dataRec[element.field] = null;
+          });
           this.messageService.add({ 
             severity: "success", 
             summary: "Ok:", 
             detail: "Object Saved", 
             life: 3000
           });
+          if(close){
+            this.thisref?.close();
+          }
         },
         error: (e) => {
           this.messageService.add({ 
@@ -145,12 +152,18 @@ export class DataobjectCreateComponent  implements OnInit {
     else{
       this.apiService.CreateDataObject(obj).subscribe({
         next: (v) => {
+          this.fields.forEach(element => {
+            this.dataRec[element.field] = null;
+          });
           this.messageService.add({ 
             severity: "success", 
             summary: "Ok:", 
             detail: "Object Saved", 
             life: 3000
           });
+          if(close){
+            this.thisref?.close();
+          }
         },
         error: (e) => {
           this.messageService.add({ 
@@ -164,6 +177,10 @@ export class DataobjectCreateComponent  implements OnInit {
     });      
     }
 
+  }
+
+  SaveClose(){
+    this.Save(true);
   }
 
   SelectParent(field : string){

@@ -11,12 +11,13 @@ import { MessageService } from "primeng/api";
 import { MessagesModule } from 'primeng/messages';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MenuComponent } from '../../../menu/menu.component';
+import { FooterComponent } from '../../home/footer/footer.component';
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [PasswordModule, CommonModule, FormsModule,InputTextModule, ButtonModule,CardModule,ProgressSpinnerModule,MessagesModule],
+  imports: [PasswordModule, CommonModule, FormsModule,InputTextModule, ButtonModule,CardModule,ProgressSpinnerModule,MessagesModule, FooterComponent],
   providers: [MessageService], 
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'

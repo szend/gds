@@ -29,6 +29,8 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ApiService } from '../../Services/api.service';
 import { DatabaseCreateComponent } from '../database-create/database-create.component';
 import { DatabaseTablesComponent } from '../database-tables/database-tables.component';
+import { ObjecttypeCreateComponent } from '../objecttype-create/objecttype-create.component';
+import { AuthService } from '../../Services/auth.service';
 
 @Component({
   selector: 'app-database-list',
@@ -44,7 +46,7 @@ import { DatabaseTablesComponent } from '../database-tables/database-tables.comp
 export class DatabaseListComponent implements OnInit {
 
 
-  constructor(private confirmationService: ConfirmationService,public apiService: ApiService, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public messageService: MessageService) 
+  constructor(public authService: AuthService,private confirmationService: ConfirmationService,public apiService: ApiService, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public messageService: MessageService) 
   {
 
   }
@@ -74,16 +76,26 @@ export class DatabaseListComponent implements OnInit {
   }
 
   CreateNew() {
-    this.ref = this.dialogService.open(DatabaseCreateComponent,  { data: {dataRec: null, createmode : true}, header: 'Create new database connection', resizable: true});
+    this.ref = this.dialogService.open(DatabaseCreateComponent,  { data: {dataRec: null, createmode : true}, header: 'Create new connection', resizable: true});
     this.ref.onClose.subscribe(x => {
       this.Refresh();
+      this.authService.newlogin.emit(true);
     });
   }
 
+  CreateNewTable(){
+    this.ref = this.dialogService.open(ObjecttypeCreateComponent,  { data: {}, header: 'Create new table', resizable: true});
+    this.ref.onClose.subscribe(x => {
+      this.authService.newlogin.emit(true);
+    });
+}
+
+
   Edit(row : any){
-    this.ref = this.dialogService.open(DatabaseCreateComponent,  { data: {dataRec: row, createmode : false}, header: 'Edit database connection', resizable: true});
+    this.ref = this.dialogService.open(DatabaseCreateComponent,  { data: {dataRec: row, createmode : false}, header: 'Edit connection', resizable: true});
     this.ref.onClose.subscribe(x => {
       this.Refresh();
+      this.authService.newlogin.emit(true);
     });
   }
 

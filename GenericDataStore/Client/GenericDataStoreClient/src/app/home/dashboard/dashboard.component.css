@@ -1,0 +1,7 @@
+@media (max-width: 1024px) {
+    .p-card-title{
+     display: none !important;
+    }
+   
+ 
+   }

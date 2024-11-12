@@ -15,13 +15,17 @@ import { InputTextModule } from 'primeng/inputtext';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { FormsModule } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ProgressBarModule } from 'primeng/progressbar';
+
 
 
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [MenubarModule, ButtonModule,CommonModule,AvatarModule,AvatarGroupModule,SidebarModule,MeterGroupModule,InputTextModule, KeyFilterModule, FormsModule, ProgressSpinnerModule],
+  imports: [MenubarModule, ButtonModule,CommonModule,AvatarModule,AvatarGroupModule,SidebarModule,MeterGroupModule,InputTextModule, KeyFilterModule, FormsModule, ProgressSpinnerModule,
+    ProgressBarModule
+  ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
@@ -44,6 +48,7 @@ export class MenuComponent {
   public extdata : number | undefined;
   public limitsaved : boolean = false;
 
+  loading = false;
 
   public loggedIn : boolean | undefined = undefined;
 
@@ -61,6 +66,7 @@ export class MenuComponent {
   }
 
   Refresh(){
+    this.loading = true;
     //this.loggedIn = this.authService.isLoggedIn();
     this.username = localStorage?.getItem("username") ?? "";
     this.items = [];
@@ -74,16 +80,19 @@ export class MenuComponent {
         privatmenu.items.push(listitem)
       });
       this.items = [
-        { label: 'Dashboard', icon: 'pi pi-home', routerLink: '/dashboard'},
+        { label: 'Dashboard', icon: 'pi pi-desktop', routerLink: '/dashboard'},
         { label: 'Price', icon: 'pi pi-euro', routerLink: '/price'},
-        { label: 'Contact', icon: 'pi pi-comment', routerLink: '/contact'},
+        // { label: 'Contact', icon: 'pi pi-comment', routerLink: '/contact'},
         { label: 'Features', icon: 'pi pi-info-circle', routerLink: '/features'},
-        { label: 'MyDatabases',icon: 'pi pi-database', routerLink: '/connection/databases'},
-        { label: 'Messages',icon: 'pi pi-comments', routerLink: '/messages'},
+        { label: 'Datasources',icon: 'pi pi-database', routerLink: '/connection/databases'},
+        // { label: 'Messages',icon: 'pi pi-comments', routerLink: '/messages'},
+        { label: 'Public data',icon: 'pi pi-search', routerLink: '/publicdata'},
+
       ];
       this.items.push(privatmenu);
       // this.getCategories();
       this.loggedIn = true;
+      this.loading = false;
       
     }, () =>{
       this.items = [
@@ -93,7 +102,9 @@ export class MenuComponent {
         { label: 'Features', icon: 'pi pi-info-circle', routerLink: '/features'},
         { label: 'Login', icon: 'pi pi-sign-in', routerLink: '/login'},
         { label: 'Register', icon: 'pi pi-user-plus', routerLink: '/register'},
+        { label: 'Public data',icon: 'pi pi-search', routerLink: '/publicdata'},
       ];
+      this.loading = false;
       // this.getCategories();
       // this.items.push(        { label: 'Login', icon: 'pi pi-sign-in', routerLink: '/login'},
       //   { label: 'Register', icon: 'pi pi-user-plus', routerLink: '/register'});
@@ -137,6 +148,10 @@ export class MenuComponent {
 
   Messages(){
     this.router.navigateByUrl('messages');
+  }
+
+  Conntact(){
+    this.router.navigateByUrl('conntact');
   }
 
   Subscriptions(){

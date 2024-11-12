@@ -1,169 +1,375 @@
 
-<meta name="keywords" [content]="data.description">
-    <meta name="description" [content]="data.description">
+<meta name="keywords" [content]="data?.description">
+    <meta name="description" [content]="data?.description">
 
-<div *ngIf="data">
-    <p-menubar *ngIf="GetAccess('f') && filterMetu.length > 0" [model]="filterMetu"></p-menubar>
 
-    
-    <button *ngIf="GetAccess('c')" style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="CreateNew()">Add new</button>
-    <button *ngIf="GetAccess()" style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-success p-mr-2" (click)="EditAll()">Edit all filtered</button>      
-    <button style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="bluebutton" (click)="Refresh(true)">Refresh</button> 
-    <button *ngIf="GetAccess()" style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-warning p-mr-2" (click)="settingVisible = !settingVisible">Settings</button>
-    <button *ngIf="GetAccess()" style="margin-bottom: 2rem;" pButton pRipple class="p-button-warning p-mr-2" (click)="aiVisible = !aiVisible">AI</button>
-    <button *ngIf="GetAccess('ch')" style="margin-left: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button p-mr-2" (click)="OpenChart()">Chart</button> 
-    <button *ngIf="GetAccess('e')" style="margin-left: 1rem;margin-bottom: 2rem;margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Export()">Export</button> 
 
-    <button *ngIf="!GetAccess()" style="margin-right: 1rem;margin-bottom: 2rem;" pButton pRipple class="p-button-warning p-mr-2" (click)="SendMessage()">Send Message</button>
 
-    <p-multiSelect 
-    [options]="fields" 
-    [(ngModel)]="selectedColumns" 
-    optionLabel="header"
-    selectedItemsLabel="{0} columns selected" 
-    [style]="{'width': '15rem', 'margin-right': '3rem', 'margin-bottom': '2rem'}" 
-    placeholder="Choose Columns" />
-    <i *ngIf="data.description" [pTooltip]="data.description" class="pi pi-question-circle" style="font-size: 2rem"></i>
 
-    <p-progressSpinner [style]="{'height' : '4rem', 'position' : 'absolute'}" [hidden]="!loading" ariaLabel="loading"></p-progressSpinner>
-<div>
-    <p-table #table  [styleClass]="'p-datatable-striped'" *ngIf="data" [columns]="selectedColumns" [value]="rowData" [lazy]="true"  (onFilter)="onFilter($event)" (onSort)="onSort($event)" (onPage)="onPageChange($event)"
-    [rowHover]="true" selectionMode="single" [dataKey]="'dataObjectId'" [styleClass]="'p-datatable-gridlines p-mt-4'"
-    [reorderableColumns]="true" [resizableColumns]="true" columnResizeMode="expand"
-    [scrollable]="true"  [rowsPerPageOptions]="[5,10,15,25,50,100,200,500,1000,2000]" [showCurrentPageReport]="true" [filterDelay]="0"
-    [paginator]="true" [rows]="defaultcount" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [totalRecords]="count"
-    [(contextMenuSelection)]="selectedProduct" 
-    [contextMenu]="cm" 
-    >
 
-        <ng-template pTemplate="colgroup" let-columns>
-            <colgroup >
-                <col *ngFor="let col of columns" [style.min-width]="'120px'">
-            </colgroup>
-        </ng-template>
-        <ng-template pTemplate="header" let-columns>
-            <tr>
-                <th pReorderableColumn [pSortableColumn]="col.field"  *ngFor="let col of columns">
-                    <p-columnFilter  *ngIf="col.type != 'numeric' && col.type != 'image'&& col.type != 'option'"
-                    [type]="col.type"
-                    [field]="col.field"
-                    display="menu"
-                    class="ml-auto"> 
-                </p-columnFilter> 
-                <p-columnFilter  *ngIf="col.type == 'option'"
-                [type]="'text'"
-                [field]="col.field"
-                display="menu"
-                class="ml-auto"> 
-            </p-columnFilter> 
-                <p-columnFilter   *ngIf="col.type == 'numeric'"
-                [field]="col.field"
-                [type]="col.type"
-                display="menu"
-                class="ml-auto"> 
-                <ng-template pTemplate="filter" let-value let-filter="filterCallback" >
-                    <input #p  placeholder="Any"  [pKeyFilter]="'num'" pInputText />
-                    <button (click)="filter(p.value)"  style="margin-top: 1rem;" pButton pRipple class="p-button p-mr-2">Apply</button> 
-                </ng-template>
-            </p-columnFilter> 
-                    {{ col.header }}
-                    <p-sortIcon></p-sortIcon>
-                </th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-row let-columns="columns">
-            <tr (dblclick)="Edit(row)" [pContextMenuRow]="row" [ngClass]="{'editablerow': row.editable == true && bgch,'simplerow': row.editable != true || !bgch}">
-               
-                    <td *ngFor="let col of columns; index as i" [ngStyle]="GetStyle(row.value,col)">
-                        <label *ngIf="col.type != 'image' && col.type != 'boolean'">
-                         {{ getValue(row.value, col) }}
-                        </label>
-                        <label *ngIf="col.type == 'boolean' && getValue(row.value, col) != '' && getValue(row.value, col) != undefined && getValue(row.value, col) != null">
-                            <i  *ngIf="getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true || getValue(row.value, col) == 1 || getValue(row.value, col) == '1' " class="pi pi-check" style="font-size: 1rem"></i>
-    
-                            <i  *ngIf="(getValue(row.value, col) == 'false' || getValue(row.value, col) == 'False' || getValue(row.value, col) == false) " class="pi pi-times" style="font-size: 1rem"></i>
-                            {{ getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true || getValue(row.value, col) == 1 || getValue(row.value, col) == '1' }}
-                           </label>
-                        <p-image [width]="'300rem'" [height]="'300rem'" *ngIf="col.type == 'image' && getImageObj(row, col.header)"  [src]="getImageObj(row, col.header)"  alt="not picture" [preview]="true"></p-image>
-                    </td>
-               
-            </tr>
-        </ng-template>
-    </p-table>
+
+
+
+
+
+
+
+
+
+
+    <div *ngIf="loading">
+        <p-progressBar mode="indeterminate" [style]="{ height: '6px' }" />
+    </div>
+<div  class="block-content visible1024">
+    <div class="ng-star-inserted" style="height: 100vh; overflow: scroll;">
+         <div class="min-h-screen flex relative lg:static surface-ground">
+              <div id="app-sidebar-3"
+                   class=" bg-gray-900 h-screen lg:block flex-shrink-0 absolute lg:static  z-1 border-right-1 border-gray-800 select-none"
+                   style="position: static !important;">
+                   <div class="flex flex-column h-full">
+                        <div style="z-index: 1000;" class="overflow-y-auto">
+                             <ul [id]="dashboarid" class="list-none p-3 m-0">
+                                <li style="height: 2rem;" class="hidden1024x">
+                                    <a (click)="HideSpam()" pripple="" pstyleclass="@next" enterclass="hidden" style="background-color: black;"
+                                         enteractiveclass="slidedown" leavetoclass="hidden"
+                                         leaveactiveclass="slideup"
+                                         class=" sidemenubutton p-ripple p-element flex cursor-pointer border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                         <i *ngIf="!hiddenactive" class="pi pi-angle-left mr-2"></i>
+                                         <i *ngIf="hiddenactive" class="pi pi-angle-right mr-2"></i>
+                                    </a>
+                               </li>
+
+                                <li>
+                                    <a (click)="Refresh(true)"  pTooltip="Refresh" pripple="" pstyleclass="@next" enterclass="hidden" style="background-color: #295F98;"
+                                         enteractiveclass="slidedown" leavetoclass="hidden"
+                                         leaveactiveclass="slideup"
+                                         class=" sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                         <i class="pi pi-refresh mr-2"></i>
+                                         <span  *ngIf="!hiddenactive" class="font-medium hidden1024">Refresh</span>
+                                    </a>
+                               </li>
+                               <li *ngIf="!GetAccess()" >
+                                <a (click)="SendMessage()"  pTooltip="Send Message" pripple="" style="background-color: #295F98;"
+                                     class="sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                     <i class="pi pi-comments mr-2"></i>
+                                     <span  *ngIf="!hiddenactive" class="hidden1024 font-medium">Send Message</span><span
+                                          class="p-ink"></span></a>
+                           </li>
+                                  <li *ngIf="GetAccess('c')" >
+                                       <a  pTooltip="Add row"  (click)="CreateNew()" style="background-color: #86AB89;" pripple=""
+                                            class="sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                            <i class="pi pi-plus mr-2"></i>
+                                            <span *ngIf="!hiddenactive" class="font-medium hidden1024">Add row</span>
+                                            <span class="p-ink"></span>
+                                       </a>
+                                  </li>
+                                  <li *ngIf="GetAccess('c')" >
+
+                                    <p-fileUpload id="fileuploader" pTooltip="Add from file" #fileUploader class="hover:bg-gray-800" [chooseLabel]="hiddenactive ? '' : 'Add from file'"  chooseIcon="pi pi-file-import" mode="basic"  [style]="{'display' : 'inline-block', 'text-align' : 'left'}"  (uploadHandler)="importFile($event)" [customUpload]="true">
+                                    </p-fileUpload> 
+                         
+
+                               </li>
+                                  <li *ngIf="GetAccess()" >
+                                       <a pTooltip="Settings" (click)="settingVisible = !settingVisible" pripple="" style="background-color: #454545;"
+                                            class="sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                            <i class="pi pi-cog mr-2"></i>
+                                            <span  *ngIf="!hiddenactive" class="font-medium hidden1024">Settings</span><span
+                                                 class="p-ink"></span>
+                                                 <i *ngIf="!settingVisible && !hiddenactive" class="pi pi-chevron-down ml-2 hidden1024"></i>
+                                                 <i *ngIf="settingVisible && !hiddenactive" class="pi pi-chevron-up ml-2 hidden1024"></i>
+                                                </a>
+                                  </li>
+
+
+                                            <li class="childbutton" *ngIf="GetAccess() && settingVisible" >
+                                                <a pTooltip="Edit Table" (click)="EditType()" pripple="" style="background-color: #9BABB8;"
+                                                    class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                    <i class="pi pi-wrench mr-2"></i>
+                                                    <span *ngIf="!hiddenactive" class="font-medium hidden1024">Edit Table</span><span
+                                                        class="p-ink"></span></a>
+                                                </li>
+                                                <li class="childbutton" *ngIf="GetAccess() && settingVisible" >
+                                                    <a pTooltip="Add Child" (click)="AddChild()" pripple="" style="background-color: #9BABB8;"
+                                                        class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                        <i class="pi pi-plus-circle mr-2"></i>
+                                                        <span *ngIf="!hiddenactive" class="font-medium hidden1024">Add Child</span><span
+                                                            class="p-ink"></span></a>
+                                                    </li>
+                                                    <li class="childbutton" *ngIf="GetAccess() && settingVisible" >
+                                                        <a pTooltip="Remove Child" (click)="RemoveChild()" pripple="" style="background-color: #9BABB8;"
+                                                            class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                            <i class="pi pi-minus-circle mr-2"></i>
+                                                            <span *ngIf="!hiddenactive" class="font-medium hidden1024">Remove Child</span><span
+                                                                class="p-ink"></span></a>
+                                                        </li>
+                                                        <li class="childbutton" *ngIf="GetAccess() && settingVisible" >
+                                                            <a pTooltip="Calculated Field" (click)="AddCalculatedField()" pripple="" style="background-color: #9BABB8;"
+                                                                class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                <i class="pi pi-calculator mr-2"></i>
+                                                                <span *ngIf="!hiddenactive" class="font-medium hidden1024">Calculated Field</span><span
+                                                                    class="p-ink"></span></a>
+                                                            </li>
+                                                            <li class="childbutton" *ngIf="GetAccess() && settingVisible" >
+                                                                <a pTooltip="Colored background" (click)="AddColor()" pripple="" style="background-color: #9BABB8;"
+                                                                    class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                    <i class="pi pi-palette mr-2"></i>
+                                                                    <span *ngIf="!hiddenactive" class="font-medium hidden1024">Colored background</span><span
+                                                                        class="p-ink"></span></a>
+                                                                </li>
+                                                                <li class="childbutton" *ngIf="GetAccess() && settingVisible" >
+                                                                    <a pTooltip="Colored text" (click)="AddColorLabel()" pripple="" style="background-color: #9BABB8;"
+                                                                        class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                        <i class="pi pi-palette mr-2"></i>
+                                                                        <span *ngIf="!hiddenactive" class="font-medium hidden1024">Colored text</span><span
+                                                                            class="p-ink"></span></a>
+                                                                    </li>
+                                                                    <li class="childbutton" *ngIf="GetAccess() && settingVisible" >
+                                                                        <a pTooltip="Text size" (click)="TextSize()" pripple="" style="background-color: #9BABB8;"
+                                                                            class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                            <i class="pi pi-search-plus mr-2"></i>
+                                                                            <span *ngIf="!hiddenactive" class="font-medium hidden1024">Text size</span><span
+                                                                                class="p-ink"></span></a>
+                                                                        </li>
+                                                                <li class="childbutton" *ngIf="GetAccess() && settingVisible" >
+                                                                    <a pTooltip="Pages" (click)="Pages()" pripple="" style="background-color: #9BABB8;"
+                                                                        class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                        <i class="pi pi-receipt mr-2"></i>
+                                                                        <span *ngIf="!hiddenactive" class="font-medium hidden1024">Pages</span><span
+                                                                            class="p-ink"></span></a>
+                                                                    </li>
+                                                                    <li class="childbutton" *ngIf="GetAccess() && settingVisible" >
+                                                                        <a pTooltip="Delete Table" (click)="DeleteDialog($event)" pripple="" style="background-color: #C96868;"
+                                                                            class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                            <i class="pi pi-trash mr-2"></i>
+                                                                            <span *ngIf="!hiddenactive" class="font-medium hidden1024">Delete Table</span><span
+                                                                                class="p-ink"></span></a>
+                                                                        </li>
+                                                                       
+
+
+                                                
+                                  <li *ngIf="GetAccess()">
+                                    <a pTooltip="AI" (click)="aiVisible = !aiVisible" pripple=""  style="background-color: #454545;"
+                                            class="sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                            <i class="pi pi-microchip-ai mr-2"></i>
+                                            <span  *ngIf="!hiddenactive" class="font-medium hidden1024">AI</span>
+                                            <i *ngIf="!aiVisible && !hiddenactive" class="hidden1024 pi pi-chevron-down ml-2"></i>
+                                            <i *ngIf="aiVisible && !hiddenactive" class="pi pi-chevron-up ml-2 hidden1024"></i>
+                                       </a></li>
+
+
+                                                        <li class="childbutton" *ngIf="GetAccess() && aiVisible" >
+                                                            <a pTooltip="Create clusters" (click)="Clusters()" pripple="" style="background-color: #9BABB8;"
+                                                                class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                <i class="pi pi-th-large mr-2"></i>
+                                                                <span *ngIf="!hiddenactive" class="font-medium hidden1024">Create clusters</span><span
+                                                                    class="p-ink"></span></a>
+                                                            </li>
+                                                            <li class="childbutton" *ngIf="GetAccess() && aiVisible" >
+                                                                <a pTooltip="Classification" (click)="Classification()" pripple="" style="background-color: #9BABB8;"
+                                                                    class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                    <i class="pi pi-tags mr-2"></i>
+                                                                    <span *ngIf="!hiddenactive" class="font-medium hidden1024">Classification</span><span
+                                                                        class="p-ink"></span></a>
+                                                                </li>
+                                                                <li class="childbutton" *ngIf="GetAccess() && aiVisible" >
+                                                                    <a pTooltip="Image classification" (click)="ImageClassification()" pripple="" style="background-color: #9BABB8;"
+                                                                        class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                        <i class="pi pi-images mr-2"></i>
+                                                                        <span *ngIf="!hiddenactive" class="font-medium hidden1024">Image classification</span><span
+                                                                            class="p-ink"></span></a>
+                                                                    </li>
+                                                                    <li class="childbutton" *ngIf="GetAccess() && aiVisible" >
+                                                                        <a pTooltip="Regression" (click)="Regression()" pripple="" style="background-color: #9BABB8;"
+                                                                            class="sidemenubutton  p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                                                            <i class="pi pi-percentage mr-2"></i>
+                                                                            <span *ngIf="!hiddenactive" class="font-medium hidden1024">Regression</span><span
+                                                                                class="p-ink"></span></a>
+                                                                        </li>
+
+
+
+                                  
+                                       <li *ngIf="GetAccess('ch')" >
+                                    <a pTooltip="Chart" (click)="OpenChart()" pripple=""  style="background-color: #b79560;"
+                                            class="sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                            <i class="pi pi-chart-line mr-2"></i>
+                                            <span  *ngIf="!hiddenactive" class="font-medium hidden1024">Chart</span><span class="p-ink"></span></a>
+                                  </li>
+                                  <li *ngIf="GetAccess('e')" >
+                                    <a pTooltip="Export" (click)="Export()" pripple="" style="background-color: #b79560;"
+                                            class="sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                            <i class="pi pi-file-export mr-2"></i>
+                                            <span  *ngIf="!hiddenactive" class="font-medium hidden1024">Export</span><span class="p-ink"></span></a>
+                                  </li>
+                                  <li *ngIf="GetAccess()" >
+                                    <a pTooltip="Edit filtered rows" (click)="EditAll()"  pripple="" style="background-color: #b79560;"
+                                         class=" sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                         <i class="pi pi-pencil mr-2"></i>
+                                         <span  *ngIf="!hiddenactive" class="font-medium hidden1024">Edit filtered rows</span>
+                                         <span class="p-ink"></span>
+                                    </a>
+                               </li>
+                                  <li *ngIf="!dashboardmode"  >
+                                    <a pTooltip="Add to dashboard"  (click)="AddToDashboard()" pripple="" style="background-color: #b79560;"
+                                            class="sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                            <i class="pi pi-folder-plus mr-2"></i>
+                                            <span  *ngIf="!hiddenactive" class="font-medium hidden1024"> 
+                                                 Add to dashboard
+                                                 </span><span class="p-ink"></span></a>
+                                  </li>
+                                  <li *ngIf="dashboardmode"  >
+                                    <a pTooltip="Remove from dashboard" (click)="RemoveFromDashboard()" pripple="" style="background-color: #C96868;"
+                                            class="sidemenubutton p-ripple p-element flex align-items-center cursor-pointer p-3 border-round hover:bg-gray-800  hover:text-white transition-duration-150 transition-colors">
+                                            <i class="pi pi-minus mr-2"></i>
+                                            <span  *ngIf="!hiddenactive" class="font-medium hidden1024">Remove from dashboard</span><span
+                                                 class="p-ink"></span></a>
+                                  </li>
+                             </ul>
+                        </div>
+                   </div>
+              </div>
+
+
+
+              <div [ngStyle]="GetBackgroundColor()" style="overflow: scroll;" class="min-h-screen flex flex-column relative flex-auto">
+
+                   <div [ngStyle]="GetBackgroundColor()" style="padding-left: 2rem;"  class=" flex flex-column flex-auto">
+
+                        <div  [ngStyle]="GetBackgroundColor()" class=" surface-border border-round  flex-auto">
+                             <div style="padding: 1rem;">
+
+                                <div *ngIf="data">
+                                    <label style="color: red;" *ngIf="!charts && dashboardmode">Drop a chart here to make it live</label><br>
+                                    <label class="hidden1024" style="font-size: 2rem; margin-right: 1rem;"><b>{{data.name}}</b></label>
+                                    <i *ngIf="data.description" [pTooltip]="data.description" class="pi pi-question-circle hidden1024" style="font-size: 2rem"></i>
+                                    <p-multiSelect 
+                                    [options]="fields" 
+                                    [(ngModel)]="selectedColumns" 
+                                    optionLabel="header"
+                                    selectedItemsLabel="{0} columns" 
+                                    [style]="{'margin-left' : '1rem', 'margin-bottom' : '0.3rem','margin-right' : '1rem'}"
+                                    placeholder="Choose Columns" />
+                                    <!-- <p-inputSwitch [(ngModel)]="quickedit" /> -->
+                                <div>
+                                    <p-table #table  [styleClass]="'p-datatable-striped'" *ngIf="data" [columns]="selectedColumns" [value]="rowData" [lazy]="true"  (onFilter)="onFilter($event)" (onSort)="onSort($event)" (onPage)="onPageChange($event)"
+                                    [rowHover]="true" selectionMode="single" [dataKey]="'dataObjectId'" [styleClass]="'p-datatable-gridlines p-mt-4'"
+                                    [reorderableColumns]="true" [resizableColumns]="true" columnResizeMode="expand"
+                                    [scrollable]="true"  [rowsPerPageOptions]="[5,10,15,25,50,100,200,500,1000,2000]" [showCurrentPageReport]="true" [filterDelay]="0"
+                                    [paginator]="true" [rows]="defaultcount" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [totalRecords]="count"
+                                    [(contextMenuSelection)]="selectedProduct" 
+                                    [contextMenu]="cm" 
+                                    >
+                                
+                                        <ng-template pTemplate="colgroup" let-columns>
+                                            <colgroup >
+                                                <col *ngFor="let col of columns" [style.min-width]="'120px'">
+                                            </colgroup>
+                                        </ng-template>
+                                        <ng-template pTemplate="header" let-columns>
+                                            <tr>
+
+                                                <th pResizableColumn pReorderableColumn [pSortableColumn]="col.field"  *ngFor="let col of columns">
+                                                    <p-columnFilter  *ngIf="col.type != 'numeric' && col.type != 'image'&& col.type != 'option' && col.type != 'id' && col.type != 'foreignkey'"
+                                                    [type]="col.type"
+                                                    [field]="col.field"
+                                                    display="menu"
+                                                    class="ml-auto"> 
+                                                </p-columnFilter> 
+                                                <p-columnFilter  *ngIf="col.type == 'option'"
+                                                [type]="'text'"
+                                                [field]="col.field"
+                                                display="menu"
+                                                class="ml-auto"> 
+                                            </p-columnFilter> 
+                                            <p-columnFilter  *ngIf="col.type == 'id' || col.type == 'foreignkey'"
+                                            [type]="'text'"
+                                            [field]="col.field"
+                                            display="menu"
+                                            class="ml-auto"> 
+                                        </p-columnFilter> 
+                                                <p-columnFilter   *ngIf="col.type == 'numeric'"
+                                                [field]="col.field"
+                                                [type]="col.type"
+                                                display="menu"
+                                                class="ml-auto"> 
+                                                <ng-template pTemplate="filter" let-value let-filter="filterCallback" >
+                                                    <input #p  placeholder="Any"  [pKeyFilter]="'num'" pInputText />
+                                                    <button (click)="filter(p.value)"  style="margin-top: 1rem;" pButton pRipple class="p-button p-mr-2">Apply</button> 
+                                                </ng-template>
+                                            </p-columnFilter> 
+                                                    {{ col.header }}
+                                                    <p-sortIcon></p-sortIcon>
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-row let-columns="columns" let-index="rowIndex">
+                                            <tr [pReorderableRow]="index" (dblclick)="Edit(row)" [pContextMenuRow]="row" [ngClass]="{'editablerow': row.editable == true && bgch,'simplerow': row.editable != true || !bgch}">
+                                                
+                                                    <td (click)="DataClick()" *ngFor="let col of columns; index as i" [ngStyle]="GetStyle(row.value,col)">
+                                                        <label *ngIf="col.type != 'image' && col.type != 'boolean'">
+                                                        <p [ngStyle]="GetStyleLabel(row.value,col)" *ngIf="!quickedit">{{ getValue(row.value, col) }}</p>
+                                                        <input [disabled]="!editable" *ngIf="quickedit"  [value]="getValue(row.value, col)" pInputText/>
+                                                        </label>
+                                                        <label *ngIf="col.type == 'boolean' && getValue(row.value, col) != '' && getValue(row.value, col) != undefined && getValue(row.value, col) != null">
+                                                            <i  *ngIf="getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true || getValue(row.value, col) == 1 || getValue(row.value, col) == '1' " class="pi pi-check" style="font-size: 1rem"></i>
+                                    
+                                                            <i  *ngIf="(getValue(row.value, col) == 'false' || getValue(row.value, col) == 'False' || getValue(row.value, col) == false) " class="pi pi-times" style="font-size: 1rem"></i>
+                                                            {{ getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true || getValue(row.value, col) == 1 || getValue(row.value, col) == '1' }}
+                                                           </label>
+                                                        <p-image [width]="'300rem'" [height]="'300rem'" *ngIf="col.type == 'image' && getImageObj(row, col.header)"  [src]="getImageObj(row, col.header)"  alt="not picture" [preview]="true"></p-image>
+                                                    </td>
+                                                    <!-- <td>
+                                                        <span class="pi pi-bars" pReorderableRowHandle></span>
+                                                    </td> -->
+                                               
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                                
+                                    
+                                        <p-confirmDialog>
+                                            <ng-template pTemplate="message" let-message>
+                                                <div class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
+                                                    <p-image [width]="'300rem'" [height]="'300rem'"  [src]="'././assets/img/warning.png'"  alt="not picture" ></p-image>
+                                                    <p>Are you sure?</p>
+                                                </div>
+                                            </ng-template>
+                                        </p-confirmDialog>
+                                </div>
+                                <div *ngIf="!data">
+                                    no data
+                                </div>
+                             </div>
+         
+                        </div>
+
+                   </div>
+              </div>
+
+
+         </div>
+
+    </div>
+
 </div>
 
-    
-        <p-confirmDialog>
-            <ng-template pTemplate="message" let-message>
-                <div class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
-                    <p-image [width]="'300rem'" [height]="'300rem'"  [src]="'././assets/img/warning.png'"  alt="not picture" ></p-image>
-                    <p>Are you sure?</p>
-                </div>
-            </ng-template>
-        </p-confirmDialog>
-</div>
-<div *ngIf="!data">
-no data
-</div>
 
 
-<p-sidebar [(visible)]="settingVisible" position="left">
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button style="margin-right: 1rem;" *ngIf="GetAccess()" pButton pRipple class="p-button p-mr-2" (click)="EditType()">Edit Object Definition</button>
-        <i  pTooltip="You can edit your list. Add or remove field, option, category, description,
-         or define others right. But you have to be very careful if you change the type of a field, check if every value is correct before the change." class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="AddChild()">Add Child</button>
-        <i  pTooltip="Child list is same as any other list, but every element in the list are also belong to a parent element.
-         The whole list with every element will be available from your list menu, and if you double-click on any element in your parent list you can see every child element next to the properties tab." class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="RemoveChild()">Remove Child</button>
-        <i  pTooltip="Remove child relation" class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="AddCalculatedField()">Add Calculated Field</button>
-        <i  pTooltip="Create a new field what is calculated from one or more other field. " class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="AddColor()">Add Coloring</button>
-        <i  pTooltip="Create coloring" class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
 
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Pages()">Pages</button>
-        <i  pTooltip="Manage pages" class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <p-fileUpload  *ngIf="GetAccess()" #fileUploader   mode="basic"  [style]="{'display' : 'inline-block'}"  (uploadHandler)="importFile($event)" chooseLabel="Import from file" [customUpload]="true"></p-fileUpload>
-        <i  pTooltip="Import elements from excel. The first line must contains field names. Same file structure like in the export file." class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()" style="margin-right: 1rem;" pButton pRipple class="p-button-danger p-mr-2" (click)="DeleteDialog($event)">DeleteList</button>
-        <i  pTooltip="Delete your list. You can not delete until your list has child list." class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
 
-     
-</p-sidebar>
-<p-sidebar [(visible)]="aiVisible" position="left">
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Clusters()">AI Clusters</button>
-        <i  pTooltip="Based on your data, AI try to put every element into a cluster and create a field with the cluster id." class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Classification()">Classification</button>
-        <i  pTooltip="If you have a field with type 'text' or 'option', then you can create and train an AI to predict your next elements value." class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="ImageClassification()">ImageClassification</button>
-        <i  pTooltip="If you have a field with type 'image', and at least one other none 'image' type field, then you can create and train an AI. Then if you create a new element and upload an image, you can click the Classify button. The trained AI will try to fill every other field based on the information on the picture." class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-    <div style="margin-right: 1rem;margin-bottom: 2rem;">
-        <button *ngIf="GetAccess()"  style="margin-right: 1rem;" pButton pRipple class="p-button p-mr-2" (click)="Regression()">Regression</button>
-        <i  pTooltip="If you have a field with type 'numeric', then you can create and train an AI to predict your next elements value." class="pi pi-question-circle" style="font-size: 2rem"></i>
-    </div>
-</p-sidebar>
+
+
+
+
+
+
+
+
+
+
 <p-contextMenu #cm [model]="contextitems" />
 
 <p-toast position="top-right" key="key1" (onClose)="onReject()" [baseZIndex]="5000">

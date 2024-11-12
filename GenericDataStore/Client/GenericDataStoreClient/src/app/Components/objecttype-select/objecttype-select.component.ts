@@ -38,7 +38,9 @@ export class ObjecttypeSelectComponent {
     take: 0, 
     skip: 0,
     valueTake: 0,
-    valueSkip: 0
+    valueSkip: 0,
+    parentValueFilters: [],
+    parentValueSortingParams: []
   };
 
   types : any[] = [];

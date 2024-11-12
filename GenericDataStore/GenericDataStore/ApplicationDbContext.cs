@@ -30,6 +30,10 @@ namespace GenericDataStore
 
         public DbSet<TablePage> TablePage { get; set; }
 
+        public DbSet<DashboardTable> DashboardTable { get; set; }
+
+        public DbSet<Chart> Chart { get; set; }
+
 
 
 
