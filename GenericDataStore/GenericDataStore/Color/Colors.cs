@@ -1,4 +1,7 @@
-﻿namespace GenericDataStore.Color
+﻿using Google.Apis.AnalyticsReporting.v4.Data;
+using System.Drawing;
+
+namespace GenericDataStore.Color
 {
     public  class Colors
     {
@@ -194,6 +197,26 @@
             List<string> colorList = ColorList[colorListIndex];
             string color = colorList[colorIndex];
             return color.Substring(0, color.Length - 2) + alpha.ToString("X2");
+        }
+
+        public List<string> GenerateColorGradient(/*string colorA, string colorb,*/ int count)
+        {
+            List<string> colors = new List<string>();
+            //var color1 = ColorTranslator.FromHtml(colorA);
+            //var color2 = ColorTranslator.FromHtml(colorb);
+            var color1 = ColorTranslator.FromHtml("#2e2e2e");
+            var color2 = ColorTranslator.FromHtml("#ff7029");
+            for (int i = 0; i < count; i++)
+            {
+                double ratio = i / (double)count;
+                int a = (int)Math.Round(color1.A * (1 - ratio) + color2.A * ratio);
+                int r = (int)Math.Round(color1.R * (1 - ratio) + color2.R * ratio);
+                int g = (int)Math.Round(color1.G * (1 - ratio) + color2.G * ratio);
+                int b = (int)Math.Round(color1.B * (1 - ratio) + color2.B * ratio);
+                colors.Add(System.Drawing.Color.FromArgb(a, r, g, b).ToArgb().ToString("X8"));
+            }
+            return colors;
+
         }
     }
 }
