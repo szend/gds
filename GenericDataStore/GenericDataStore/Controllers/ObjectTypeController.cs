@@ -708,7 +708,10 @@ namespace GenericDataStore.Controllers
         [HttpPost("CreateCalculatedChart")]
         public virtual async Task<IActionResult> CreateCalculatedChart([FromBody] ChartInput chartInput)
         {
-            var chtyp = await GenerateChart(chartInput,false);
+            Dictionary<RootFilter, ObjectType> typecache;
+            var ex = _memoryCache.TryGetValue(chartInput.Filter, out typecache);
+
+            var chtyp = await GenerateChart(chartInput,false,null,typecache);
             if(chtyp != null)
             {
                 return new JsonResult(chtyp, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
@@ -718,14 +721,25 @@ namespace GenericDataStore.Controllers
             return BadRequest("Type not found");
         }
 
-        private async Task<ChartModelType?> GenerateChart(ChartInput chartInput, bool req = false, ObjectType type = null)
+        private async Task<ChartModelType?> GenerateChart(ChartInput chartInput, bool req = false, ObjectType type = null, Dictionary<RootFilter, ObjectType> typecache = null)
         {
             if(type == null)
             {
                 var query = this.DbContext.Set<ObjectType>().ToArray().AsQueryable();
-                RootFilter? filterResult;
-                query = await FilterQuery("", query, null, !chartInput.LiveMode, true, chartInput.Filter, true);
-                type = query.FirstOrDefault();
+                query = await FilterQuery("", query, null, !chartInput.LiveMode, true, chartInput?.Filter, true);
+                type = query?.FirstOrDefault();
+
+                if(typecache != null)
+                {
+                    typecache.Add(chartInput?.Filter, type);
+
+                }
+                else
+                {
+                    _memoryCache.Set(chartInput.Filter, type,
+                            new MemoryCacheEntryOptions()
+                            .SetAbsoluteExpiration(TimeSpan.FromSeconds(30)));
+                }
             }
 
             Colors colors = new Colors();
@@ -734,18 +748,18 @@ namespace GenericDataStore.Controllers
 
                 Field fieldx = new Field
                 {
-                    CalculationMethod = chartInput.Xcalculation,
+                    CalculationMethod = chartInput?.Xcalculation,
                     Name = "CalculatedX",
                     Type = "calculatednumeric",
                     ObjectTypeId = type.ObjectTypeId
                 };
                 Field fieldy = new Field
                 {
-                    CalculationMethod = chartInput.Ycalculation,
+                    CalculationMethod = chartInput?.Ycalculation,
                     Name = "CalculatedY",
                     Type = "calculatednumeric",
                     ObjectTypeId = type.ObjectTypeId,
-                    ColorMethod = chartInput.Colorcalculation
+                    ColorMethod = chartInput?.Colorcalculation
                 };
                 type.Field.Add(fieldx);
                 type.Field.Add(fieldy);
@@ -929,7 +943,7 @@ namespace GenericDataStore.Controllers
                 {
                     ChartModelType chtyp = new ChartModelType();
                     chtyp.Datasets.Add(new ChartModelDataset());
-                    chtyp.Name = chartInput.Xcalculation + "-" + chartInput.Ycalculation;
+                    chtyp.Name = chartInput?.Xcalculation + "-" + chartInput?.Ycalculation;
                     List<double> values = new List<double>();
                     List<object> labels = new List<object>();
 
@@ -939,7 +953,7 @@ namespace GenericDataStore.Controllers
                     foreach (var obj in type.DataObject)
                     {
                         var val = obj.Value.FirstOrDefault(x => x.Name == fieldy.Name);
-                        if(val.Color != null && val.Color != "")
+                        if(val != null && val.Color != null && val.Color != "")
                         {
                             uniquecolorlist.Add(val.Color);
                         }
@@ -998,7 +1012,7 @@ namespace GenericDataStore.Controllers
                     }
 
                     //var grval = values.OrderBy(x => x);
-                    chtyp.Datasets[0].Label = chartInput.Ycalculation;
+                    chtyp.Datasets[0].Label = chartInput?.Ycalculation;
 
                     //if(uniquecolorlist.Count > 0)
                     //{
@@ -1016,10 +1030,10 @@ namespace GenericDataStore.Controllers
                     //chtyp.Datasets[0].BorderColor.Add(color);
                     //chtyp.Datasets[0].BackgroundColor.Add(color);
 
-                    chtyp.Datasets[0].Stacked = chartInput.Stacked;
-                    chtyp.Datasets[0].Stepped = chartInput.Step;
-                    chtyp.Datasets[0].Regression = chartInput.Regression;
-                    chtyp.Datasets[0].Fill = chartInput.Fill;
+                    chtyp.Datasets[0].Stacked = chartInput?.Stacked;
+                    chtyp.Datasets[0].Stepped = chartInput?.Step;
+                    chtyp.Datasets[0].Regression = chartInput?.Regression;
+                    chtyp.Datasets[0].Fill = chartInput?.Fill;
                     foreach (var g in values)
                     {
                         chtyp.Datasets[0].Data.Add(g);
@@ -1027,9 +1041,9 @@ namespace GenericDataStore.Controllers
 
                     foreach (var g in labels)
                     {
-                        chtyp.Labels.Add(g.ToString());
+                        chtyp.Labels.Add(g?.ToString() ?? "");
                     }
-                    if(chartInput.GroupId != null && req == false)
+                    if(chartInput?.GroupId != null && req == false)
                     {
                         var groupedcharts = DbContext.Chart.Where(x => x.GroupId == chartInput.GroupId && x.ChartId != chartInput.Id).ToList();
                         foreach (var item in groupedcharts)
@@ -1789,10 +1803,23 @@ namespace GenericDataStore.Controllers
             }
             var dashboardstables = DbContext.DashboardTable.Where(x => x.AppUserId == id).ToList();
             List<DashboardModel> types = new List<DashboardModel>();
+            Dictionary<RootFilter,ObjectType> typechache = new Dictionary<RootFilter, ObjectType>();
+
             foreach (var item in dashboardstables)
             {
-                var list = DbContext.ObjectType.Where(x => x.ObjectTypeId == item.ObjectTypeId).ToList().AsQueryable();
-                list = await this.FilterQuery(item.RootFilter, list);
+                var filterResult = JsonConvert.DeserializeObject<RootFilter>(item.RootFilter ?? "");
+                var list = typechache.Where(x => x.Value.ObjectTypeId == item.ObjectTypeId && x.Key.Equals(filterResult)).Select(x => x.Value).ToList().AsQueryable();
+                if(list.Count() == 0)
+                {
+                   list = DbContext.ObjectType.Where(x => x.ObjectTypeId == item.ObjectTypeId).ToList().AsQueryable();
+                    list = await this.FilterQuery(item.RootFilter ?? "", list);
+
+                    foreach (var ch in list)
+                    {
+                        typechache.Add(filterResult,ch);
+                    }
+
+                }
                 var first = list.FirstOrDefault();
                 if(first != null)
                 {
@@ -1836,7 +1863,8 @@ namespace GenericDataStore.Controllers
             var charts = DbContext.Chart.Where(x => x.AppUserId == id && x.GroupId == null).ToList();
             foreach (var item in charts)
             {
-                RootFilter? filterResult = JsonConvert.DeserializeObject<RootFilter>(item.RootFilter);
+                RootFilter filterResult = JsonConvert.DeserializeObject<RootFilter>(item.RootFilter);
+                filterResult.ValueTake = 2000;
                 ChartInput chinput = new ChartInput()
                 {
                     Xcalculation = item.Xcalculation,
@@ -1853,7 +1881,8 @@ namespace GenericDataStore.Controllers
 
 
                 };
-                var chtype = await GenerateChart(chinput);
+                var objtype = typechache.FirstOrDefault(x => x.Key.Equals(chinput.Filter)).Value;
+                var chtype = await GenerateChart(chinput,false,objtype, typechache);
 
                 types.Add(new DashboardModel()
                 {
@@ -1873,6 +1902,8 @@ namespace GenericDataStore.Controllers
                 if (!types.Any(x => x?.ChartInput?.GroupId == item.GroupId))
                 {
                     RootFilter? filterResult = JsonConvert.DeserializeObject<RootFilter>(item.RootFilter);
+                    filterResult.ValueTake = 2000;
+
                     ChartInput chinput = new ChartInput()
                     {
                         Xcalculation = item.Xcalculation,
@@ -1889,7 +1920,8 @@ namespace GenericDataStore.Controllers
                         Colorcalculation = item.Colorcalculation,
 
                     };
-                    var chtype = await GenerateChart(chinput);
+                    var objtype = typechache.FirstOrDefault(x => x.Key.Equals(chinput.Filter)).Value;
+                    var chtype = await GenerateChart(chinput, false, objtype, typechache);
 
                     types.Add(new DashboardModel()
                     {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { FooterComponent } from '../footer/footer.component';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MessagesModule } from 'primeng/messages';
 import { ApiService } from '../../Services/api.service';
+import { Title, Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-contact',
@@ -20,10 +21,15 @@ import { ApiService } from '../../Services/api.service';
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.css'
 })
-export class ContactComponent {
+export class ContactComponent implements OnInit {
 
-  constructor(public apiService: ApiService, public messageService: MessageService) 
+  constructor(private titleService: Title,private meta: Meta,public apiService: ApiService, public messageService: MessageService) 
   {
+  }
+  ngOnInit(): void {
+    this.titleService.setTitle("Contact"); 
+    this.meta.updateTag({ name: 'description', content: "Contact" });
+    this.meta.updateTag({ name: 'keywords', content: "Contact" }); 
   }
 
   public name: string = '';

@@ -31,6 +31,7 @@ import { DatabaseCreateComponent } from '../database-create/database-create.comp
 import { DatabaseTablesComponent } from '../database-tables/database-tables.component';
 import { ObjecttypeCreateComponent } from '../objecttype-create/objecttype-create.component';
 import { AuthService } from '../../Services/auth.service';
+import { Title, Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-database-list',
@@ -46,7 +47,7 @@ import { AuthService } from '../../Services/auth.service';
 export class DatabaseListComponent implements OnInit {
 
 
-  constructor(public authService: AuthService,private confirmationService: ConfirmationService,public apiService: ApiService, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public messageService: MessageService) 
+  constructor(private titleService: Title,private meta: Meta,public authService: AuthService,private confirmationService: ConfirmationService,public apiService: ApiService, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public messageService: MessageService) 
   {
 
   }
@@ -63,6 +64,9 @@ export class DatabaseListComponent implements OnInit {
 
 
   ngOnInit() {
+    this.titleService.setTitle("Datasources"); 
+    this.meta.updateTag({ name: 'description', content: "Datasources" });
+    this.meta.updateTag({ name: 'keywords', content: "Datasources" });
     this.Refresh();
   }
 

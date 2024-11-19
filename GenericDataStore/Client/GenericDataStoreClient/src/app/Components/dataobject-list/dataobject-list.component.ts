@@ -46,6 +46,7 @@ import { CalculatedColorComponent } from '../calculated-color/calculated-color.c
 import { MessageEditComponent } from '../../User/message-edit/message-edit.component';
 import { Output, EventEmitter } from '@angular/core';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { Meta, Title } from '@angular/platform-browser';
 
 
 
@@ -118,7 +119,7 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
 ];
 
 
-  constructor(private confirmationService: ConfirmationService,public apiService: ApiService,protected route: ActivatedRoute, protected router: Router, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public messageService: MessageService) 
+  constructor(private titleService: Title,private meta: Meta,private confirmationService: ConfirmationService,public apiService: ApiService,protected route: ActivatedRoute, protected router: Router, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public messageService: MessageService) 
   {
 
   }
@@ -256,6 +257,10 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
      if(!this.data) {
        this.router.navigateByUrl('home');
      }
+     this.titleService.setTitle(this.data.name); 
+     this.meta.updateTag({ name: 'description', content: this.data.description });
+     this.meta.updateTag({ name: 'keywords', content: this.data.description });
+
      this.rootFilterData.emit(this.rootFilter);
      this.InitList();
      this.loading = false;   

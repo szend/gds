@@ -4,6 +4,7 @@ import { ApiService } from '../../Services/api.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Title, Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-confirmpayment',
@@ -15,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 export class ConfirmpaymentComponent implements OnInit {
 
   
-  constructor(public apiService: ApiService,protected route: ActivatedRoute, protected router: Router) 
+  constructor(private titleService: Title,private meta: Meta,public apiService: ApiService,protected route: ActivatedRoute, protected router: Router) 
   {
 
   }
@@ -24,6 +25,8 @@ export class ConfirmpaymentComponent implements OnInit {
   message : string = "";
 
   ngOnInit(): void {
+    this.titleService.setTitle("Confirm payment"); 
+
     if(localStorage.getItem('link')){
       localStorage.removeItem('link');
 

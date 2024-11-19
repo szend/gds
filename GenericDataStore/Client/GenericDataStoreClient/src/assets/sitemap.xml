@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap-image/1.1">  
+  <url>  
+    <loc>https://genericdatastore.com/</loc>  
+    <lastmod>2024-11-19</lastmod>  
+    <changefreq>weekly</changefreq>  
+    <priority>1.0</priority>  
+  </url>
+
+    <url>  
+    <loc>https://genericdatastore.com/home</loc>  
+    <lastmod>2024-11-19</lastmod>  
+    <changefreq>weekly</changefreq>  
+    <priority>1.0</priority>  
+  </url>  
+
+    <url>  
+    <loc>https://genericdatastore.com/price</loc>  
+    <lastmod>2024-11-19</lastmod>  
+    <changefreq>weekly</changefreq>  
+    <priority>0.5</priority>  
+  </url>
+
+
+
+
+      <url>  
+    <loc>https://genericdatastore.com/features</loc>  
+    <lastmod>2024-11-19</lastmod>  
+    <changefreq>weekly</changefreq>  
+    <priority>0.5</priority>  
+  </url>
+
+      <url>  
+    <loc>https://genericdatastore.com/contact</loc>  
+    <lastmod>2024-11-19</lastmod>  
+    <changefreq>weekly</changefreq>  
+    <priority>0.5</priority>  
+  </url>
+
+      <url>  
+    <loc>https://genericdatastore.com/c7b02f1e-3fe8-4676-0a95-08dd0305a75c/demo</loc>  
+    <lastmod>2024-11-19</lastmod>  
+    <changefreq>weekly</changefreq>  
+    <priority>0.5</priority>  
+  </url>
+
+        <url>  
+    <loc>https://genericdatastore.com/login</loc>  
+    <lastmod>2024-11-19</lastmod>  
+    <changefreq>weekly</changefreq>  
+    <priority>0.2</priority>  
+  </url>
+
+        <url>  
+    <loc>https://genericdatastore.com/register</loc>  
+    <lastmod>2024-11-19</lastmod>  
+    <changefreq>weekly</changefreq>  
+    <priority>0.2</priority>  
+  </url>
+  
+  
+   </urlset>  

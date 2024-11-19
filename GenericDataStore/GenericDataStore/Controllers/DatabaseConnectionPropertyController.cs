@@ -141,7 +141,7 @@ namespace GenericDataStore.Controllers
                         DenyExport = false,
                         DenyAdd = true,
                         NoFilterMenu = false,
-                        Private = false,
+                        Private = true,
                         Promoted = false,
                         TableName = item,
                         DatabaseConnectionPropertyId = dbid,
@@ -276,7 +276,7 @@ namespace GenericDataStore.Controllers
                             DenyExport = false,
                             DenyAdd = true,
                             NoFilterMenu = false,
-                            Private = false,
+                            Private = true,
                             Promoted = false,
                             TableName = desc.ClassName,
                             DatabaseConnectionPropertyId = dbid,
@@ -492,7 +492,7 @@ namespace GenericDataStore.Controllers
             }
             else
             {
-                var db = DbContext.DatabaseConnectionProperty.Where(x => x.AppUserId == user.Id);
+                var db = DbContext.DatabaseConnectionProperty.Where(x => x.AppUserId == user.Id && x.DatabaseType.ToLower() != "api");
                 return new JsonResult(db, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
             }
@@ -512,20 +512,29 @@ namespace GenericDataStore.Controllers
         [Authorize(Policy = "Full")]
         public async Task<IActionResult> ExecuteQuery(Guid dbid, string query)
         {
-            Guid? userid = this.DbContext.Users.FirstOrDefault(x => x.UserName == "admin")?.Id;
-            var db = DbContext.DatabaseConnectionProperty.FirstOrDefault(x => x.AppUserId == userid && x.DatabaseConnectionPropertyId == dbid);
-            if (db == null)
+            try
             {
-                return BadRequest("Database not found");
+                Guid? userid = this.DbContext.Users.FirstOrDefault(x => x.UserName == "admin")?.Id;
+                var db = DbContext.DatabaseConnectionProperty.FirstOrDefault(x => x.AppUserId == userid && x.DatabaseConnectionPropertyId == dbid);
+                if (db == null)
+                {
+                    return BadRequest("Database not found");
+                }
+                if (userid != null)
+                {
+                    Repository Repository = new Repository(db.ConnectionString, db.DatabaseType);
+
+                    string res = Repository.ExecuteQuery(query);
+                    return new JsonResult(res, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+                }
             }
-            if (userid != null)
+            catch (Exception e)
             {
-              Repository Repository = new Repository(db.ConnectionString, db.DatabaseType);
 
-              string res = Repository.ExecuteQuery(query);
-              return new JsonResult(res, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-
+                return new JsonResult(e.Message, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             }
+
 
             return BadRequest();
         }

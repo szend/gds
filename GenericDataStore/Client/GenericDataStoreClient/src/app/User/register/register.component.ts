@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../Services/api.service';
 import { CardModule } from 'primeng/card';
@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { Title, Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-register',
@@ -19,15 +20,20 @@ import { PasswordModule } from 'primeng/password';
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   public username : string | undefined;
   public password : string | undefined;
   public password2 : string | undefined;
   public email : string | undefined;
   
-  constructor(public apiService: ApiService,private router: Router,private messageService: MessageService ) 
+  constructor(private titleService: Title,private meta: Meta,public apiService: ApiService,private router: Router,private messageService: MessageService ) 
   {
   }
+  ngOnInit(): void {
+    this.titleService.setTitle("Register"); 
+    this.meta.updateTag({ name: 'description', content: "Register" });
+    this.meta.updateTag({ name: 'keywords', content: "Register" });
+    }
 
   Register(){
     if(this.password != this.password2){

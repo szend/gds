@@ -15,6 +15,6 @@ export const appConfig: ApplicationConfig = {
      provideHttpClient(
       withInterceptors([authInterceptor])
     ),
-    {provide: LocationStrategy, useClass: HashLocationStrategy}
+    // {provide: LocationStrategy, useClass: HashLocationStrategy}
      ]
 };

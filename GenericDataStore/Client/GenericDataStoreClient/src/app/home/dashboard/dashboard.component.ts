@@ -27,6 +27,7 @@ import { SpeedDialModule } from 'primeng/speeddial';
 import { Chart } from 'chart.js';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { Title, Meta } from '@angular/platform-browser';
 
 
 // declare var LeaderLine: any;
@@ -47,7 +48,7 @@ export class DashboardComponent  implements OnInit {
   textColorSecondary = this.documentStyle.getPropertyValue('--text-color-secondary');
   surfaceBorder = this.documentStyle.getPropertyValue('--surface-border');
   selectedNodes!: TreeNode[];
-  constructor(public apiService: ApiService, protected router: Router, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public authService: AuthService) 
+  constructor(private titleService: Title,private meta: Meta,public apiService: ApiService, protected router: Router, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public authService: AuthService) 
   {
   }
 
@@ -85,6 +86,9 @@ export class DashboardComponent  implements OnInit {
 
 
   ngOnInit() {
+    this.titleService.setTitle("Dashboard"); 
+    this.meta.updateTag({ name: 'description', content: "Dashboard" });
+    this.meta.updateTag({ name: 'keywords', content: "Dashboard" }); 
     this.Refresh()
   }
 

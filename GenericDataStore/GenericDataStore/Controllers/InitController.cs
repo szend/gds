@@ -51,36 +51,51 @@ namespace GenericDataStore.Controllers
         [HttpGet("migr/{psw}/{sec}")]
         public async Task<ContentResult> Migr(string? psw = "´", string? sec = " ", string? email = "admin@admin.admin")
         {
-            if(sec != "grtkkj6.A")
+            try
             {
-                return new ContentResult() {  };
-            }
-            var migrations = await DbContext.Database.GetPendingMigrationsAsync();
-            string mess = "";
-            if (migrations.Any())
-            {
-                Logger.LogWarning("InitDatabase.Migrate");
-                await DbContext.Database.MigrateAsync();
-                mess += "Migration done. ";
-            }
-
-
-
-            if (psw != "" && !await this.userManager.Users.AnyAsync(e => e.NormalizedUserName == "ADMIN"))
-            {
-                psw = this.EncodePassword(psw);
-                AppUser admin = new AppUser() { UserName = "admin", AllowedDataCount = 999999999, AllowedListCount= 999999999,AllowedExternalDataCount = 999999999, PasswordHash = psw, Email = email };
-                var result = await this.userManager.CreateAsync(admin);
-
-                if (!result.Succeeded)
+                if (sec != "grtkkj6.A")
                 {
-                    return new ContentResult() { Content = mess };
+                    return new ContentResult() { };
                 }
-                DbContext.SaveChanges();
-                mess += "Admin user created. ";
+                var migrations = await DbContext.Database.GetPendingMigrationsAsync();
+                string mess = "";
+                if (migrations.Any())
+                {
+                    Logger.LogWarning("InitDatabase.Migrate");
+                    await DbContext.Database.MigrateAsync();
+                    mess += "Migration done. ";
+                }
+
+
+
+                if (psw != "" && !await this.userManager.Users.AnyAsync(e => e.NormalizedUserName == "ADMIN"))
+                {
+                    psw = this.EncodePassword(psw);
+                    AppUser admin = new AppUser() { UserName = "admin", AllowedDataCount = 999999999, AllowedListCount = 999999999, AllowedExternalDataCount = 999999999, PasswordHash = psw, Email = email };
+                    var result = await this.userManager.CreateAsync(admin);
+
+                    if (!result.Succeeded)
+                    {
+                        return new ContentResult() { Content = mess };
+                    }
+                    DbContext.SaveChanges();
+                    mess += "Admin user created. ";
+                }
+
+                return new ContentResult() { Content = mess };
+
+            }
+            catch (Exception e)
+            {
+
+                return new ContentResult() { Content = e.Message +".........."+
+                    e.Source + "........." +
+                    e.StackTrace
+                
+            };
             }
 
-            return new ContentResult() { Content = mess };
+
         }
 
     }

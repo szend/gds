@@ -10,6 +10,7 @@ import { RootFilter } from '../../Models/Parameters';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputTextModule } from 'primeng/inputtext';
 import { TabViewModule } from 'primeng/tabview';
+import { Title, Meta } from '@angular/platform-browser';
 
 
 
@@ -21,13 +22,16 @@ import { TabViewModule } from 'primeng/tabview';
   styleUrl: './list-view.component.css'
 })
 export class ListViewComponent implements OnInit{
-  constructor(protected route: ActivatedRoute,public apiService: ApiService, protected router: Router) 
+  constructor(private titleService: Title,private meta: Meta,protected route: ActivatedRoute,public apiService: ApiService, protected router: Router) 
   {
   }
 
   public loading: boolean = false;
 
   ngOnInit(): void {
+    this.titleService.setTitle("GenericDataStore"); 
+    this.meta.updateTag({ name: 'description', content: "List view" });
+    this.meta.updateTag({ name: 'keywords', content: "list view" });
     this.route.paramMap.subscribe(params => {     
       this.category = params.get("category");
       this.Refresh();

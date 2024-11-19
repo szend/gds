@@ -19,6 +19,7 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { ScrollTopModule } from 'primeng/scrolltop';
 import { ContactComponent } from './contact/contact.component';
 import { DataobjectListComponent } from '../Components/dataobject-list/dataobject-list.component';
+import { Meta, Title } from '@angular/platform-browser';
 
 
 
@@ -35,7 +36,7 @@ import { DataobjectListComponent } from '../Components/dataobject-list/dataobjec
 })
 export class HomeComponent implements OnInit {
 
-  constructor(public apiService: ApiService, protected router: Router, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public authService: AuthService) 
+  constructor(private titleService: Title,private meta: Meta,public apiService: ApiService, protected router: Router, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,public authService: AuthService) 
   {
   }
 
@@ -44,26 +45,18 @@ export class HomeComponent implements OnInit {
   public loggedin : boolean = true;
   @ViewChild('list', {static: false}) list: ListViewComponent | undefined;
 
-  replacetexts : any[] = [
-    {text : "Replace your unreadable API response", src: "assets/demoimg/apiresponse.png"},
-    {text : "Replace your Excel file", src: "assets/demoimg/Excel.png"},
-    {text : "Replace your complex SQL query", src: "assets/demoimg/sql.png"}
-  ];
 
-  withtexts : any[] = [
-    {text : "Manageable list", src: "assets/demoimg/table.gif"},
-    {text : "Live dashboard", src: "assets/demoimg/dashboard.gif"},
-    {text : "Auto generated and custom chart", src: "assets/demoimg/charts.gif"}
-  ]
+  key : string = "generic, data, store, genericdatastore, generic data store, database editor, without sql, edit database, edit database without sql, database, database tool, store data online, online data, manage database, connect database, analyse data, data analysis, database chart, create ai, ai data analysis, online database editor, online database editor without sql, store data online free, edit data online free, connect database online, edit database online, create relation between tables with different database. create relation between database tables with different database online"
 
-  replacetext : string = this.replacetexts[0].text;
-  withtext : string = this.withtexts[0].text;
-  replacesrc : string = this.replacetexts[0].src;
-  withsrc : string = this.withtexts[0].src;
+  desc : string = "Database editor tool. Manage and analyse your data online without sql. Connnect your databases, edit, create, delete data and tables, see chart, create calculated field and coloring, use built in AI tools."
+
 
   repidx = 1;
   withidx = 1;
   ngOnInit() {
+    this.titleService.setTitle("GenericDataStore"); 
+    this.meta.updateTag({ name: 'description', content: this.desc });
+    this.meta.updateTag({ name: 'keywords', content: this.key });
     gsap.registerPlugin(ScrollTrigger,ScrollToPlugin);
     
     let items = gsap.utils.toArray(".items"),

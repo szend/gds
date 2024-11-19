@@ -11,6 +11,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DataobjectEditComponent } from '../../Components/dataobject-edit/dataobject-edit.component';
 import { MessageEditComponent } from '../message-edit/message-edit.component';
 import { FieldsetModule } from 'primeng/fieldset';
+import { Title, Meta } from '@angular/platform-browser';
 
 
 @Component({
@@ -22,7 +23,7 @@ import { FieldsetModule } from 'primeng/fieldset';
   styleUrl: './message.component.css'
 })
 export class MessageComponent implements OnInit {
-  constructor( public apiService: ApiService, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,private messageService: MessageService) 
+  constructor( private titleService: Title,private meta: Meta,public apiService: ApiService, protected changeDetector: ChangeDetectorRef, protected dialogService: DialogService,private messageService: MessageService) 
   {
   }
 
@@ -32,6 +33,9 @@ export class MessageComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.titleService.setTitle("Messages"); 
+    this.meta.updateTag({ name: 'description', content: "Messages" });
+    this.meta.updateTag({ name: 'keywords', content: "Messages" });  
     this.Refresh();
   }
 

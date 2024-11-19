@@ -11,6 +11,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DataobjectEditComponent } from '../../Components/dataobject-edit/dataobject-edit.component';
 import { FooterComponent } from '../footer/footer.component';
+import { Title, Meta } from '@angular/platform-browser';
 
 
 @Component({
@@ -22,7 +23,7 @@ import { FooterComponent } from '../footer/footer.component';
   styleUrl: './searchview.component.css'
 })
 export class SearchviewComponent implements OnInit{
-  constructor(protected route: ActivatedRoute,public apiService: ApiService, protected router: Router, protected dialogService: DialogService) 
+  constructor(private titleService: Title,private meta: Meta,protected route: ActivatedRoute,public apiService: ApiService, protected router: Router, protected dialogService: DialogService) 
   {
   }
 
@@ -33,6 +34,9 @@ export class SearchviewComponent implements OnInit{
   ref: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
+    this.titleService.setTitle("GenericDataStore"); 
+    this.meta.updateTag({ name: 'description', content: "Search" });
+    this.meta.updateTag({ name: 'keywords', content: "Search, data, find" });
     this.route.paramMap.subscribe(params => {     
       this.searchstring = params.get("searchstring");
       this.Refresh();

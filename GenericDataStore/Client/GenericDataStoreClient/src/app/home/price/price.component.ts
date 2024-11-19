@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FooterComponent } from '../footer/footer.component';
 import { ApiService } from '../../Services/api.service';
+import { Title, Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-price',
@@ -16,11 +17,16 @@ import { ApiService } from '../../Services/api.service';
   templateUrl: './price.component.html',
   styleUrl: './price.component.css'
 })
-export class PriceComponent {
+export class PriceComponent implements OnInit {
 
-  constructor(protected router: Router,public apiService: ApiService) 
+  constructor(private titleService: Title,private meta: Meta,protected router: Router,public apiService: ApiService) 
   {
 
+  }
+  ngOnInit(): void {
+    this.titleService.setTitle("Price"); 
+    this.meta.updateTag({ name: 'description', content: "Price" });
+    this.meta.updateTag({ name: 'keywords', content: "Price" });
   }
 
   options : string = "intro";

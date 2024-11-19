@@ -12,6 +12,7 @@ import { MessagesModule } from 'primeng/messages';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MenuComponent } from '../../../menu/menu.component';
 import { FooterComponent } from '../../home/footer/footer.component';
+import { Title, Meta } from '@angular/platform-browser';
 
 
 @Component({
@@ -27,11 +28,14 @@ export class LoginComponent implements OnInit {
   public password : string | undefined;
   public loading : boolean = false;
 
-  constructor(public authService: AuthService,private router: Router,private messageService: MessageService ) 
+  constructor(private titleService: Title,private meta: Meta,public authService: AuthService,private router: Router,private messageService: MessageService ) 
   {
   }
 
   ngOnInit() {
+    this.titleService.setTitle("Login"); 
+    this.meta.updateTag({ name: 'description', content: "Login" });
+    this.meta.updateTag({ name: 'keywords', content: "Login" });
     if(!localStorage.getItem("firstload")){
       //location.reload();
       localStorage.setItem("firstload","true");

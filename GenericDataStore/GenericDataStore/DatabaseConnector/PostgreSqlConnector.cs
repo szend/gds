@@ -427,7 +427,7 @@ WHERE constraint_type = 'PRIMARY KEY' and tc.table_name = '"+ name + @"') THEN '
     else ''
     end 
  ||
-' [FieldName(" + "\"" + "' + column_name +" + "'\"" + @")] '
+' [FieldName(" + "\"" + "' || column_name || " + " '\"" + @")] '
 ||
 'public ' ||
   case

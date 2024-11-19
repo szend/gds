@@ -11,10 +11,10 @@ namespace GenericDataStore.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "PropertyName",
-                table: "Field",
-                newName: "SizeMethod");
+            //migrationBuilder.RenameColumn(
+            //    name: "PropertyName",
+            //    table: "Field",
+            //    newName: "SizeMethod");
 
             migrationBuilder.AddColumn<string>(
                 name: "Color",
@@ -27,6 +27,12 @@ namespace GenericDataStore.Migrations
                 name: "DefaultOrder",
                 table: "Field",
                 type: "tinyint(1)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "SizeMethod",
+                table: "Field",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
