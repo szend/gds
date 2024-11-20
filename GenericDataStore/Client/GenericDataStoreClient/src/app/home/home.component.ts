@@ -57,6 +57,9 @@ export class HomeComponent implements OnInit {
     this.titleService.setTitle("GenericDataStore"); 
     this.meta.updateTag({ name: 'description', content: this.desc });
     this.meta.updateTag({ name: 'keywords', content: this.key });
+
+
+  
     gsap.registerPlugin(ScrollTrigger,ScrollToPlugin);
     
     let items = gsap.utils.toArray(".items"),
@@ -99,19 +102,6 @@ items.forEach((container : any, i) => {
 
 });
 
-
-// gsap.from("#zoom-out h2", {
-//   scale: 930, stagger: 0.25, duration: 3,
-//   scrollTrigger: {
-//       trigger: "#zoom-out",
-//       pin: true,
-//       end: `+=${innerHeight * 1.3}`,
-//       scrub: 3,
-//       markers: false
-//   }
-// });
-
-// zoom-in
 gsap.to("#zoom-in h2", {
   scale: 600, stagger: 0.25, duration: 3,
   scrollTrigger: {
