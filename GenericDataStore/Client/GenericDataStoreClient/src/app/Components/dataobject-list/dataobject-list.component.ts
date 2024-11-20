@@ -95,7 +95,7 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
 
 
   public data: any = {denyAdd : true, denyExport: true, denyChart: true, allUserFullAccess: false, noFilterMenu: false, field: [], dataObject: [], count: 0, objectTypeId: ""};
-  public defaultcount : number = 100;
+  public defaultcount : number = 25;
   public fields : any[] = [];
   public selectedColumns : any[] = [];
   public originalfields : any[] = [];

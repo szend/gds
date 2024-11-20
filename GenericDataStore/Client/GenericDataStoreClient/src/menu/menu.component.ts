@@ -151,7 +151,7 @@ export class MenuComponent {
   }
 
   Conntact(){
-    this.router.navigateByUrl('conntact');
+    this.router.navigateByUrl('contact');
   }
 
   Subscriptions(){
