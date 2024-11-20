@@ -25,14 +25,14 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
-    option.UseSqlServer("Name=ConnectionStrings:Db");
+    // option.UseSqlServer("Name=ConnectionStrings:Db");
 
     //option.UseMySql("Server=localhost;Database=mysql;User ID=root;Password=;Port=3306;",
     //   ServerVersion.AutoDetect("Server=localhost;Database=mysql;User ID=root;Password=;Port=3306;"));
 
 
-    //option.UseMySql("SSL Mode=Required;Server=mysql-3e45a36c-gdsdatabase.c.aivencloud.com;Database=defaultdb;User=avnadmin;Password=AVNS_VjKtKwWLTnm6d65ufau;port=11348;SslMode=Required;SslCa=DigiCertGlobalRootCA.crt.pem;Allow User Variables=true;",
-    //   ServerVersion.AutoDetect("SSL Mode=Required;Server=mysql-3e45a36c-gdsdatabase.c.aivencloud.com;Database=defaultdb;User=avnadmin;Password=AVNS_VjKtKwWLTnm6d65ufau;port=11348;SslMode=Required;SslCa=DigiCertGlobalRootCA.crt.pem;Allow User Variables=true"));
+    option.UseMySql("SSL Mode=Required;Server=mysql-3e45a36c-gdsdatabase.c.aivencloud.com;Database=defaultdb;User=avnadmin;Password=AVNS_VjKtKwWLTnm6d65ufau;port=11348;SslMode=Required;SslCa=DigiCertGlobalRootCA.crt.pem;Allow User Variables=true;",
+       ServerVersion.AutoDetect("SSL Mode=Required;Server=mysql-3e45a36c-gdsdatabase.c.aivencloud.com;Database=defaultdb;User=avnadmin;Password=AVNS_VjKtKwWLTnm6d65ufau;port=11348;SslMode=Required;SslCa=DigiCertGlobalRootCA.crt.pem;Allow User Variables=true"));
 
 
 
