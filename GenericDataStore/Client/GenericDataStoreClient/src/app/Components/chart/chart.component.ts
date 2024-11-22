@@ -560,7 +560,6 @@ CreateChartBool(){
 }
 
 CreateChartSetup(element : any) : any[]{
-    console.log(element);
     if(element.chartdatas != undefined){
        return element.chartdatas;
     }
@@ -578,7 +577,6 @@ CreateChartSetup(element : any) : any[]{
                 step: element.datasets[0].stepped != undefined ? element.datasets[0].stepped.toString() : null,
                 stacked : element.datasets[0].stacked != undefined ? element.datasets[0].stacked : false,
             }];
-            console.log(res);
             return res;
         
     }
@@ -888,7 +886,6 @@ ChartClickOption(event: {element:{ datasetIndex: number, index : number}},chart:
     if(this.id){
         localStorage.setItem('id', this.id);
     }
-    console.log(this.private);
     if(this.private){
         localStorage.setItem('private', this.private.toString());
     }

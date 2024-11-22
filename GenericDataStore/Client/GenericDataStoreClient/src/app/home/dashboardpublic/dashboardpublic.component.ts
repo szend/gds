@@ -209,7 +209,6 @@ this.apiService.RemoveFromDashboardChart(element.chartInput.id).subscribe(x => {
   scrollRight(){
     if(this.widgetsContent)
     this.widgetsContent.nativeElement.scrollLeft += 150;
-  console.log('df');
   }
 
   scrollLeft2(){
@@ -220,7 +219,6 @@ this.apiService.RemoveFromDashboardChart(element.chartInput.id).subscribe(x => {
   scrollRight2(){
     if(this.widgetsContent2)
     this.widgetsContent2.nativeElement.scrollLeft += 150;
-    console.log('df');
 
   }
 
@@ -274,7 +272,6 @@ this.apiService.RemoveFromDashboardChart(element.chartInput.id).subscribe(x => {
     this.data[old_index] = newdata;
     this.data[new_index] = olddata;
 
-    console.log(this.data);
 
     this.CreateMenu();
 
@@ -282,7 +279,6 @@ this.apiService.RemoveFromDashboardChart(element.chartInput.id).subscribe(x => {
 
 SaveDashboard(){
   this.data.forEach(element => {
-    console.log(element);
     if(element.type == 'table'){
       this.apiService.SaveDashboard(element.objectType.dashboardTableId,element.size,element.position).subscribe(x => {
 
@@ -298,7 +294,6 @@ SaveDashboard(){
   dragchart : any | undefined;
   connections: any[] = [];
 dragStart(chart: any) {
-  console.log(this.dragchart);
 
     this.dragchart = chart;
 }
@@ -338,13 +333,11 @@ droptoChart(tochart : any) {
       type: this.dragchart.chartInput.type
     }
     tochart.chart.datasets.push(dset);   
-    console.log(element2);
           
 });
   // tochart.chart.datasets.push(this.dragchart.chart.datasets[0]);
   if(tochart.chartInput.type == 'pie' || tochart.chartInput.type == 'doughnut' || tochart.chartInput.type == 'polarArea'){
     tochart.chartInput.combined = true;
-    console.log(tochart.chartInput);
   }
   this.ReloadChart(tochart);
 }
@@ -417,8 +410,6 @@ ChangeChartType(event: any,chart: any, i: number,child : boolean = false){
       this.optionsopt.scales = {x: this.optionsnum.scales.x, y: this.optionsnum.scales.y};       
   if(chart.datasets?.length > 0){
       chart.datasets.forEach((element: any) => {
-          console.log(element);
-          console.log(event);
           element.type = event.value.value;
       });
   }
@@ -440,7 +431,6 @@ HideLabels(){
 }
 
 RefreshChartByChart(event : any, table : any){
-  console.log(event);
    var ch = this.data.find(x => x.chartInput.id == event.chartInput.id).chart = event.chart;
 
 
@@ -456,8 +446,6 @@ ChartClickOption(event: {element:{ datasetIndex: number, index : number}},chart:
   let tableconections = this.connections.filter(x => x.chart == chart.chartInput.id);
 
   tableconections.forEach(element => {
-        console.log(filter);
-        console.log(chart.chart.privateobject)
 
         var valueflter = chart.chart.labels[event.element.index].toString();
         var list = this.dataobjectlist?.find(x => x.data.dashboardTableId == element.table);
@@ -488,19 +476,16 @@ ChartClickOption(event: {element:{ datasetIndex: number, index : number}},chart:
 }
 
 ChartClickNum(event: any,chart: any, i: number){
-console.log(event);
-console.log(chart);
+
 
   var filter = chart.chartInput.filter;
 
   let tableconections = this.connections.filter(x => x.chart == chart.chartInput.id);
 
   tableconections.forEach(element => {
-        console.log(filter);
-        console.log(chart.chart.privateobject)
+
 
         var valueflter = chart.chart.datasets[event.element.datasetIndex].data[event.element.index].toString();
-        console.log(valueflter);
         var list = this.dataobjectlist?.find(x => x.data.dashboardTableId == element.table);
         if(list){
           let tableconections = this.connections.filter(x => x.table == element.table).map(x => x.chart);
@@ -563,7 +548,6 @@ public optionsoptcombined = {
       legend: {
         labels: {
           generateLabels: function(chart : any) {
-            console.log(chart);
             // Get the default label list
             const original = Chart.overrides.pie.plugins.legend.labels.generateLabels;
             const labelsOriginal : any = original.call(this, chart);

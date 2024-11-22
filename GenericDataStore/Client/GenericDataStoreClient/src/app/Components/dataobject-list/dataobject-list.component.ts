@@ -140,7 +140,6 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
   }
 
    Refresh(full: boolean = true) {
-    console.log("refresh");
     this.loading = true;
     if(full){
       this.rootFilter.filters = [];
@@ -154,7 +153,6 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
     if(this.child){
       if(this.parentdataid == null || this.parentdataid == undefined){
         this.rootFilter.valueFilters.push({ field: 'ParentDataObjectId', operator: this.parenttypeid, value: this.parentrow });
-        console.log(this.parentfilter);
 
         if(this.parentfilter){
           this.rootFilter.parentValueFilters = this.parentfilter.valueFilters;
@@ -179,7 +177,6 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
           this.table?.clear();
     
          }
-         console.log(this.private);
          this.InitData(this.private ?? false)
       }
       else{
@@ -226,10 +223,8 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
     if(localStorage.getItem('name')){
       this.name = localStorage.getItem('name') ?? "";
     }
-    console.log(privatelist);
     this.rootFilter.filters.push({ field: 'Name', operator: 'equals', value: this.name });
     this.rootFilter.filters.push({ field: 'ObjectTypeId', operator: 'equals', value: this.id });
-    console.log(this.id);
     localStorage.removeItem('name');
      localStorage.removeItem('id');
 
@@ -248,7 +243,6 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
       if(x.length == 0){
         this.loading = false;
       }
-      console.log(x);
       var dashboardid = this.data?.dashboardTableId;
      this.data = x[0];
      this.data.dashboardTableId = dashboardid;
@@ -274,7 +268,6 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
   }
 
   DashboardRefresh(chart : any, value : any, connectedcharts : any[],datalabel : any = null){
-    console.log(chart);
     this.loading = true;
     chart.charts = connectedcharts;
     this.apiService.GetTypeByChart(chart,this.private ?? false,value,datalabel).subscribe(x =>{
@@ -285,8 +278,7 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
      this.data = x.type;
      this.data.dashboardTableId = dashboardid;
      this.count = x.type.count;
-     console.log(x);
-     console.log(chart);
+
      
 
      this.InitList();
@@ -317,7 +309,6 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
     this.fields =((this.data.field as object as any[]).map(y => {
       return{field: y.name, header: y.name, type: y.type, option: y.option, visible: y.visible}
     }));
-    console.log(this.fields);
     this.selectedColumns = this.fields.filter(x => x.visible == false || x.visible == undefined || x.visible == null);
     this.originalfields =((this.data.field as object as any[]).map(y => {
      return{field: y.name, header: y.name, type: y.type, option: y.option, visible: y.visible}
@@ -526,7 +517,6 @@ export class DataobjectListComponent  implements OnInit, AfterViewInit {
     this.loading = true;
     this.apiService.ChartData(this.rootFilter).subscribe(x => {
       this.loading = false;
-      console.log(this.private);
       this.ref = this.dialogService.open(ChartComponent,  { data: {fields: this.fields ,filter : this.rootFilter,dataRec: x, name : this.name,id: this.id, private: this.private}, header: 'Chart', resizable: true});
       this.ref.onClose.subscribe(x => {
        // this.Refresh();

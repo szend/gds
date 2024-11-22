@@ -163,14 +163,12 @@ conoperators: any[] | undefined = [
     this.typeoptions = this.config.data.typeoptions;
     this.optionsnum = this.config.data.options;
     this.selectedoption = this.typeoptions[0];
-    console.log(this.fields);
 
   }
 
 
   AddOperator(op : any, tostring: string | undefined = "x", xcalc : boolean = true) : string | undefined{
     if(tostring != "x"){
-      console.log(tostring);
       tostring += this.conselectedoperator.code;
       this.conselectedoperator = undefined;
       return tostring;
@@ -217,7 +215,6 @@ conoperators: any[] | undefined = [
     }
 
     constring = this.AddOperator(null,constring);
-console.log(this.connecfunccon2);
     if(this.manualcon2){
       constring = this.AddManual(constring, false);
     }
@@ -295,7 +292,6 @@ console.log(this.connecfunccon2);
   }
 
   AddFromTable(tostring : string | undefined = "x", part1 : boolean | undefined = undefined, xcalc : boolean = true) : string | undefined{
-    console.log(part1);
     if(tostring != "x"){
       if(part1 == true){
         if(this.chldorparntcon1.name == 'child'){

@@ -161,21 +161,30 @@ namespace GenericDataStore.DatabaseConnector
             var res = obj.Value.FirstOrDefault(x => x.Name == field.Name).ValueString;
             if(res == null)
             {
-                return "''";
+                return "'NULL'";
             }
             if(field.Type == "date")
             {
                 if(res == "NA")
                 {
-                    return "''";
+                    return "'NULL'";
                 }
                 try
                 {
-                    return $"'{res?.Split('.')[2] + "." + res.Split('.')[1] + "." + res.Split('.')[0]}'";
+                    if(res.Length > 10)
+                    {
+                        var splitted = res.Split(' ');
+                        return $"'{splitted[0].Split('.')[2] + "." + splitted[0].Split('.')[1] + "." + splitted[0].Split('.')[0] + " " + splitted[1]}'";
+
+                    }
+                    else
+                    {
+                        return $"'{res?.Split('.')[2] + "." + res.Split('.')[1] + "." + res.Split('.')[0]}'";
+                    }
                 }
                 catch (Exception)
                 {
-                    return "''";
+                    return "'NULL'";
                 }
             }
             else if (field.Type == "numeric")
@@ -187,7 +196,7 @@ namespace GenericDataStore.DatabaseConnector
                 catch (Exception)
                 {
 
-                    return "''";
+                    return "'NULL'";
                 }
                 return res?.Replace(",",".");
             }
@@ -241,7 +250,7 @@ namespace GenericDataStore.DatabaseConnector
             foreach (var item in typ.Field.Where(x => x.Name != "AppUserId" && x.Name != "DataObjectId" && x.Type != "id" && !x.Type.Contains("calculated")))
             {
                 var valuesstring = GetValueString(item, obj);
-                if (valuesstring != "''")
+                if (valuesstring != "'NULL'")
                 {
                     if(sqltype == "mysql")
                     {

@@ -31,7 +31,7 @@
             <tr (dblclick)="Edit(row)" [pContextMenuRow]="row">
                 <td *ngFor="let col of columns; index as i">
                     <label >
-                     {{ row[col.field]}}
+                     {{col.header == 'ConnectionString' ? '******' :  row[col.field]}}
                     </label>
                     <!-- <label *ngIf="col.type == 'boolean'">
                         <i  *ngIf="getValue(row.value, col) == 'true' ||getValue(row.value, col) == 'True' || getValue(row.value, col) == true" class="pi pi-check" style="font-size: 1rem"></i>

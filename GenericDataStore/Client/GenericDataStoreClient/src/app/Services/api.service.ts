@@ -12,8 +12,6 @@ export class ApiService {
 
  baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
 
- // baseUrl: string = "https://gds-bkbnb8b0dhaxf2hu.eastus-01.azurewebsites.net/api";
-
   constructor(public http: HttpClient) { }
 
   AddToDashboard(dashtable : any):Observable<any> {

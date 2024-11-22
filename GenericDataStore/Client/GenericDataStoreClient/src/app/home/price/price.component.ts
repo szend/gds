@@ -42,7 +42,6 @@ export class PriceComponent implements OnInit {
   }
 
   Select(link : string){
-    console.log(link);
     localStorage.setItem('link',link)
   
     window.open(link, '_blank');

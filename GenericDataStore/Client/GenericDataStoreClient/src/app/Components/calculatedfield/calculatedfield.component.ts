@@ -182,7 +182,6 @@ calculationString : string = "";
 
   AddOperator(op : any, tostring: string | undefined = "x") : string | undefined{
     if(tostring != "x"){
-      console.log(tostring);
       tostring += this.conselectedoperator.code;
       this.conselectedoperator = undefined;
       return tostring;
@@ -216,7 +215,6 @@ calculationString : string = "";
     }
 
     constring = this.AddOperator(null,constring);
-console.log(this.connecfunccon2);
     if(this.manualcon2){
       constring = this.AddManual(constring, false);
     }
@@ -270,7 +268,6 @@ console.log(this.connecfunccon2);
   }
 
   AddFromTable(tostring : string | undefined = "x", part1 : boolean | undefined = undefined) : string | undefined{
-    console.log(part1);
     if(tostring != "x"){
       if(part1 == true){
         if(this.chldorparntcon1.name == 'child'){
@@ -378,7 +375,6 @@ console.log(this.connecfunccon2);
 
   RemoveFromCalc(event : any){
     var lastcalc : string | undefined = this.calculationString.split(' ').filter(x => x != ' ' && x != '').pop();
-    console.log(lastcalc);
     if(lastcalc){
     this.calculationString = this.calculationString.replace(lastcalc,'');
     }

@@ -46,17 +46,11 @@ export class HomeComponent implements OnInit {
   @ViewChild('list', {static: false}) list: ListViewComponent | undefined;
 
 
-  key : string = "generic, data, store, genericdatastore, generic data store, database editor, without sql, edit database, edit database without sql, database, database tool, store data online, online data, manage database, connect database, analyse data, data analysis, database chart, create ai, ai data analysis, online database editor, online database editor without sql, store data online free, edit data online free, connect database online, edit database online, create relation between tables with different database. create relation between database tables with different database online"
-
-  desc : string = "Database editor tool. Manage and analyse your data online without sql. Connnect your databases, edit, create, delete data and tables, see chart, create calculated field and coloring, use built in AI tools."
-
-
   repidx = 1;
   withidx = 1;
   ngOnInit() {
-    this.titleService.setTitle("GenericDataStore"); 
-    this.meta.updateTag({ name: 'description', content: this.desc });
-    this.meta.updateTag({ name: 'keywords', content: this.key });
+    this.titleService.setTitle("GenericDataStore - Online NoSQL Solution"); 
+
 
 
   

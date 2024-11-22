@@ -29,8 +29,8 @@ export class ListViewComponent implements OnInit{
   public loading: boolean = false;
 
   ngOnInit(): void {
-    this.titleService.setTitle("GenericDataStore"); 
-    this.meta.updateTag({ name: 'description', content: "List view" });
+    this.titleService.setTitle("GenericDataStore - Online NoSQL Solution"); 
+        this.meta.updateTag({ name: 'description', content: "List view" });
     this.meta.updateTag({ name: 'keywords', content: "list view" });
     this.route.paramMap.subscribe(params => {     
       this.category = params.get("category");
@@ -56,7 +56,7 @@ export class ListViewComponent implements OnInit{
 
     this.apiService.GetTypeByFilter(this.rootFilter).subscribe(x => {
       this.types = x;
-      console.log(x);
+
       loading1 = false;
       if(!loading1 && !loading2){
         this.loading = false;
@@ -65,7 +65,7 @@ export class ListViewComponent implements OnInit{
 
     this.apiService.GetAllPublicDashboard().subscribe(x => {
       this.dashboards = x;
-      console.log(x);
+
       loading2 = false;
       if(!loading1 && !loading2){
         this.loading = false;

@@ -217,7 +217,15 @@ WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='" + dbname + "'";
                 {
                     if(filter == null  || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
                     {
-                        oString += " Order By " + "[" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "]";
+                        if(objtype.Field.FirstOrDefault(x => x.Type == "id") == null)
+                        {
+                            oString += " Order By " + "[" + objtype.Field.FirstOrDefault().Name + "]";
+                        }
+                        else
+                        {
+                            oString += " Order By " + "[" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "]";
+
+                        }
                     }
                     oString += @" OFFSET " + filter.ValueSkip + " ROWS FETCH NEXT " + filter.ValueTake + " ROWS ONLY";
                 }
@@ -225,7 +233,15 @@ WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='" + dbname + "'";
                 {
                     if (filter == null || filter.ValueSortingParams == null || !filter.ValueSortingParams.Any())
                     {
-                        oString += " Order By " + "[" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "]";
+                        if (objtype.Field.FirstOrDefault(x => x.Type == "id") == null)
+                        {
+                            oString += " Order By " + "[" + objtype.Field.FirstOrDefault().Name + "]";
+                        }
+                        else
+                        {
+                            oString += " Order By " + "[" + objtype.Field.FirstOrDefault(x => x.Type == "id").Name + "]";
+
+                        }
                     }
                     oString += @" OFFSET " + filter.ValueSkip + " ROWS FETCH NEXT " + filter.ValueTake + " ROWS ONLY";
                 }

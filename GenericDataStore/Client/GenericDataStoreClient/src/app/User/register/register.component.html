@@ -1,7 +1,7 @@
 <div style="padding: 2rem; height: 100rem;" class="card flex justify-content-center">
-    <p-card  [style]="{ width: '360px', padding: '2rem' }">
+    <p-card  [style]="{ width: '360px', padding: '2rem', 'background-image': 'repeating-linear-gradient( 124.02deg, #f3bd75, hsl(0, 0%, 39%))' }">
         <ng-template pTemplate="header">
-            <h1>Register</h1>
+            <h1 style="color: black;">Register</h1>
         </ng-template>
         <div style="display: grid;">
             <label>User Name</label>
@@ -29,7 +29,7 @@
             <p-button label="Register" (onClick)="Register()"></p-button>
             <br>
             <br>
-            <label> By clicking "Register", you agree to the GenericDataStore <a href="/#/termsofuse">Terms of use</a> and <a href="/#/dataprotection">Privacy Policy</a>.</label>
+            <label> By clicking "Register", you agree to the GenericDataStore <a href="/termsofuse">Terms of use</a> and <a href="/dataprotection">Privacy Policy</a>.</label>
         </ng-template>
     </p-card>
 </div>

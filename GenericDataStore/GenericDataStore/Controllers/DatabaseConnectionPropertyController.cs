@@ -489,13 +489,13 @@ namespace GenericDataStore.Controllers
             if(user.UserName.ToLower() == "admin")
             {
                 var db = DbContext.DatabaseConnectionProperty;
-                await db.ForEachAsync(x => x.ConnectionString = "**************");
+
                 return new JsonResult(db, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             }
             else
             {
                 var db = DbContext.DatabaseConnectionProperty.Where(x => x.AppUserId == user.Id);
-                await db.ForEachAsync(x => x.ConnectionString = "**************");
+
                 return new JsonResult(db, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
             }

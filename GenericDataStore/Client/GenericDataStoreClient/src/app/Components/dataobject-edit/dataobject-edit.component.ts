@@ -101,7 +101,6 @@ export class DataobjectEditComponent implements OnInit {
       let filter : RootFilter = {parentValueSortingParams: [],parentValueFilters: [],valueFilters: [], valueSkip:0,valueTake:0,valueSortingParams:[],skip:0,take:0,logic:'and',sortingParams:[], filters:[{ field: 'ParentObjectTypeId', operator: 'equals', value: this.parentid }]}
       this.apiService.GetChildTypeByFilter(filter).subscribe(x =>{
         this.childlist = x;
-        console.log(this.childlist);
         this.loading = false;
       })
     }

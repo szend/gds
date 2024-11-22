@@ -34,8 +34,8 @@ export class SearchviewComponent implements OnInit{
   ref: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
-    this.titleService.setTitle("GenericDataStore"); 
-    this.meta.updateTag({ name: 'description', content: "Search" });
+    this.titleService.setTitle("GenericDataStore - Online NoSQL Solution"); 
+        this.meta.updateTag({ name: 'description', content: "Search" });
     this.meta.updateTag({ name: 'keywords', content: "Search, data, find" });
     this.route.paramMap.subscribe(params => {     
       this.searchstring = params.get("searchstring");

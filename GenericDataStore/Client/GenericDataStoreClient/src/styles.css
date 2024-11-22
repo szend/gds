@@ -107,6 +107,11 @@ th{
     border: hsl(20, 100%, 58%);
 }
 
+.p-highlight{
+    background-color: hsl(20, 100%, 58%);
+
+}
+
 .p-fileupload-choose{
     background-color: #86AB89;
     width: 100%;
