@@ -708,10 +708,10 @@ namespace GenericDataStore.Controllers
         [HttpPost("CreateCalculatedChart")]
         public virtual async Task<IActionResult> CreateCalculatedChart([FromBody] ChartInput chartInput)
         {
-            Dictionary<RootFilter, ObjectType> typecache;
-            var ex = _memoryCache.TryGetValue(chartInput.Filter, out typecache);
+            //Dictionary<RootFilter, ObjectType> typecache;
+            //var ex = _memoryCache.TryGetValue(chartInput.Filter, out typecache);
 
-            var chtyp = await GenerateChart(chartInput,false,null,typecache);
+            var chtyp = await GenerateChart(chartInput,false,null);
             if(chtyp != null)
             {
                 return new JsonResult(chtyp, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
@@ -736,9 +736,9 @@ namespace GenericDataStore.Controllers
                 }
                 else
                 {
-                    _memoryCache.Set(chartInput.Filter, type,
-                            new MemoryCacheEntryOptions()
-                            .SetAbsoluteExpiration(TimeSpan.FromSeconds(30)));
+                    //_memoryCache.Set(chartInput.Filter, type,
+                    //        new MemoryCacheEntryOptions()
+                    //        .SetAbsoluteExpiration(TimeSpan.FromSeconds(30)));
                 }
             }
 

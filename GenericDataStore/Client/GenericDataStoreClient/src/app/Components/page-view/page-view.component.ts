@@ -48,6 +48,7 @@ export class PageViewComponent implements OnInit {
 
           formeddata.push(dataitem);
         });
+        console.log(formeddata)
         let template = data.page.html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
         .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
         .replace(/<link\b[^<]*(?:(?!<\/link>)<[^<]*)*<\/link>/gi, '')

@@ -17,13 +17,15 @@
 
                 <p-dropdown *ngIf="prop.type == 'option'" [options]="prop.option" [dataKey]="'optionValue'" (onChange)="OptionSelect($event,prop)"  optionLabel="optionName" [showClear]="true" placeholder="Select a type"></p-dropdown>
 
-                <div *ngIf="prop.type == 'image'">
+                <!-- <div *ngIf="prop.type == 'image'">
                     <label>Upload after its created</label>
 
-                    <!-- <p-fileUpload #fileUploader [maxFileSize]="5485760"  mode="basic" accept="image/*" 
+                    <p-fileUpload #fileUploader [maxFileSize]="5485760"  mode="basic" accept="image/*" 
                     (uploadHandler)="UploadFile($event,dataRec[i].valueId)" chooseLabel="Select file" [customUpload]="true"
-                    invalidFileSizeMessageDetail="Allowed file size is 5MiB"></p-fileUpload>                -->
-                </div>
+                    invalidFileSizeMessageDetail="Allowed file size is 5MiB"></p-fileUpload>               
+                </div> -->
+                <input *ngIf="prop.type == 'image'"   [(ngModel)]="dataRec[prop.field]" pInputText/>
+
     
             </div>
     </div>

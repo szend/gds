@@ -11,13 +11,14 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputTextModule } from 'primeng/inputtext';
 import { TabViewModule } from 'primeng/tabview';
 import { Title, Meta } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 
 
 @Component({
   selector: 'app-list-view',
   standalone: true,
-  imports: [DataViewModule,CardModule,TagModule,ButtonModule,CommonModule,ProgressSpinnerModule,InputTextModule, TabViewModule],
+  imports: [DataViewModule,CardModule,TagModule,ButtonModule,CommonModule,ProgressSpinnerModule,InputTextModule, TabViewModule, FormsModule],
   templateUrl: './list-view.component.html',
   styleUrl: './list-view.component.css'
 })
@@ -29,7 +30,7 @@ export class ListViewComponent implements OnInit{
   public loading: boolean = false;
 
   ngOnInit(): void {
-    this.titleService.setTitle("GenericDataStore - Online NoSQL Solution"); 
+    this.titleService.setTitle("GenericDataStore - Online NoSQL Database Solution"); 
         this.meta.updateTag({ name: 'description', content: "List view" });
     this.meta.updateTag({ name: 'keywords', content: "list view" });
     this.route.paramMap.subscribe(params => {     
@@ -93,6 +94,15 @@ export class ListViewComponent implements OnInit{
 
   GoToType(name : string, id: string){
     this.router.navigateByUrl('/'+ id +'/'+ name);
+  }
+
+  GetStyle(item : any){
+    if(item?.promoted){
+      if(item.color){
+        return { "background-image" : "linear-gradient(0.15turn,"+  item.color + ", #ffffff)" , "margin" : "0px"};
+      }
+    }
+    return {  "margin" : "0px"};
   }
 
   GoToDashboard(id : string){

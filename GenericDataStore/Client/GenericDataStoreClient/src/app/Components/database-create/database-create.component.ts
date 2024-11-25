@@ -119,9 +119,12 @@ export class DatabaseCreateComponent implements OnInit {
   }
 
   ImportApiTable(){
+    this.loading = true;
     this.apiService.ImportApiTables(this.database.databaseConnectionPropertyId).subscribe((data: any) => {
+      this.loading = false;
       this.messageService.add({severity:'success', summary: 'Success', detail: 'Data connected'});
     }, (error: any) => {
+      this.loading = false;
       this.messageService.add({severity:'error', summary: 'Error', detail: 'Error connecting data'});
     });
   }

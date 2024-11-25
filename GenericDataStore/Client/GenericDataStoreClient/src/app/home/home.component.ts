@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit {
   repidx = 1;
   withidx = 1;
   ngOnInit() {
-    this.titleService.setTitle("GenericDataStore - Online NoSQL Solution"); 
+    this.titleService.setTitle("GenericDataStore - Online NoSQL Database Solution"); 
 
 
 

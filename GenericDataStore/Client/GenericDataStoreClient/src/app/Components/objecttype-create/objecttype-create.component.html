@@ -62,7 +62,7 @@
                         <input  style="margin-bottom: 1rem; width: 20rem;"  [(ngModel)]="prop.name"  pInputText/>
                         <div style="display: flex;">
                             <label >Type of the property</label>
-                            <i  pTooltip="Define which type of data you want to store in this field. Select text if it is simple characters, number if it is numeric, date if date, boolean if true/false, option if category (you can define the categories if you select), and image if you want to store images." class="pi pi-question-circle" style="font-size: 1rem"></i>
+                            <i  pTooltip="Define which type of data you want to store in this field. Select text if it is simple characters, number if it is numeric, date if date, boolean if true/false, option if category (you can define the categories if you select), and image as URL if you want to visualize images." class="pi pi-question-circle" style="font-size: 1rem"></i>
                         </div>
                         <p-dropdown  [style]="{ 'margin-bottom': '2rem'}"[options]="options" [(ngModel)]="prop.type" dataKey="code" optionLabel="name" (onChange)="SetType($event,i)" [showClear]="true"
                          [placeholder]="prop.type ?? 'Select type'"></p-dropdown>

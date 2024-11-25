@@ -29,13 +29,15 @@
 
                         <p-dropdown [disabled]="!editable" *ngIf="prop.type == 'option' && dataRec[i]" [options]="prop.option" [dataKey]="'optionValue'" (onChange)="OptionSelect($event,i)"  optionLabel="optionName" [showClear]="true"
                          [placeholder]="dataRec[i].valueString != null && dataRec[i].valueString != undefined && dataRec[i].valueString != '' ? dataRec[i].valueString : 'Select'"></p-dropdown>
-                        <div *ngIf="prop.type == 'image' && dataRec[i]">
+                        <!-- <div *ngIf="prop.type == 'image' && dataRec[i]">
                             <p-fileUpload #fileUploader [maxFileSize]="5485760"  mode="basic" accept="image/*" [disabled]="!editable"
                             (uploadHandler)="UploadFile($event,dataRec[i].name)" chooseLabel="Select file" [customUpload]="true"
                             invalidFileSizeMessageDetail="Allowed file size is 5MiB"></p-fileUpload> 
                             <p-image [width]="'500rem'" [height]="'500rem'" *ngIf="prop.type == 'image' && getImageObj(dataRec[i], prop.header)"  [src]="getImageObj(dataRec[i], prop.header)"  alt="not picture" [preview]="true"></p-image>              
                             <button *ngIf="HasAiModel(prop.header)"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="ClassifyImage($event,prop.header)">ClassifyImage</button> 
-                        </div>
+                        </div> -->
+                        <input [disabled]="!editable" *ngIf="prop.type == 'image' && dataRec[i]"   [(ngModel)]="dataRec[i].valueString" pInputText/>
+
 
                         <button *ngIf="prop.type == 'numeric' && dataRec[i] && HasAiModel(prop.header) && editable"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="PredictValueNum($event,prop.header)">Predict value</button> 
                         <button *ngIf="(prop.type == 'option' || prop.type == 'text') && dataRec[i] && HasAiModel(prop.header) && editable"  style="margin-right: 1rem;" pButton pRipple class="p-button-success p-mr-2" (click)="PredictValueStr($event,prop.header)">Predict value</button> 
