@@ -1,3 +1,5 @@
+<p-messages></p-messages>
+
 <div style="padding: 2rem; height: 100rem;" class="card flex justify-content-center">
     <p-card  [style]="{ width: '360px', padding: '2rem', 'background-image': 'repeating-linear-gradient( 124.02deg, #f3bd75, hsl(0, 0%, 39%))' }">
         <ng-template pTemplate="header">
@@ -19,10 +21,6 @@
             <label>Password again</label>
             <p-password (keyup.enter)="Register()"  required [(ngModel)]="password2" [feedback]="false"></p-password>
         </div>
-        <div style="display: grid;">
-            <label>Password again</label>
-            <p-password (keyup.enter)="Register()"  required [(ngModel)]="password2" [feedback]="false"></p-password>
-        </div>
 
     
         <ng-template pTemplate="footer">
@@ -33,5 +31,4 @@
         </ng-template>
     </p-card>
 </div>
-<p-messages></p-messages>
 
