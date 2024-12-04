@@ -1,0 +1,18 @@
+{
+  "routes": [
+    "/",
+    "/connection/databases",
+    "/contact",
+    "/dashboard",
+    "/dataprotection",
+    "/features",
+    "/home",
+    "/login",
+    "/messages",
+    "/mylists",
+    "/price",
+    "/publicdata",
+    "/register",
+    "/termsofuse"
+  ]
+}
