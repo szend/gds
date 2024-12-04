@@ -1,0 +1,18 @@
+{  
+  "navigationFallback": {  
+    "rewrite": "/index.html",  
+    "exclude": [  
+      "/images/*",  
+      "/css/*",  
+      "/js/*",  
+      "/favicon.ico",  
+      "/404.html"  
+    ]  
+  },  
+  "routes": [  
+    {  
+      "route": "/api/*",  
+      "allowedRoles": ["anonymous"]  
+    }  
+  ]  
+}  
